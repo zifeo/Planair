@@ -1,4 +1,4 @@
-final boolean DEBUG = true;
+final boolean DEBUG = false;
 
 final int PLATE_SIZE = 250;
 final int PLATE_THICKNESS = 10;
@@ -86,7 +86,7 @@ float trim(float value, float bound) {
 /* EVENT HANDLER */
 
 void mouseWheel(MouseEvent e) {
-  motionFactor -= e.getCount() / 3;
+  motionFactor -= e.getCount() / 5.0;
   motionFactor = trim(motionFactor, 0.2, 2);
 }
 
