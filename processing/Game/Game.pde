@@ -28,7 +28,7 @@ void setup() {
   frameRate(FRAMERATE);
 
   PVector onPlate = new PVector(0, -PLATE_THICKNESS/2, 0);
-
+  
   sphere = new Sphere(onPlate, SPHERE_RADIUS);
   sphere.setXBounds(-PLATE_SIZE/2 + SPHERE_RADIUS, PLATE_SIZE/2 - SPHERE_RADIUS);
   sphere.setZBounds(-PLATE_SIZE/2 + SPHERE_RADIUS, PLATE_SIZE/2 - SPHERE_RADIUS);
@@ -40,7 +40,7 @@ void setup() {
   shiftCylinder.setXBounds(-PLATE_SIZE/2 + CYLINDER_RADIUS, PLATE_SIZE/2 - CYLINDER_RADIUS);
   shiftCylinder.setZBounds(-PLATE_SIZE/2 + CYLINDER_RADIUS, PLATE_SIZE/2 - CYLINDER_RADIUS);
   
-  scoreboard = new Scoreboard(width, SCOREBOARD_HEIGHT);
+  scoreboard = new Scoreboard(width, SCOREBOARD_HEIGHT, sphere);
   scoreboard.addForProjection(plate);
   scoreboard.addForProjection(sphere);
 }

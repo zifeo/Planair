@@ -17,11 +17,11 @@ abstract class Movable extends Drawable {
   }
   
   public void setLocation(PVector location) {
-    super.setLocation(keepInBounds(location));
+    checkBounds(location);
   }
   
   public void update() {
-    setLocation(keepInBounds(PVector.add(location(), velocity))); 
+    checkBounds(PVector.add(location(), velocity)); 
   }
   
   public void setXBounds(float min, float max) {
@@ -64,8 +64,8 @@ abstract class Movable extends Drawable {
   }
   
   // had to put "Cylinder" here because of Processing buggy behaviour, will change to Movable when on Eclipse
-  public void checkCollisions(ArrayList<Cylinder> obstacles) {
-    
+  public int checkCollisions(ArrayList<Cylinder> obstacles) {
+    int count = 0;
     PVector location = location();
     for (Drawable obstacle: obstacles) {
       
@@ -83,32 +83,42 @@ abstract class Movable extends Drawable {
          delta.normalize();
          delta.setMag(borders);
          setLocation(PVector.add(obstacleLocation, delta));
+         ++count;
        }
     } 
+    return count;
   }
   
-  private PVector keepInBounds(PVector location) {
+  protected int checkBounds(PVector location) {
+    int count = 0;
     if (location.x < minBounds.x) {
       location.x = minBounds.x;
       velocity.x = abs(velocity.x);
+      ++count;
     } else if (location.x > maxBounds.x) {
       location.x = maxBounds.x;
       velocity.x = -abs(velocity.x);
+      ++count;
     }
     if (location.y < minBounds.y) {
       location.y = minBounds.y;
       velocity.y = abs(velocity.y);
+      ++count;
     } else if (location.y > maxBounds.y) {
       location.y = maxBounds.y;
       velocity.y = -abs(velocity.y);
+      ++count;
     }
     if (location.z < minBounds.z) {
       location.z = minBounds.z;
       velocity.z = abs(velocity.z);
+      ++count;
     } else if (location.z > maxBounds.z) {
       location.z = maxBounds.z;
       velocity.z = -abs(velocity.z);
+      ++count;
     }
-    return location;
+    super.setLocation(location);
+    return count;
   }
 }

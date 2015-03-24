@@ -1,4 +1,4 @@
-final class Sphere extends Accelerable implements Projectable {
+final class Sphere extends Scorable implements Projectable {
   
   private final float radius;
   
@@ -35,6 +35,22 @@ final class Sphere extends Accelerable implements Projectable {
   
   public float get2DDistanceFrom(float angle) {
     return radius;
+  }
+  
+  public int checkCollisions(ArrayList<Cylinder> obstacles) {
+    int count = super.checkCollisions(obstacles);
+    if (count != 0) {
+      notifyScore(count);
+    }
+    return count;
+  }
+  
+  protected int checkBounds(PVector location) {
+    int count = super.checkBounds(location);
+    if (count != 0) {
+      notifyScore(-count);
+    }
+    return count; 
   }
   
 }
