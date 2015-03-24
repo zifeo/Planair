@@ -37,7 +37,7 @@ final class Sphere extends Scorable implements Projectable {
     return radius;
   }
   
-  public int checkCollisions(ArrayList<Cylinder> obstacles) {
+  public int checkCollisions(ArrayList<Drawable> obstacles) {
     int count = super.checkCollisions(obstacles);
     if (count != 0) {
       notifyScore(count);

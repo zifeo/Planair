@@ -19,16 +19,10 @@ final class Plate extends Drawable implements Projectable {
     drawAxes();
     popMatrix();
   }
-  
-  public void update() {}
-  
-  public float get2DDistanceFrom(float angle) {
-    return size;
-  }
-  
+    
   public void projectOn(PGraphics graphic) {
     graphic.noStroke();
-    graphic.fill(0, 0, 30, 51);
+    graphic.fill(100, 50);
     graphic.rect(0, 0, graphic.width, graphic.height);
   }
 }

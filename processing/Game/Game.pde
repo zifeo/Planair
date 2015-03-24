@@ -20,7 +20,7 @@ float motionFactor = 1.5;
 Sphere sphere;
 Plate plate;
 Cylinder shiftCylinder;
-ArrayList<Cylinder> cylinders = new ArrayList<Cylinder>();
+ArrayList<Drawable> cylinders = new ArrayList<Drawable>();
 Scoreboard scoreboard;
 
 void setup() {
@@ -74,7 +74,7 @@ void draw() {
 
   sphere.draw();
   plate.draw();
-  for (Cylinder cylinder : cylinders) {
+  for (Drawable cylinder : cylinders) {
     cylinder.draw();
   }
   popMatrix();
@@ -99,8 +99,10 @@ void mouseWheel(MouseEvent e) {
 }
 
 void mouseDragged() {
-  environmentRotation.x = trim(environmentRotation.x - motionFactor * (mouseY - pmouseY) / 100.0, PI_3);
-  environmentRotation.z = trim(environmentRotation.z + motionFactor * (mouseX - pmouseX) / 100.0, PI_3);
+  if (mouseY < height - SCOREBOARD_HEIGHT) {
+    environmentRotation.x = trim(environmentRotation.x - motionFactor * (mouseY - pmouseY) / 100.0, PI_3);
+    environmentRotation.z = trim(environmentRotation.z + motionFactor * (mouseX - pmouseX) / 100.0, PI_3);
+  }
 }
 
 // don't allow the cylinder to be placed over the sphere
