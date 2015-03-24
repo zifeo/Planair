@@ -17,7 +17,7 @@ abstract class Drawable {
   public void update() {}
   
   public abstract void draw();
-  
+    
   public abstract float get2DDistanceFrom(float angle);
   
   protected void drawAxes() {

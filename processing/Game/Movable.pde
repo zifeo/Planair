@@ -39,6 +39,30 @@ abstract class Movable extends Drawable {
     this.maxBounds.z = max;
   }
   
+  public float xMinBound() {
+    return minBounds.x;
+  }
+  
+  public float yMinBound() {
+    return minBounds.y;
+  }
+  
+  public float zMinBound() {
+    return minBounds.z;
+  }
+  
+  public float xMaxBound() {
+    return maxBounds.x;
+  }
+  
+  public float yMaxBound() {
+    return maxBounds.y;
+  }
+  
+  public float zMaxBound() {
+    return maxBounds.z;
+  }
+  
   // had to put "Cylinder" here because of Processing buggy behaviour, will change to Movable when on Eclipse
   public void checkCollisions(ArrayList<Cylinder> obstacles) {
     
@@ -47,14 +71,18 @@ abstract class Movable extends Drawable {
       
        PVector obstacleLocation = obstacle.location();      
        float angle = PVector.angleBetween(location, obstacleLocation);
-       float distance = PVector.dist(location, obstacleLocation);
+       PVector delta = PVector.sub(location, obstacleLocation);
        float borders = get2DDistanceFrom(angle) + obstacle.get2DDistanceFrom(angle + PI);
        
-       if (distance <= borders) {
+       if (delta.mag() < borders) {
          PVector normal = PVector.sub(location(), obstacle.location());
          normal.normalize();
          normal.mult(2 * PVector.dot(velocity, normal));
          velocity.sub(normal);
+         
+         delta.normalize();
+         delta.setMag(borders);
+         setLocation(PVector.add(obstacleLocation, delta));
        }
     } 
   }

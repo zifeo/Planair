@@ -1,14 +1,15 @@
-final boolean DEBUG = false;
+final boolean DEBUG = true;
 
 final int PLATE_SIZE = 250;
 final int PLATE_THICKNESS = 10;
 final int SPHERE_RADIUS = 10;
 final int CYLINDER_HEIGHT = 20;
-final int CYLINDER_RADIUS = 10;
+final int CYLINDER_RADIUS = 15;
 final int CYLINDER_RESOLUTION = 8;
+final int SCOREBOARD_HEIGHT = 100;
 
 final int WINDOWS_WIDTH = 500;
-final int WINDOWS_HEIGHT = 500;
+final int WINDOWS_HEIGHT = 600;
 final int FRAMERATE = 60;
 final float PI_3 = PI/3;
 
@@ -20,6 +21,7 @@ Sphere sphere;
 Plate plate;
 Cylinder shiftCylinder;
 ArrayList<Cylinder> cylinders = new ArrayList<Cylinder>();
+Scoreboard scoreboard;
 
 void setup() {
   size(WINDOWS_WIDTH, WINDOWS_HEIGHT, P3D);
@@ -37,6 +39,10 @@ void setup() {
   shiftCylinder = new Cylinder(onPlate, CYLINDER_RADIUS, CYLINDER_HEIGHT, CYLINDER_RESOLUTION);
   shiftCylinder.setXBounds(-PLATE_SIZE/2 + CYLINDER_RADIUS, PLATE_SIZE/2 - CYLINDER_RADIUS);
   shiftCylinder.setZBounds(-PLATE_SIZE/2 + CYLINDER_RADIUS, PLATE_SIZE/2 - CYLINDER_RADIUS);
+  
+  scoreboard = new Scoreboard(width, SCOREBOARD_HEIGHT);
+  scoreboard.addForProjection(plate);
+  scoreboard.addForProjection(sphere);
 }
 
 void draw() {
@@ -71,8 +77,10 @@ void draw() {
   for (Cylinder cylinder : cylinders) {
     cylinder.draw();
   }
-
   popMatrix();
+  
+  scoreboard.update();
+  scoreboard.draw();
 }
 
 float trim(float value, float min, float max) {
@@ -105,7 +113,9 @@ void mousePressed() {
     float borders = shiftCylinder.get2DDistanceFrom(angle) + sphere.get2DDistanceFrom(angle + PI);
      
     if (distance > borders) {
-      cylinders.add(new Cylinder(shiftCylinder));
+      Cylinder obstacle = new Cylinder(shiftCylinder);
+      cylinders.add(obstacle);
+      scoreboard.addForProjection(obstacle);
     }
   }
 }
