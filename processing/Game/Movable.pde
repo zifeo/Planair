@@ -66,6 +66,7 @@ abstract class Movable extends Drawable {
   public int checkCollisions(ArrayList<Drawable> obstacles) {
     int count = 0;
     PVector location = location();
+    PVector correction = new PVector(0, 0, 0);
     for (Drawable obstacle: obstacles) {
       
        PVector obstacleLocation = obstacle.location();     
@@ -81,10 +82,16 @@ abstract class Movable extends Drawable {
          
          delta.normalize();
          delta.setMag(borders);
-         setLocation(PVector.add(obstacleLocation, delta));
+         correction.add(PVector.add(obstacleLocation, delta));
          ++count;
        }
-    } 
+    }
+    if (count > 0) {
+      correction.x /= count;
+      correction.y = location.y;
+      correction.z /= count;
+      setLocation(correction);
+    }
     return count;
   }
   
