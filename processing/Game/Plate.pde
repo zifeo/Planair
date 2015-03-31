@@ -1,4 +1,4 @@
-final class Plate extends Drawable {
+final class Plate extends Drawable implements Projectable {
   
   private final int size;
   private final int thickness;
@@ -11,6 +11,7 @@ final class Plate extends Drawable {
   
   public void draw() {
     pushMatrix();
+    noStroke();
     fill(146, 192, 220);
     PVector location = location();
     translate(location.x, location.y, location.z);
@@ -18,10 +19,10 @@ final class Plate extends Drawable {
     drawAxes();
     popMatrix();
   }
-  
-  public void update() {}
-  
-  public float get2DDistanceFrom(float angle) {
-    return size;
+    
+  public void projectOn(PGraphics graphic) {
+    graphic.noStroke();
+    graphic.fill(100, 50);
+    graphic.rect(0, 0, graphic.width, graphic.height);
   }
 }

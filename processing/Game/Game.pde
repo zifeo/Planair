@@ -1,14 +1,15 @@
-final boolean DEBUG = false;
+final boolean DEBUG = true;
 
 final int PLATE_SIZE = 250;
 final int PLATE_THICKNESS = 10;
 final int SPHERE_RADIUS = 10;
 final int CYLINDER_HEIGHT = 20;
-final int CYLINDER_RADIUS = 10;
+final int CYLINDER_RADIUS = 15;
 final int CYLINDER_RESOLUTION = 8;
+final int SCOREBOARD_HEIGHT = 100;
 
 final int WINDOWS_WIDTH = 500;
-final int WINDOWS_HEIGHT = 500;
+final int WINDOWS_HEIGHT = 600;
 final int FRAMERATE = 60;
 final float PI_3 = PI/3;
 
@@ -19,14 +20,15 @@ float motionFactor = 1.5;
 Sphere sphere;
 Plate plate;
 Cylinder shiftCylinder;
-ArrayList<Cylinder> cylinders = new ArrayList<Cylinder>();
+ArrayList<Drawable> cylinders = new ArrayList<Drawable>();
+Scoreboard scoreboard;
 
 void setup() {
   size(WINDOWS_WIDTH, WINDOWS_HEIGHT, P3D);
   frameRate(FRAMERATE);
 
   PVector onPlate = new PVector(0, -PLATE_THICKNESS/2, 0);
-
+  
   sphere = new Sphere(onPlate, SPHERE_RADIUS);
   sphere.setXBounds(-PLATE_SIZE/2 + SPHERE_RADIUS, PLATE_SIZE/2 - SPHERE_RADIUS);
   sphere.setZBounds(-PLATE_SIZE/2 + SPHERE_RADIUS, PLATE_SIZE/2 - SPHERE_RADIUS);
@@ -37,6 +39,10 @@ void setup() {
   shiftCylinder = new Cylinder(onPlate, CYLINDER_RADIUS, CYLINDER_HEIGHT, CYLINDER_RESOLUTION);
   shiftCylinder.setXBounds(-PLATE_SIZE/2 + CYLINDER_RADIUS, PLATE_SIZE/2 - CYLINDER_RADIUS);
   shiftCylinder.setZBounds(-PLATE_SIZE/2 + CYLINDER_RADIUS, PLATE_SIZE/2 - CYLINDER_RADIUS);
+  
+  scoreboard = new Scoreboard(width, SCOREBOARD_HEIGHT, sphere);
+  scoreboard.addForProjection(plate);
+  scoreboard.addForProjection(sphere);
 }
 
 void draw() {
@@ -68,11 +74,13 @@ void draw() {
 
   sphere.draw();
   plate.draw();
-  for (Cylinder cylinder : cylinders) {
+  for (Drawable cylinder : cylinders) {
     cylinder.draw();
   }
-
   popMatrix();
+  
+  scoreboard.update();
+  scoreboard.draw();
 }
 
 float trim(float value, float min, float max) {
@@ -91,8 +99,10 @@ void mouseWheel(MouseEvent e) {
 }
 
 void mouseDragged() {
-  environmentRotation.x = trim(environmentRotation.x - motionFactor * (mouseY - pmouseY) / 100.0, PI_3);
-  environmentRotation.z = trim(environmentRotation.z + motionFactor * (mouseX - pmouseX) / 100.0, PI_3);
+  if (mouseY < height - SCOREBOARD_HEIGHT) {
+    environmentRotation.x = trim(environmentRotation.x - motionFactor * (mouseY - pmouseY) / 100.0, PI_3);
+    environmentRotation.z = trim(environmentRotation.z + motionFactor * (mouseX - pmouseX) / 100.0, PI_3);
+  }
 }
 
 // don't allow the cylinder to be placed over the sphere
@@ -105,7 +115,9 @@ void mousePressed() {
     float borders = shiftCylinder.get2DDistanceFrom(angle) + sphere.get2DDistanceFrom(angle + PI);
      
     if (distance > borders) {
-      cylinders.add(new Cylinder(shiftCylinder));
+      Cylinder obstacle = new Cylinder(shiftCylinder);
+      cylinders.add(obstacle);
+      scoreboard.addForProjection(obstacle);
     }
   }
 }

@@ -17,11 +17,11 @@ abstract class Movable extends Drawable {
   }
   
   public void setLocation(PVector location) {
-    super.setLocation(keepInBounds(location));
+    checkBounds(location);
   }
   
   public void update() {
-    setLocation(keepInBounds(PVector.add(location(), velocity))); 
+    checkBounds(PVector.add(location(), velocity)); 
   }
   
   public void setXBounds(float min, float max) {
@@ -39,48 +39,92 @@ abstract class Movable extends Drawable {
     this.maxBounds.z = max;
   }
   
-  // had to put "Cylinder" here because of Processing buggy behaviour, will change to Movable when on Eclipse
-  public void checkCollisions(ArrayList<Cylinder> obstacles) {
-    
+  public float xMinBound() {
+    return minBounds.x;
+  }
+  
+  public float yMinBound() {
+    return minBounds.y;
+  }
+  
+  public float zMinBound() {
+    return minBounds.z;
+  }
+  
+  public float xMaxBound() {
+    return maxBounds.x;
+  }
+  
+  public float yMaxBound() {
+    return maxBounds.y;
+  }
+  
+  public float zMaxBound() {
+    return maxBounds.z;
+  }
+  
+  public int checkCollisions(ArrayList<Drawable> obstacles) {
+    int count = 0;
     PVector location = location();
+    PVector correction = new PVector(0, 0, 0);
     for (Drawable obstacle: obstacles) {
       
-       PVector obstacleLocation = obstacle.location();      
+       PVector obstacleLocation = obstacle.location();     
        float angle = PVector.angleBetween(location, obstacleLocation);
-       float distance = PVector.dist(location, obstacleLocation);
+       PVector delta = PVector.sub(location, obstacleLocation);
        float borders = get2DDistanceFrom(angle) + obstacle.get2DDistanceFrom(angle + PI);
        
-       if (distance <= borders) {
-         PVector normal = PVector.sub(location(), obstacle.location());
+       if (delta.mag() < borders) {
+         PVector normal = PVector.sub(location, obstacleLocation);
          normal.normalize();
          normal.mult(2 * PVector.dot(velocity, normal));
          velocity.sub(normal);
+         
+         delta.normalize();
+         delta.setMag(borders);
+         correction.add(PVector.add(obstacleLocation, delta));
+         ++count;
        }
-    } 
+    }
+    if (count > 0) {
+      correction.x /= count;
+      correction.y = location.y;
+      correction.z /= count;
+      setLocation(correction);
+    }
+    return count;
   }
   
-  private PVector keepInBounds(PVector location) {
+  protected int checkBounds(PVector location) {
+    int count = 0;
     if (location.x < minBounds.x) {
       location.x = minBounds.x;
       velocity.x = abs(velocity.x);
+      ++count;
     } else if (location.x > maxBounds.x) {
       location.x = maxBounds.x;
       velocity.x = -abs(velocity.x);
+      ++count;
     }
     if (location.y < minBounds.y) {
       location.y = minBounds.y;
       velocity.y = abs(velocity.y);
+      ++count;
     } else if (location.y > maxBounds.y) {
       location.y = maxBounds.y;
       velocity.y = -abs(velocity.y);
+      ++count;
     }
     if (location.z < minBounds.z) {
       location.z = minBounds.z;
       velocity.z = abs(velocity.z);
+      ++count;
     } else if (location.z > maxBounds.z) {
       location.z = maxBounds.z;
       velocity.z = -abs(velocity.z);
+      ++count;
     }
-    return location;
+    super.setLocation(location);
+    return count;
   }
 }

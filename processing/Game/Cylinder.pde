@@ -1,4 +1,4 @@
-final class Cylinder extends Movable {
+final class Cylinder extends Movable implements Projectable {
     
   private PShape shape;
   private final float radius;
@@ -16,6 +16,9 @@ final class Cylinder extends Movable {
     this.shape = that.shape;
     this.radius = that.radius;
     this.cylinderHeight = that.cylinderHeight;
+    this.setXBounds(that.xMinBound(), that.xMaxBound());
+    this.setYBounds(that.yMinBound(), that.yMaxBound());
+    this.setZBounds(that.zMinBound(), that.zMaxBound());
   }
   
   public void draw() {
@@ -31,6 +34,22 @@ final class Cylinder extends Movable {
     return radius; 
   }
   
+  public void projectOn(PGraphics graphic) {
+    
+    graphic.fill(220);
+    graphic.noStroke();
+
+    PVector location = location();
+    float widthOrigin = xMaxBound() - xMinBound() + 2 * radius;
+    float heightOrigin = zMaxBound() - zMinBound() + 2 * radius;
+    
+    float radiusScaled = radius / widthOrigin * graphic.width;
+    float xScaled = (location.x - xMinBound() + 2 * radius) / widthOrigin * graphic.width;
+    float yScaled = (location.z - zMinBound() + 2 * radius) / heightOrigin * graphic.height;
+
+    graphic.ellipse(xScaled - radiusScaled, yScaled - radiusScaled, 2 * radiusScaled, 2 * radiusScaled);
+  }
+
   private PShape createCylinder(float radius, float cylinderHeight, int cylinderResolution) {
     PShape cylinder = createShape(GROUP);
     PShape floor = createShape();
