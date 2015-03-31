@@ -11,6 +11,9 @@ final class Tree extends Movable implements Projectable {
   
   Tree(Tree that) {
     this(that.location());
+    this.setXBounds(that.xMinBound(), that.xMaxBound());
+    this.setYBounds(that.yMinBound(), that.yMaxBound());
+    this.setZBounds(that.zMinBound(), that.zMaxBound());
   }
   
   public void draw() {
