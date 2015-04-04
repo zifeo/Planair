@@ -1,8 +1,8 @@
 final class Tree extends Movable implements Projectable {
     
   private PShape shape;
-  private final float scale = 40;
-  private final float radius = 15;
+  private final float scale = 5;
+  private final float radius = 6;
   
   Tree(PVector location) {
     super(location);
@@ -46,7 +46,7 @@ final class Tree extends Movable implements Projectable {
   }
 
   private PShape createTree() {
-    PShape tree = loadShape("simpleTree.obj");
+    PShape tree = loadShape("treeLight.obj");
     tree.scale(scale);
     tree.rotate(PI);
     return tree;
