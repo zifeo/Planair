@@ -19,7 +19,7 @@ float motionFactor = 1.5;
 
 Sphere sphere;
 Plate plate;
-Cylinder shiftCylinder;
+Tree shiftCylinder;
 ArrayList<Drawable> cylinders = new ArrayList<Drawable>();
 Scoreboard scoreboard;
 
@@ -36,7 +36,7 @@ void setup() {
 
   plate = new Plate(new PVector(0, 0, 0), PLATE_SIZE, PLATE_THICKNESS);
 
-  shiftCylinder = new Cylinder(onPlate, CYLINDER_RADIUS, CYLINDER_HEIGHT, CYLINDER_RESOLUTION);
+  shiftCylinder = new Tree(onPlate);
   shiftCylinder.setXBounds(-PLATE_SIZE/2 + CYLINDER_RADIUS, PLATE_SIZE/2 - CYLINDER_RADIUS);
   shiftCylinder.setZBounds(-PLATE_SIZE/2 + CYLINDER_RADIUS, PLATE_SIZE/2 - CYLINDER_RADIUS);
   
@@ -77,6 +77,7 @@ void draw() {
   for (Drawable cylinder : cylinders) {
     cylinder.draw();
   }
+  
   popMatrix();
   
   scoreboard.update();
@@ -115,7 +116,7 @@ void mousePressed() {
     float borders = shiftCylinder.get2DDistanceFrom(angle) + sphere.get2DDistanceFrom(angle + PI);
      
     if (distance > borders) {
-      Cylinder obstacle = new Cylinder(shiftCylinder);
+      Tree obstacle = new Tree(shiftCylinder);
       cylinders.add(obstacle);
       scoreboard.addForProjection(obstacle);
     }
