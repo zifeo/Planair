@@ -1,0 +1,153 @@
+package planair;
+
+import processing.core.*;
+import drawableObjects.*;
+
+import java.awt.event.MouseWheelEvent;
+import java.util.ArrayList;
+
+/**
+ * Created by Nicolas on 04.04.15.
+ */
+public class Planair extends PApplet{
+
+    // Dans le futur à mettre dans une classe properties
+    public static final boolean DEBUG              = true;
+    public static final int PLATE_SIZE             = 250;
+    public static final int PLATE_THICKNESS        = 10;
+    public static final int SPHERE_RADIUS          = 10;
+    public static final int CYLINDER_HEIGHT        = 20;
+    public static final int CYLINDER_RADIUS        = 15;
+    public static final int CYLINDER_RESOLUTION    = 8;
+    public static final int SCOREBOARD_HEIGHT      = 100;
+    public static final int WINDOWS_WIDTH          = 500;
+    public static final int WINDOWS_HEIGHT         = 600;
+    public static final int FRAMERATE              = 60;
+    public static final float PI_3                 = PI/3;
+
+    private Status status = Status.PLAY;
+    private PVector environmentRotation = new PVector(0, 0, 0);
+    private float motionFactor = 1.5f;
+
+    private Sphere sphere;
+    private Plate plate;
+    private Cylinder shiftCylinder;
+    private ArrayList<Drawable> cylinders = new ArrayList<Drawable>();
+    private Scoreboard scoreboard;
+
+    public static void main(String args[]) {
+        String[] appletArgs = new String[] { "planair.Planair" };
+        if (args != null) {
+            PApplet.main(concat(appletArgs, args));
+        } else {
+            PApplet.main(appletArgs);
+        }
+    }
+
+    public void setup() {
+        size(WINDOWS_WIDTH, WINDOWS_HEIGHT, P3D);
+        frameRate(FRAMERATE);
+
+        PVector onPlate = new PVector(0, -PLATE_THICKNESS/2, 0);
+
+        println(onPlate);
+
+        sphere = new Sphere(this, onPlate, SPHERE_RADIUS);
+        sphere.setXBounds(-PLATE_SIZE/2 + SPHERE_RADIUS, PLATE_SIZE/2 - SPHERE_RADIUS);
+        sphere.setZBounds(-PLATE_SIZE/2 + SPHERE_RADIUS, PLATE_SIZE/2 - SPHERE_RADIUS);
+        sphere.enableGravity();
+
+        plate = new Plate(this, new PVector(0, 0, 0), PLATE_SIZE, PLATE_THICKNESS);
+
+        shiftCylinder = new Cylinder(this, onPlate, CYLINDER_RADIUS, CYLINDER_HEIGHT, CYLINDER_RESOLUTION);
+        shiftCylinder.setXBounds(-PLATE_SIZE/2 + CYLINDER_RADIUS, PLATE_SIZE/2 - CYLINDER_RADIUS);
+        shiftCylinder.setZBounds(-PLATE_SIZE/2 + CYLINDER_RADIUS, PLATE_SIZE/2 - CYLINDER_RADIUS);
+
+        scoreboard = new Scoreboard(this, width, SCOREBOARD_HEIGHT, sphere);
+        scoreboard.addForProjection(plate);
+        scoreboard.addForProjection(sphere);
+    }
+
+    public void draw() {
+        pushMatrix();
+        background(200);
+        lights();
+
+        switch (status) {
+            case PLAY:
+                camera(0, 0, (height/2.0f) / tan(PI*30.0f / 180.0f), 0, 0, 0, 0, 1, 0);
+
+                rotateX(environmentRotation.x);
+                rotateY(environmentRotation.y);
+                rotateZ(environmentRotation.z);
+                sphere.setEnvironmentRotation(environmentRotation);
+
+                sphere.update();
+                sphere.checkCollisions(cylinders);
+                plate.update();
+                break;
+
+            case ADD_CYLINDER:
+                camera(0, -(height/2.0f) / tan(PI*30.0f / 180.0f), 0, 0, 0, 0, 0, 0, 1);
+
+                shiftCylinder.setLocation(new PVector(mouseX - width/2, -PLATE_THICKNESS/2, mouseY - height/2));
+                shiftCylinder.draw();
+                break;
+        }
+
+        sphere.draw();
+        plate.draw();
+        for (Drawable cylinder : cylinders) {
+            cylinder.draw();
+        }
+        popMatrix();
+
+        scoreboard.update();
+        scoreboard.draw();
+    }
+
+/* EVENT HANDLER */
+
+    public void mouseWheel(MouseWheelEvent e) {
+        motionFactor -= e.getPreciseWheelRotation() / 5.0f;
+        motionFactor = Util.trim(motionFactor, 0.2f, 2);
+    }
+
+    public void mouseDragged() {
+        if (mouseY < height - SCOREBOARD_HEIGHT) {
+            environmentRotation.x = Util.trim(environmentRotation.x - motionFactor * (mouseY - pmouseY) / 100.0f, PI_3);
+            environmentRotation.z = Util.trim(environmentRotation.z + motionFactor * (mouseX - pmouseX) / 100.0f, PI_3);
+        }
+    }
+
+    // don't allow the cylinder to be placed over the sphere
+    public void mousePressed() {
+        if (status == Status.ADD_CYLINDER) {
+            PVector wantedLocation = shiftCylinder.location();
+            PVector sphereLocation = sphere.location();
+            float angle = PVector.angleBetween(wantedLocation, sphereLocation);
+            float distance = PVector.dist(wantedLocation, sphereLocation);
+            float borders = shiftCylinder.get2DDistanceFrom(angle) + sphere.get2DDistanceFrom(angle + PI);
+
+            if (distance > borders) {
+                Cylinder obstacle = new Cylinder(shiftCylinder);
+                cylinders.add(obstacle);
+                scoreboard.addForProjection(obstacle);
+            }
+        }
+    }
+
+    public void keyReleased() {
+        switch (keyCode) {
+            case SHIFT:
+                status = Status.PLAY;
+        }
+    }
+
+    public void keyPressed() {
+        switch (keyCode) {
+            case SHIFT:
+                status = Status.ADD_CYLINDER;
+        }
+    }
+}
