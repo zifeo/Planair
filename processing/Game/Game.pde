@@ -22,6 +22,7 @@ Plate plate;
 Tree shiftCylinder;
 ArrayList<Drawable> cylinders = new ArrayList<Drawable>();
 Scoreboard scoreboard;
+Environment environment;
 
 void setup() {
   size(WINDOWS_WIDTH, WINDOWS_HEIGHT, P3D);
@@ -43,6 +44,8 @@ void setup() {
   scoreboard = new Scoreboard(width, SCOREBOARD_HEIGHT, sphere);
   scoreboard.addForProjection(plate);
   scoreboard.addForProjection(sphere);
+  
+  environment = new Environment();
 }
 
 void draw() {
@@ -52,8 +55,10 @@ void draw() {
 
   switch (status) {
     case PLAY:
-      camera(0, 0, (height/2.0) / tan(PI*30.0 / 180.0), 0, 0, 0, 0, 1, 0);
-  
+      camera(0, -200, (height/2.0) / tan(PI*30.0 / 180.0), 0, 0, 0, 0, 1, 0);
+      
+      environment.draw();
+      
       rotateX(environmentRotation.x);
       rotateY(environmentRotation.y);
       rotateZ(environmentRotation.z);
