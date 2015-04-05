@@ -1,4 +1,4 @@
-package ch.epfl.planair.drawableObjects;
+package ch.epfl.planair.specs;
 
 import processing.core.PApplet;
 import processing.core.PVector;
@@ -10,7 +10,7 @@ public abstract class Movable extends Drawable {
     private PVector maxBounds = new PVector(Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE);
     private PVector minBounds = new PVector(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY);
 
-    Movable(PApplet parent, PVector location) {
+    public Movable(PApplet parent, PVector location) {
         super(parent, location);
     }
 

@@ -1,7 +1,9 @@
 package ch.epfl.planair;
 
+import ch.epfl.planair.scores.Scoreboard;
+import ch.epfl.planair.specs.Drawable;
 import processing.core.*;
-import ch.epfl.planair.drawableObjects.*;
+import ch.epfl.planair.objects.*;
 
 import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
@@ -47,7 +49,7 @@ public class Planair extends PApplet {
         frameRate(FRAMERATE);
 
         PVector onPlate = new PVector(0, -PLATE_THICKNESS/2, 0);
-        
+
         sphere = new Sphere(this, onPlate, SPHERE_RADIUS);
         sphere.setXBounds(-PLATE_SIZE/2 + SPHERE_RADIUS, PLATE_SIZE/2 - SPHERE_RADIUS);
         sphere.setZBounds(-PLATE_SIZE/2 + SPHERE_RADIUS, PLATE_SIZE/2 - SPHERE_RADIUS);

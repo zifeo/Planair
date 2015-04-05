@@ -1,7 +1,10 @@
-package ch.epfl.planair.drawableObjects;
+package ch.epfl.planair.objects;
 
 import java.util.ArrayList;
 
+import ch.epfl.planair.specs.Drawable;
+import ch.epfl.planair.specs.Projectable;
+import ch.epfl.planair.specs.Scorable;
 import processing.core.PApplet;
 import processing.core.PVector;
 import processing.core.PGraphics;

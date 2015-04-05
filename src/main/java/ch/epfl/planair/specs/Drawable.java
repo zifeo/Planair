@@ -1,4 +1,4 @@
-package ch.epfl.planair.drawableObjects;
+package ch.epfl.planair.specs;
 
 import ch.epfl.planair.Planair;
 import processing.core.PApplet;
@@ -13,7 +13,7 @@ public abstract class Drawable {
         this.parent = parent;
     }
 
-    Drawable(PApplet parent, PVector location) {
+    public Drawable(PApplet parent, PVector location) {
         this.parent = parent;
         this.location.set(location);
     }

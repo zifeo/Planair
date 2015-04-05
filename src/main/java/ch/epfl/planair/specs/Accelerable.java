@@ -1,4 +1,4 @@
-package ch.epfl.planair.drawableObjects;
+package ch.epfl.planair.specs;
 
 import processing.core.PVector;
 import processing.core.PApplet;

@@ -1,6 +1,10 @@
-package ch.epfl.planair.drawableObjects;
+package ch.epfl.planair.scores;
 
 import java.util.ArrayList;
+
+import ch.epfl.planair.specs.Drawable;
+import ch.epfl.planair.specs.Projectable;
+import ch.epfl.planair.specs.Scorable;
 import processing.core.*;
 
 public final class Scoreboard extends Drawable implements Scorer {

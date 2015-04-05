@@ -1,8 +1,8 @@
-package ch.epfl.planair.drawableObjects;
+package ch.epfl.planair.specs;
 
 import processing.core.PGraphics;
 
-interface Projectable {
+public interface Projectable {
 
     public abstract void projectOn(PGraphics graphic);
 

@@ -1,5 +1,7 @@
-package ch.epfl.planair.drawableObjects;
+package ch.epfl.planair.objects;
 
+import ch.epfl.planair.specs.Movable;
+import ch.epfl.planair.specs.Projectable;
 import processing.core.PShape;
 import processing.core.PVector;
 import processing.core.PApplet;

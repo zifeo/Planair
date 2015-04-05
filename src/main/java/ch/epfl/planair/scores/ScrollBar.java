@@ -1,6 +1,7 @@
-package ch.epfl.planair.drawableObjects;
+package ch.epfl.planair.scores;
 
 import ch.epfl.planair.Utils;
+import ch.epfl.planair.specs.Drawable;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.core.PVector;
