@@ -12,7 +12,7 @@ public abstract class Scorable extends Accelerable {
 
     public Scorable(PApplet parent, PVector location) {
         super(parent, location);
-        this.scoreObservers = new ArrayList<Scorer>();
+        this.scoreObservers = new ArrayList<>();
     }
 
     public void addScoreObserver(Scorer scorer) {
