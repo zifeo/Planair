@@ -1,6 +1,6 @@
-package drawableObjects;
+package ch.epfl.planair.drawableObjects;
 
-import planair.Planair;
+import ch.epfl.planair.Planair;
 import processing.core.PApplet;
 import processing.core.PVector;
 
@@ -8,6 +8,7 @@ import processing.core.PVector;
  * Created by Nicolas on 04.04.15.
  */
 public abstract class Drawable {
+
     protected PApplet parent;
     private PVector location = new PVector(0, 0, 0);
 

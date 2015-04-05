@@ -1,15 +1,12 @@
-package planair;
+package ch.epfl.planair;
 
 import processing.core.*;
-import drawableObjects.*;
+import ch.epfl.planair.drawableObjects.*;
 
 import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
 
-/**
- * Created by Nicolas on 04.04.15.
- */
-public class Planair extends PApplet{
+public class Planair extends PApplet {
 
     // Dans le futur à mettre dans une classe properties
     public static final boolean DEBUG              = true;
@@ -37,7 +34,7 @@ public class Planair extends PApplet{
     private Scoreboard scoreboard;
 
     public static void main(String args[]) {
-        String[] appletArgs = new String[] { "planair.Planair" };
+        String[] appletArgs = new String[] { "ch.epfl.planair.Planair" };
         if (args != null) {
             PApplet.main(concat(appletArgs, args));
         } else {
@@ -112,13 +109,13 @@ public class Planair extends PApplet{
 
     public void mouseWheel(MouseWheelEvent e) {
         motionFactor -= e.getPreciseWheelRotation() / 5.0f;
-        motionFactor = Util.trim(motionFactor, 0.2f, 2);
+        motionFactor = Utils.trim(motionFactor, 0.2f, 2);
     }
 
     public void mouseDragged() {
         if (mouseY < height - SCOREBOARD_HEIGHT) {
-            environmentRotation.x = Util.trim(environmentRotation.x - motionFactor * (mouseY - pmouseY) / 100.0f, PI_3);
-            environmentRotation.z = Util.trim(environmentRotation.z + motionFactor * (mouseX - pmouseX) / 100.0f, PI_3);
+            environmentRotation.x = Utils.trim(environmentRotation.x - motionFactor * (mouseY - pmouseY) / 100.0f, PI_3);
+            environmentRotation.z = Utils.trim(environmentRotation.z + motionFactor * (mouseX - pmouseX) / 100.0f, PI_3);
         }
     }
 

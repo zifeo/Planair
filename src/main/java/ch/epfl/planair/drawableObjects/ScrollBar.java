@@ -1,6 +1,6 @@
-package drawableObjects;
+package ch.epfl.planair.drawableObjects;
 
-import planair.Util;
+import ch.epfl.planair.Utils;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.core.PVector;
@@ -49,7 +49,7 @@ public final class ScrollBar extends Drawable {
             locked = false;
         }
         if (locked) {
-            newSliderPosition = Util.trim(parent.mouseX - xPosition - barHeight / 2, sliderPositionMin, sliderPositionMax);
+            newSliderPosition = Utils.trim(parent.mouseX - xPosition - barHeight / 2, sliderPositionMin, sliderPositionMax);
         }
         if (Math.abs(newSliderPosition - sliderPosition) > 1) {
             sliderPosition = sliderPosition + (newSliderPosition - sliderPosition);
@@ -86,6 +86,6 @@ public final class ScrollBar extends Drawable {
      * corresponding to [leftmost position, rightmost position]
      */
     public float pos() {
-        return Util.trim(2 * sliderPosition / (barWidth - barHeight), 0.2f, 2);
+        return Utils.trim(2 * sliderPosition / (barWidth - barHeight), 0.2f, 2);
     }
 }
