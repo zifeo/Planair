@@ -31,7 +31,8 @@ public class Planair extends PApplet{
 
     private Sphere sphere;
     private Plate plate;
-    private Cylinder shiftCylinder;
+    private Tree shiftCylinder;
+    //private Cylinder shiftCylinder;
     private ArrayList<Drawable> cylinders = new ArrayList<Drawable>();
     private Scoreboard scoreboard;
 
@@ -59,8 +60,8 @@ public class Planair extends PApplet{
 
         plate = new Plate(this, new PVector(0, 0, 0), PLATE_SIZE, PLATE_THICKNESS);
 
-        //shiftCylinder = new Tree(this, onPlate)
-        shiftCylinder = new Cylinder(this, onPlate, CYLINDER_RADIUS, CYLINDER_HEIGHT, CYLINDER_RESOLUTION);
+        shiftCylinder = new Tree(this, onPlate);
+        //shiftCylinder = new Cylinder(this, onPlate, CYLINDER_RADIUS, CYLINDER_HEIGHT, CYLINDER_RESOLUTION);
         shiftCylinder.setXBounds(-PLATE_SIZE/2 + CYLINDER_RADIUS, PLATE_SIZE/2 - CYLINDER_RADIUS);
         shiftCylinder.setZBounds(-PLATE_SIZE/2 + CYLINDER_RADIUS, PLATE_SIZE/2 - CYLINDER_RADIUS);
 
@@ -131,7 +132,8 @@ public class Planair extends PApplet{
             float borders = shiftCylinder.get2DDistanceFrom(angle) + sphere.get2DDistanceFrom(angle + PI);
 
             if (distance > borders) {
-                Cylinder obstacle = new Cylinder(shiftCylinder);
+                //Cylinder obstacle = new Cylinder(shiftCylinder);
+                Tree obstacle = new Tree(shiftCylinder);
                 cylinders.add(obstacle);
                 scoreboard.addForProjection(obstacle);
             }

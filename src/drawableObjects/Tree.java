@@ -5,7 +5,7 @@ import processing.core.PVector;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 
-final class Tree extends Movable implements Projectable {
+public final class Tree extends Movable implements Projectable {
 
     private PShape shape;
     private final float scale = 40;
