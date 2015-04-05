@@ -47,9 +47,7 @@ public class Planair extends PApplet {
         frameRate(FRAMERATE);
 
         PVector onPlate = new PVector(0, -PLATE_THICKNESS/2, 0);
-
-        println(onPlate);
-
+        
         sphere = new Sphere(this, onPlate, SPHERE_RADIUS);
         sphere.setXBounds(-PLATE_SIZE/2 + SPHERE_RADIUS, PLATE_SIZE/2 - SPHERE_RADIUS);
         sphere.setZBounds(-PLATE_SIZE/2 + SPHERE_RADIUS, PLATE_SIZE/2 - SPHERE_RADIUS);

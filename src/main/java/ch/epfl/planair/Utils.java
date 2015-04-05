@@ -14,5 +14,6 @@ public final class Utils {
         return trim(value, -bound, bound);
     }
 
+    public static PVector nullVector() { return new PVector(0, 0, 0); }
 
 }

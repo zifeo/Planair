@@ -113,12 +113,10 @@ public abstract class Movable extends Drawable {
             ++count;
         }
         if (location.y < minBounds.y) {
-            System.out.println("inf " + minBounds.y);
             location.y = minBounds.y;
             velocity.y = Math.abs(velocity.y);
             ++count;
         } else if (location.y > maxBounds.y) {
-            System.out.println("sup" + location.y);
             location.y = maxBounds.y;
             velocity.y = -Math.abs(velocity.y);
             ++count;
