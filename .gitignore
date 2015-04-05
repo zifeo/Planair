@@ -151,10 +151,8 @@ application.macosx
 # Package Files #
 *.jar
 !core.jar
-!librairies/gluegen-rt-natives-macosx-universal.jar
-!librairies/gluegen-rt.jar
-!librairies/jogl-all-natives-macosx-universal.jar
-!librairies/jogl-all.jar
+!librairies/gluegen*
+!librairies/jogl*
 *.war
 *.ear
 
