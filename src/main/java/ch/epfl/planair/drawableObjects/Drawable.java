@@ -4,9 +4,6 @@ import ch.epfl.planair.Planair;
 import processing.core.PApplet;
 import processing.core.PVector;
 
-/**
- * Created by Nicolas on 04.04.15.
- */
 public abstract class Drawable {
 
     protected PApplet parent;

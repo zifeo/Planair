@@ -4,9 +4,6 @@ import processing.core.PApplet;
 import processing.core.PVector;
 import java.util.ArrayList;
 
-/**
- * Created by Nicolas on 04.04.15.
- */
 public abstract class Movable extends Drawable {
 
     private PVector velocity = new PVector(0, 0, 0);

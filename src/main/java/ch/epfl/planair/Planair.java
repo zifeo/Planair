@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class Planair extends PApplet {
 
-    // Dans le futur à mettre dans une classe properties
+    // @todo : to put in JSON config loader
     public static final boolean DEBUG              = true;
     public static final int PLATE_SIZE             = 250;
     public static final int PLATE_THICKNESS        = 10;
@@ -103,9 +103,11 @@ public class Planair extends PApplet {
 
         scoreboard.update();
         scoreboard.draw();
-    }
 
-/* EVENT HANDLER */
+        fill(color(0));
+        textSize(11f);
+        text(frameRate, 2, 13);
+    }
 
     public void mouseWheel(MouseWheelEvent e) {
         motionFactor -= e.getPreciseWheelRotation() / 5.0f;
@@ -119,7 +121,6 @@ public class Planair extends PApplet {
         }
     }
 
-    // don't allow the cylinder to be placed over the sphere
     public void mousePressed() {
         if (status == Status.ADD_CYLINDER) {
             PVector wantedLocation = shiftCylinder.location();

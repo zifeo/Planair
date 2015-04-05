@@ -9,7 +9,7 @@ public abstract class Accelerable extends Movable {
     private PVector environmentRotation = new PVector(0, 0, 0);
     private boolean computeGravity = false;
 
-    // A déplacer dans une class properties
+    // todo : move to JSON config
     private final float normalForce = 1;
     private final float G = 0.1f;
     private final float MU = 0.03f;
