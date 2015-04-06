@@ -1,6 +1,6 @@
-# Blender v2.73 (sub 0) OBJ File: 'environment.blend'
+# Blender v2.73 (sub 0) OBJ File: 'background_scene.blend'
 # www.blender.org
-mtllib environment.mtl
+mtllib background_scene.mtl
 o Cube.002_Cube.001
 v -4.869712 0.142219 5.426389
 v -4.869712 0.142219 -5.426389
