@@ -20,7 +20,7 @@ public final class Plate extends Drawable implements Projectable {
     public void draw() {
         parent.pushMatrix();
         parent.noStroke();
-        parent.fill(146, 192, 220);
+        parent.fill(153, 153, 102);
         PVector location = location();
         parent.translate(location.x, location.y, location.z);
         parent.box(size, thickness, size);
