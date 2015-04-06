@@ -150,6 +150,9 @@ application.macosx
 
 # Package Files #
 *.jar
+!core.jar
+!libraries/gluegen*
+!libraries/jogl*
 *.war
 *.ear
 
