@@ -23,6 +23,7 @@ public class Planair extends PApplet {
     public static final int WINDOWS_HEIGHT         = 600;
     public static final int FRAMERATE              = 60;
     public static final float PI_3                 = PI/3;
+    public static final int EYE_HEIGHT             = 200;
 
     private Status status = Status.PLAY;
     private PVector environmentRotation = new PVector(0, 0, 0);
@@ -34,6 +35,7 @@ public class Planair extends PApplet {
     //private Cylinder shiftCylinder;
     private ArrayList<Drawable> cylinders = new ArrayList<Drawable>();
     private Scoreboard scoreboard;
+    private BackgroundScene background;
 
     public static void main(String args[]) {
         String[] appletArgs = new String[] { "ch.epfl.planair.Planair" };
@@ -51,20 +53,22 @@ public class Planair extends PApplet {
         PVector onPlate = new PVector(0, -PLATE_THICKNESS/2, 0);
 
         sphere = new Sphere(this, onPlate, SPHERE_RADIUS);
-        sphere.setXBounds(-PLATE_SIZE/2 + SPHERE_RADIUS, PLATE_SIZE/2 - SPHERE_RADIUS);
-        sphere.setZBounds(-PLATE_SIZE/2 + SPHERE_RADIUS, PLATE_SIZE/2 - SPHERE_RADIUS);
+        sphere.setXBounds(-PLATE_SIZE / 2 + SPHERE_RADIUS, PLATE_SIZE / 2 - SPHERE_RADIUS);
+        sphere.setZBounds(-PLATE_SIZE / 2 + SPHERE_RADIUS, PLATE_SIZE / 2 - SPHERE_RADIUS);
         sphere.enableGravity();
 
         plate = new Plate(this, new PVector(0, 0, 0), PLATE_SIZE, PLATE_THICKNESS);
 
         shiftCylinder = new Tree(this, onPlate);
         //shiftCylinder = new Cylinder(this, onPlate, CYLINDER_RADIUS, CYLINDER_HEIGHT, CYLINDER_RESOLUTION);
-        shiftCylinder.setXBounds(-PLATE_SIZE/2 + CYLINDER_RADIUS, PLATE_SIZE/2 - CYLINDER_RADIUS);
-        shiftCylinder.setZBounds(-PLATE_SIZE/2 + CYLINDER_RADIUS, PLATE_SIZE/2 - CYLINDER_RADIUS);
+        shiftCylinder.setXBounds(-PLATE_SIZE / 2 + CYLINDER_RADIUS, PLATE_SIZE / 2 - CYLINDER_RADIUS);
+        shiftCylinder.setZBounds(-PLATE_SIZE / 2 + CYLINDER_RADIUS, PLATE_SIZE / 2 - CYLINDER_RADIUS);
 
         scoreboard = new Scoreboard(this, width, SCOREBOARD_HEIGHT, sphere);
         scoreboard.addForProjection(plate);
         scoreboard.addForProjection(sphere);
+
+        background = new BackgroundScene(this);
     }
 
     public void draw() {
@@ -74,7 +78,9 @@ public class Planair extends PApplet {
 
         switch (status) {
             case PLAY:
-                camera(0, 0, (height/2.0f) / tan(PI*30.0f / 180.0f), 0, 0, 0, 0, 1, 0);
+                camera(0, -EYE_HEIGHT, (height/2.0f) / tan(PI*30.0f / 180.0f), 0, 0, 0, 0, 1, 0);
+
+                background.draw();
 
                 rotateX(environmentRotation.x);
                 rotateY(environmentRotation.y);

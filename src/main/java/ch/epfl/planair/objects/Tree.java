@@ -10,8 +10,8 @@ import processing.core.PGraphics;
 public final class Tree extends Movable implements Projectable {
 
     private PShape shape;
-    private final float scale = 40;
-    private final float radius = 15;
+    private final float scale = 5;
+    private final float radius = 6;
 
     public Tree(PApplet parent, PVector location) {
         super(parent, location);
@@ -55,7 +55,7 @@ public final class Tree extends Movable implements Projectable {
     }
 
     private PShape createTree() {
-        PShape tree = parent.loadShape("simpleTree.obj");
+        PShape tree = parent.loadShape("treeLight.obj");
         tree.scale(scale);
         tree.rotate((float)Math.PI);
         return tree;
