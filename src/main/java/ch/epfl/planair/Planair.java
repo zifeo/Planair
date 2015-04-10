@@ -2,7 +2,6 @@ package ch.epfl.planair;
 
 import ch.epfl.planair.scores.Scoreboard;
 import ch.epfl.planair.specs.Drawable;
-import org.omg.CORBA.Environment;
 import processing.core.*;
 import ch.epfl.planair.objects.*;
 
