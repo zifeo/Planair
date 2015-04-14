@@ -4,6 +4,7 @@ import ch.epfl.planair.scores.Scoreboard;
 import ch.epfl.planair.specs.Drawable;
 import processing.core.*;
 import ch.epfl.planair.objects.*;
+import processing.event.MouseEvent;
 
 import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
@@ -112,11 +113,11 @@ public class Planair extends PApplet {
 
         fill(color(0));
         textSize(11f);
-        text(frameRate, 2, 13);
+        text(String.format("fps: %.1f   motion factor: %.1f", frameRate, motionFactor), 2, 13);
     }
 
-    public void mouseWheel(MouseWheelEvent e) {
-        motionFactor -= e.getPreciseWheelRotation() / 5.0f;
+    public void mouseWheel(MouseEvent e) {
+        motionFactor -= e.getCount() / 15.0f;
         motionFactor = Utils.trim(motionFactor, 0.2f, 2);
     }
 
