@@ -7,19 +7,19 @@ public final class Sobel extends PApplet {
 
 	private PImage img;
 
-	private float[][] kernel1 = {
+	private final static float[][] kernel1 = {
 			{ 0, 0, 0 },
-			{ 0, 2, 0 },
+			{ 0, 1, 0 },
 			{ 0, 0, 0 }
 	};
 
-	private float[][] kernel2 = {
+	private final static float[][] kernel2 = {
 			{ 0, 1, 0 },
 			{ 1, 0, 1 },
 			{ 0, 1, 0 }
 	};
 
-	private float[][] gaussianKernel = {
+	private final static float[][] gaussianKernel = {
 			{  9, 12,  9 },
 			{ 12, 15, 12 },
 			{  9, 12,  9 }
@@ -36,7 +36,7 @@ public final class Sobel extends PApplet {
 		background(color(0, 0, 0));
 
 		// kernel1 or kernel2 or gaussianKernel
-		PImage result = convolute(img, kernel2);
+		PImage result = convolute(img, gaussianKernel);
 
 		image(result, 0, 0);
 	}
@@ -48,21 +48,25 @@ public final class Sobel extends PApplet {
 	public PImage convolute(PImage source, float[][] kernel) {
 
 		PImage result = createImage(source.width, source.height, ALPHA);
-		float weight = 1.f;
-
+		float weight = 0;
+		for (float[] x: kernel) {
+			for (float f: x) {
+				weight += f;
+			}
+		}
 		int margin = kernel.length / 2;
 
 		for (int x = margin; x + margin < result.width; ++x) {
 			for (int y = margin; y + margin < result.height; ++y) {
 
-				int sum = 0;
-				for (int px = x - margin, sx = 0; px < x + margin; ++px, ++sx) {
-					for (int py = y - margin, sy = 0; py < y + margin; ++py, ++sy) {
+				float sum = 0;
+				for (int px = x - margin, sx = 0; px <= x + margin; ++px, ++sx) {
+					for (int py = y - margin, sy = 0; py <= y + margin; ++py, ++sy) {
+
 						sum += brightness(source.pixels[pixel(source, px, py)]) * kernel[sx][sy];
 					}
 				}
 				result.pixels[pixel(result, x, y)] = color(sum / weight);
-				println(sum);
 			}
 		}
 		return result;
