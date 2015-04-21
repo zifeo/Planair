@@ -92,7 +92,7 @@ public final class Sobel extends PApplet {
 
 		int margin = kernelH.length / 2;
 		float max = 0;
-		float[][] buffer = new float[img.width][img.height];
+		float[][] buffer = new float[source.width][source.height];
 
 		for (int x = margin; x + margin < result.width; ++x) {
 			for (int y = margin; y + margin < result.height; ++y) {
