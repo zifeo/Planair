@@ -6,11 +6,12 @@ import ch.epfl.planair.config.Utils;
 import processing.core.PApplet;
 import processing.core.PImage;
 
-public final class BrightnessThreshold extends PApplet {
+public final class BrightnessThresholding extends PApplet {
 
 	private HScrollBar thresholdBar;
 	private PImage img;
 
+	@Override
 	public void setup() {
 		size(800, 600);
 		img = loadImage("board/board1.jpg");
@@ -18,6 +19,7 @@ public final class BrightnessThreshold extends PApplet {
 		frameRate(60);
 	}
 
+	@Override
 	public void draw() {
 		background(color(0, 0, 0));
 		thresholdBar.update();

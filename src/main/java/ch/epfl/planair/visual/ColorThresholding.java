@@ -5,7 +5,7 @@ import processing.core.PImage;
 
 import java.util.function.IntUnaryOperator;
 
-public final class HueThreshold extends PApplet {
+public final class ColorThresholding extends PApplet {
 
 	private HScrollBar thresholdBar1, thresholdBar2;
 	private PImage img;
