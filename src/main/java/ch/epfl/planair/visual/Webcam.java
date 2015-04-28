@@ -4,7 +4,6 @@ import processing.core.PApplet;
 import processing.core.PImage;
 import processing.video.Capture;
 
-// need for $PROCESSING_ROOT/modes/java/libraries/video/library
 public final class Webcam extends PApplet {
 
 	private Capture cam;
