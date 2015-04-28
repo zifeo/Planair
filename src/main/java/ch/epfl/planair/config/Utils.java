@@ -20,4 +20,12 @@ public final class Utils {
 
     public static PVector minVector() { return new PVector(Float.MIN_VALUE, Float.MIN_VALUE, Float.MIN_VALUE); }
 
+	public static void require(boolean predicat, String message) {
+		if (!predicat) throw new IllegalArgumentException(message);
+	}
+
+	public static void require(int min, int value, int max, String message) {
+		require(min <= value && value <= max, message);
+	}
+
 }
