@@ -3,8 +3,11 @@ package ch.epfl.planair.visual;
 import processing.core.PApplet;
 import processing.core.PImage;
 
-public class Hough extends PApplet{
-    /* TODO remove or keep, depending on refactoring */
+public class Hough extends PApplet {
+
+	private PApplet parent;
+
+	/* TODO remove or keep, depending on refactoring */
     private final static float[][] kernelH = {
             { 0,  1, 0 },
             { 0,  0, 0 },
@@ -15,20 +18,35 @@ public class Hough extends PApplet{
             { 1, 0, -1 },
             { 0, 0,  0 }
     };
-    float discretizationStepsPhi = 0.06f;
-    float discretizationStepsR = 2.5f;
+
+    private static float discretizationStepsPhi = 0.06f;
+    private static float discretizationStepsR = 2.5f;
+
+	public Hough(PApplet parent) {
+		this.parent = parent;
+	}
+
+	public Hough() {
+		super();
+		this.parent = this;
+	}
 
     public void setup() {
         size(800, 600);
         noLoop();
-        frameRate(60);
+	    image(loadImage("board/board1.jpg"), 0, 0);
     }
 
-    public void draw() {
-        hough(sobel(loadImage("board/board1.jpg")));
-    }
+	public void draw() {
+		hough(sobel(loadImage("board/board1.jpg")));
+	}
 
-    /* TODO refactor sobel + hough into a single class ?*/
+	public PImage apply(PImage source) {
+		return hough(sobel(source));
+	}
+
+
+	/* TODO refactor sobel + hough into a single class ?*/
     public PImage sobel(PImage source) {
 
         PImage result = createImage(source.width, source.height, ALPHA);
@@ -46,8 +64,8 @@ public class Hough extends PApplet{
                     for (int py = y - margin, sy = 0; py <= y + margin; ++py, ++sy) {
 
                         int id = pixel(source, px, py);
-                        sumH += brightness(source.pixels[id]) * kernelH[sx][sy];
-                        sumV += brightness(source.pixels[id]) * kernelV[sx][sy];
+                        sumH += parent.brightness(source.pixels[id]) * kernelH[sx][sy];
+                        sumV += parent.brightness(source.pixels[id]) * kernelV[sx][sy];
                     }
                 }
                 buffer[x][y] = sqrt(sumH * sumH + sumV * sumV);
@@ -71,10 +89,10 @@ public class Hough extends PApplet{
         int phiDim = (int) (Math.PI / discretizationStepsPhi);
         int rDim = (int) (((edgeImg.width + edgeImg.height) * 2 + 1) / discretizationStepsR);
 
-        // Updated at each pass of the inner-most for-loop (for each value of phi for each pixel)
-        double radius;
-        float accPhi;
-        float accR;
+        // Updated at each pass of the inner-most for-loop (for each value of phi for each align)
+        double radius = 0;
+        float accPhi = 0;
+        float accR = 0;
 
         // our accumulator (with a 1 pix margin around)
         int[] accumulator = new int[(phiDim + 2) * (rDim + 2)];
@@ -82,18 +100,25 @@ public class Hough extends PApplet{
         // Fill the accumulator: on edge points (ie, white pixels of the edge
         // image), store all possible (r, phi) pairs describing lines going
         // through the point.
-        for (int y = 0; y < edgeImg.height; y++) {
-            for (int x = 0; x < edgeImg.width; x++) {
+        for (int y = 0; y < edgeImg.height; ++y) {
+            for (int x = 0; x < edgeImg.width; ++x) {
                 // Are we on an edge?
-                if (brightness(edgeImg.pixels[y * edgeImg.width + x]) != 0) {
+                if (parent.brightness(edgeImg.pixels[y * edgeImg.width + x]) != 0) {
                     // ...determine here all the lines (r, phi) passing through
-                    // pixel (x,y), convert (r,phi) to coordinates in the
+                    // align (x,y), convert (r,phi) to coordinates in the
                     // accumulator, and increment accordingly the accumulator.
 
                     for (float phi = 0; phi < PI; phi += discretizationStepsPhi) {
                         accPhi = phi / discretizationStepsPhi;
-                        radius = (x * Math.cos(phi)) + (y * Math.sin(phi));
+                        radius = x * Math.cos(phi) + y * Math.sin(phi);
                         accR = (float) (radius / discretizationStepsR) + (rDim - 1) * 0.5f;
+
+	                    /*
+
+	                    Part I, step 1: r can be positive or negative, so, to use it as a coordinate in the accumulator, you
+want to center it first. Something like: r = r + (rDim - 1) / 2
+
+	                     */
 
                         accumulator[(int) (accPhi * (rDim + 2) + accR)] += 1;
                     }
@@ -107,13 +132,15 @@ public class Hough extends PApplet{
             houghImg.pixels[i] = color(min(255, accumulator[i]));
         }
         houghImg.updatePixels();
+	    //houghImg.resize(640, 480);
 
         /* TODO remove debug lines */
-        image(loadImage("board/board1.jpg"), 0, 0);
-        for (int idx = 0; idx < accumulator.length; idx++) {
+
+        for (int idx = 0; idx < accumulator.length; ++idx) {
+
             if (accumulator[idx] > 200) {
                 // first, compute back the (r, phi) polar coordinates:
-                accPhi = (int) (idx / (rDim + 2)) - 1;
+                accPhi = (idx / (rDim + 2)) - 1;
                 accR = idx - (accPhi + 1) * (rDim + 2) - 1;
                 float r = (accR - (rDim - 1) * 0.5f) * discretizationStepsR;
                 float phi = accPhi * discretizationStepsPhi;
@@ -133,24 +160,24 @@ public class Hough extends PApplet{
                 int x3 = (int) (-(y3 - r / sin(phi)) * (sin(phi) / cos(phi)));
 
                 // Finally, plot the lines
-                stroke(204,102,0);
+	            parent.stroke(204, 102, 0);
                 if (y0 > 0) {
                     if (x1 > 0)
-                        line(x0, y0, x1, y1);
+	                    parent.line(x0, y0, x1, y1);
                     else if (y2 > 0)
-                        line(x0, y0, x2, y2);
+	                    parent.line(x0, y0, x2, y2);
                     else
-                        line(x0, y0, x3, y3);
+	                    parent.line(x0, y0, x3, y3);
                 }
                 else {
                     if (x1 > 0) {
                         if (y2 > 0)
-                            line(x1, y1, x2, y2);
+	                        parent.line(x1, y1, x2, y2);
                         else
-                            line(x1, y1, x3, y3);
+	                        parent.line(x1, y1, x3, y3);
                     }
                     else
-                        line(x2, y2, x3, y3);
+	                    parent.line(x2, y2, x3, y3);
                 }
             }
         }

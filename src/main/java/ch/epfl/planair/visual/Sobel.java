@@ -49,13 +49,14 @@ public final class Sobel extends PApplet {
 		background(color(0, 0, 0));
 
 		// kernel1 or kernel2 or gaussianKernel
-		//PImage result = convolute(img, gaussianKernel);
+		// PImage result = convolute(img, gaussianKernel);
+		// sobel
 		PImage result = sobel(img);
 
 		image(result, 0, 0);
 	}
 
-	public int pixel(PImage source, int x, int y) {
+	public int align(PImage source, int x, int y) {
 		return y * source.width + x;
 	}
 
@@ -77,10 +78,10 @@ public final class Sobel extends PApplet {
 				for (int px = x - margin, sx = 0; px <= x + margin; ++px, ++sx) {
 					for (int py = y - margin, sy = 0; py <= y + margin; ++py, ++sy) {
 
-						sum += brightness(source.pixels[pixel(source, px, py)]) * kernel[sx][sy];
+						sum += brightness(source.pixels[align(source, px, py)]) * kernel[sx][sy];
 					}
 				}
-				result.pixels[pixel(result, x, y)] = color(sum / weight);
+				result.pixels[align(result, x, y)] = color(sum / weight);
 			}
 		}
 		return result;
@@ -102,7 +103,7 @@ public final class Sobel extends PApplet {
 				for (int px = x - margin, sx = 0; px <= x + margin; ++px, ++sx) {
 					for (int py = y - margin, sy = 0; py <= y + margin; ++py, ++sy) {
 
-						int id = pixel(source, px, py);
+						int id = align(source, px, py);
 						sumH += brightness(source.pixels[id]) * kernelH[sx][sy];
 						sumV += brightness(source.pixels[id]) * kernelV[sx][sy];
 					}
@@ -116,7 +117,7 @@ public final class Sobel extends PApplet {
 
 		for (int x = margin; x + margin < result.width; ++x) {
 			for (int y = margin; y + margin < result.height; ++y) {
-				result.pixels[pixel(source, x, y)] = buffer[x][y] > 0.3 * max ? color(255): color(0);
+				result.pixels[align(source, x, y)] = buffer[x][y] > 0.3 * max ? color(255): color(0);
 			}
 		}
 
