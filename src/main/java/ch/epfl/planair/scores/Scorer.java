@@ -10,6 +10,6 @@ public interface Scorer {
      *
      * @param delta amount
      */
-    public abstract void notifiedScore(int delta);
+    void notifiedScore(int delta);
 
 }

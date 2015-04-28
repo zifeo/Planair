@@ -1,4 +1,4 @@
-package ch.epfl.planair;
+package ch.epfl.planair.config;
 
 import processing.core.PVector;
 
@@ -15,5 +15,9 @@ public final class Utils {
     }
 
     public static PVector nullVector() { return new PVector(0, 0, 0); }
+
+    public static PVector maxVector() { return new PVector(Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE); }
+
+    public static PVector minVector() { return new PVector(Float.MIN_VALUE, Float.MIN_VALUE, Float.MIN_VALUE); }
 
 }

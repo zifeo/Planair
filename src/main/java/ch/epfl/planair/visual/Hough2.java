@@ -129,12 +129,55 @@ public class Hough2 extends PApplet {
 
         /* TODO remove debug lines */
 
+		// size of the region we search for a local maximum
+		int neighbourhood = 10;
+		// only search around lines with more that this amount of votes
+		// (to be adapted to your image)
+		int minVotes = 200;
 		ArrayList<Integer> best = new ArrayList<>();
-		for (int idx = 0; idx < accumulator.length; ++idx) {
+
+		for (int accR = 0; accR < rDim; accR++) {
+			for (int accPhi = 0; accPhi < phiDim; accPhi++) {
+
+				// compute current index in the accumulator
+				int idx = (accPhi + 1) * (rDim + 2) + accR + 1;
+				if (accumulator[idx] > minVotes) {
+					boolean bestCandidate = true;
+
+					// iterate over the neighbourhood
+					for (int dPhi=-neighbourhood/2; dPhi < neighbourhood/2+1; ++dPhi) {
+
+						// check we are not outside the image
+						if ( accPhi+dPhi < 0 || accPhi+dPhi >= phiDim) continue;
+						for (int dR=-neighbourhood/2; dR < neighbourhood/2 +1; ++dR) {
+
+							// check we are not outside the image
+							if (accR+dR < 0 || accR+dR >= rDim) continue;
+
+							int neighbourIdx = (accPhi + dPhi + 1) * (rDim + 2) + accR + dR + 1;
+
+							if (accumulator[idx] < accumulator[neighbourIdx]) {
+
+								// the current idx is not a local maximum!
+								bestCandidate=false;
+								break;
+							}
+						}
+						if (!bestCandidate) break;
+					}
+					if (bestCandidate) {
+						// the current idx *is* a local maximum
+						best.add(idx);
+					}
+				}
+			}
+		}
+
+		/*for (int idx = 0; idx < accumulator.length; ++idx) {
 			if (accumulator[idx] > 200) {
 				best.add(idx);
 			}
-		}
+		}*/
 		Collections.sort(best, (a, b) -> Integer.compare(accumulator[a], accumulator[b]));
 
 		for (int i = 0; i < best.size() && i < 20; ++i) {

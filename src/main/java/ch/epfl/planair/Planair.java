@@ -1,12 +1,13 @@
 package ch.epfl.planair;
 
+import ch.epfl.planair.config.Status;
+import ch.epfl.planair.config.Utils;
 import ch.epfl.planair.scores.Scoreboard;
 import ch.epfl.planair.specs.Drawable;
 import processing.core.*;
-import ch.epfl.planair.objects.*;
+import ch.epfl.planair.scene.*;
 import processing.event.MouseEvent;
 
-import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
 
 public class Planair extends PApplet {
@@ -36,7 +37,7 @@ public class Planair extends PApplet {
     //private Cylinder shiftCylinder;
     private ArrayList<Drawable> cylinders = new ArrayList<Drawable>();
     private Scoreboard scoreboard;
-    private BackgroundScene background;
+    private Background background;
 
     public static void main(String args[]) {
         String[] appletArgs = new String[] { "ch.epfl.planair.Planair" };
@@ -69,7 +70,7 @@ public class Planair extends PApplet {
         scoreboard.addForProjection(plate);
         scoreboard.addForProjection(sphere);
 
-        background = new BackgroundScene(this);
+        background = new Background(this);
     }
 
     public void draw() {

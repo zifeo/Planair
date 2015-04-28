@@ -1,4 +1,4 @@
-package ch.epfl.planair.objects;
+package ch.epfl.planair.scene;
 
 import ch.epfl.planair.specs.Movable;
 import ch.epfl.planair.scores.Projectable;
