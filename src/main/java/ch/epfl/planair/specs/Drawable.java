@@ -1,6 +1,6 @@
 package ch.epfl.planair.specs;
 
-import ch.epfl.planair.Planair;
+import ch.epfl.planair.config.Constants;
 import ch.epfl.planair.config.Utils;
 import processing.core.PApplet;
 import processing.core.PVector;
@@ -36,7 +36,7 @@ public abstract class Drawable {
     }
 
     protected void drawAxes() {
-        if (Planair.DEBUG) {
+        if (Constants.DEBUG) {
             parent.textSize(15);
             parent.noStroke();
             parent.fill(0, 200, 0);

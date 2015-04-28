@@ -112,9 +112,11 @@ public class Planair extends PApplet {
         scoreboard.update();
         scoreboard.draw();
 
-        fill(color(0));
-        textSize(11f);
-        text(String.format("fps: %.1f   motion factor: %.1f", frameRate, motionFactor), 2, 13);
+	    if (Constants.DEBUG) {
+		    fill(color(0));
+		    textSize(11f);
+		    text(String.format("fps: %.1f   motion factor: %.1f", frameRate, motionFactor), 2, 13);
+	    }
     }
 
     public void mouseWheel(MouseEvent e) {

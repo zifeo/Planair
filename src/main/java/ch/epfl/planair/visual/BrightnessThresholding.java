@@ -23,7 +23,6 @@ public final class BrightnessThresholding extends PApplet {
 	public void draw() {
 		background(color(0, 0, 0));
 		thresholdBar.update();
-
 		int thresholdValue = (int) (255 * thresholdBar.getPos());
 
 		PImage result = thresholding(img, binaryThreshold(thresholdValue, 0, 255));

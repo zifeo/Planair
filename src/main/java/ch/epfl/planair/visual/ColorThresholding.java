@@ -10,22 +10,23 @@ public final class ColorThresholding extends PApplet {
 	private HScrollBar thresholdBar1, thresholdBar2;
 	private PImage img;
 
+	@Override
 	public void setup() {
 		size(800, 600);
 		img = loadImage("board/board1.jpg");
 		thresholdBar1 = new HScrollBar(this, 0, 580, 800, 20);
 		thresholdBar2 = new HScrollBar(this, 0, 550, 800, 20);
-		//noLoop();
 		frameRate(60);
 	}
 
+	@Override
 	public void draw() {
 		background(color(0, 0, 0));
 		thresholdBar1.update();
 		thresholdBar2.update();
-
 		int firstThreshold = (int) (255 * min(thresholdBar1.getPos(), thresholdBar2.getPos()));
 		int secondThreshold = (int) (255 * max(thresholdBar1.getPos(), thresholdBar2.getPos()));
+
 		PImage result = thresholding(img, hueThreshold(firstThreshold, secondThreshold, color(0)));
 
 		image(result, 0, 0);

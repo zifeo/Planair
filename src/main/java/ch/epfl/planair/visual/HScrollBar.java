@@ -2,18 +2,21 @@ package ch.epfl.planair.visual;
 
 import processing.core.PApplet;
 
-public class HScrollBar {
-	PApplet parent;
+/**
+ * Given... @todo Refactor ! and maybe use score.scrollBar instead
+ */
+public final class HScrollBar {
+	private PApplet parent;
 
-	float barWidth; // Bar's width in pixels
-	float barHeight; // Bar's height in pixels
-	float xPosition; // Bar's x position in pixels
-	float yPosition; // Bar's y position in pixels
-	float sliderPosition, newSliderPosition;
+	private float barWidth; // Bar's width in pixels
+	private float barHeight; // Bar's height in pixels
+	private float xPosition; // Bar's x position in pixels
+	private float yPosition; // Bar's y position in pixels
+	private float sliderPosition, newSliderPosition;
 	// Position of slider
-	float sliderPositionMin, sliderPositionMax; // Max and min values of slider
-	boolean mouseOver;
-	boolean locked;
+	private float sliderPositionMin, sliderPositionMax; // Max and min values of slider
+	private boolean mouseOver;
+	private boolean locked;
 
 	// Is the mouse over the slider?
 	// Is the mouse clicking and dragging the slider now?
@@ -45,11 +48,7 @@ public class HScrollBar {
 	 * @brief Updates the state of the scrollbar according to the mouse movement
 	 */
 	void update() {
-		if (isMouseOver()) {
-			mouseOver = true;
-		} else {
-			mouseOver = false;
-		}
+		mouseOver = isMouseOver();
 		if (parent.mousePressed && mouseOver) {
 			locked = true;
 		}
