@@ -4,16 +4,16 @@ package ch.epfl.planair.config;
 public interface Constants {
 
 	// scores.Scoreboard
-	int SCOREBOARD_PADDING = 5;
-	int SCOREBOARD_FONT_SIZE = 11;
-	int SCOREBOARD_FONT_HEIGHT = 15;
-	int SCOREBOARD_TIME_CHART_BASE = 45;
-	int SCOREBOARD_SCROLL_HEIGHT = 10;
+	int SCOREBOARD_PADDING          = 5;
+	int SCOREBOARD_FONT_SIZE        = 11;
+	int SCOREBOARD_FONT_HEIGHT      = 15;
+	int SCOREBOARD_TIME_CHART_BASE  = 45;
+	int SCOREBOARD_SCROLL_HEIGHT    = 10;
 
 	// specs.Accelerable
-	float ACCELERABLE_NORMAL_FORCE = 1;
-	float ACCELERABLE_G = 0.1f;
-	float ACCELERABLE_MU = 0.03f;
+	float ACCELERABLE_NORMAL_FORCE  = 1;
+	float ACCELERABLE_G             = 0.1f;
+	float ACCELERABLE_MU            = 0.03f;
 
 	// Planair
 	boolean DEBUG              = true;
@@ -29,5 +29,9 @@ public interface Constants {
 	int FRAMERATE              = 60;
 	float PI_3                 = (float) Math.PI/3;
 	int EYE_HEIGHT             = 200;
+
+	// visual.Pipeline
+	float PIPELINE_DISCRETIZATION_STEPS_PHI = 0.06f;
+	float PIPELINE_DISCRETIZATION_STEPS_R = 2.5f;
 
 }

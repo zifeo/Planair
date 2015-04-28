@@ -10,6 +10,7 @@ public final class BrightnessThresholding extends PApplet {
 
 	private HScrollBar thresholdBar;
 	private PImage img;
+	private Pipeline pipeline;
 
 	@Override
 	public void setup() {
@@ -17,6 +18,7 @@ public final class BrightnessThresholding extends PApplet {
 		img = loadImage("board/board1.jpg");
 		thresholdBar = new HScrollBar(this, 0, 580, 800, 20);
 		frameRate(60);
+		pipeline = new Pipeline(this);
 	}
 
 	@Override
@@ -25,11 +27,11 @@ public final class BrightnessThresholding extends PApplet {
 		thresholdBar.update();
 		int thresholdValue = (int) (255 * thresholdBar.getPos());
 
-		PImage result = thresholding(img, binaryThreshold(thresholdValue, 0, 255));
-		//PImage result = thresholding(img, inverseBinaryThreshold(thresholdValue, 0, 255));
-		//PImage result = thresholding(img, truncateThreshold(thresholdValue));
-		//PImage result = thresholding(img, toZeroThreshold(thresholdValue, 0));
-		//PImage result = thresholding(img, inverseToZeroThreshold(thresholdValue));
+		PImage result = pipeline.threshold(img, binaryThreshold(thresholdValue, 0, 255));
+		//PImage result = pipeline.threshold(img, inverseBinaryThreshold(thresholdValue, 0, 255));
+		//PImage result = pipeline.threshold(img, truncateThreshold(thresholdValue));
+		//PImage result = pipeline.threshold(img, toZeroThreshold(thresholdValue, 0));
+		//PImage result = pipeline.threshold(img, inverseToZeroThreshold(thresholdValue));
 
 		image(result, 0, 0);
 		thresholdBar.display();
@@ -40,43 +42,35 @@ public final class BrightnessThresholding extends PApplet {
 	 * If input reaches the limit, max color is set, otherwise min color.
 	 *
 	 * @param threshold brighness limit (0-255)
-	 * @param min grey color (0-255)
-	 * @param max grey color (0-255)
+	 * @param minColor greyscale (0-255)
+	 * @param maxColor greyscale (0-255)
 	 * @throws IllegalArgumentException when min or max color are invalid
 	 * @return
 	 */
-	private IntUnaryOperator binaryThreshold(int threshold, int min, int max) {
-		Utils.require(0, min, 255, "invalid grey color");
-		Utils.require(0, max, 255, "invalid grey color");
-		return v -> brightness(v) > threshold ? color(max): color(min);
+	public IntUnaryOperator binaryThreshold(int threshold, int minColor, int maxColor) {
+		Utils.require(0, minColor, 255, "invalid grey color");
+		Utils.require(0, maxColor, 255, "invalid grey color");
+		return v -> brightness(v) > threshold ? color(maxColor): color(minColor);
 	}
 
-	private IntUnaryOperator inverseBinaryThreshold(int threshold, int min, int max) {
-		return binaryThreshold(threshold, max, min);
+	public IntUnaryOperator inverseBinaryThreshold(int threshold, int minColor, int maxColor) {
+		return binaryThreshold(threshold, maxColor, minColor);
 	}
 
-	private IntUnaryOperator truncateThreshold(int threshold) {
+	public IntUnaryOperator truncateThreshold(int threshold) {
 		Utils.require(0, threshold, 255, "invalid grey color");
 		return v -> brightness(v) > threshold ? color(threshold): color(brightness(v));
 	}
 
-	private IntUnaryOperator toZeroThreshold(int threshold, int min) {
+	public IntUnaryOperator toZeroThreshold(int threshold, int minColor) {
 		Utils.require(0, threshold, 255, "invalid grey color");
-		Utils.require(0, min, 255, "invalid grey color");
-		return v -> brightness(v) > threshold ? color(brightness(v)): color(min);
+		Utils.require(0, minColor, 255, "invalid grey color");
+		return v -> brightness(v) > threshold ? color(brightness(v)): color(minColor);
 	}
 
-	private IntUnaryOperator inverseToZeroThreshold(int threshold) {
+	public IntUnaryOperator inverseToZeroThreshold(int threshold) {
 		Utils.require(0, threshold, 255, "invalid grey color");
 		return v -> brightness(v) > threshold ? color(brightness(v)): color(threshold);
-	}
-
-	public PImage thresholding(PImage source, IntUnaryOperator op) {
-		PImage result = createImage(source.width, source.height, RGB);
-		for (int i = 0; i < result.width * result.height; ++i) {
-			result.pixels[i] = op.applyAsInt(source.pixels[i]);
-		}
-		return result;
 	}
 
 }

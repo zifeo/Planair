@@ -1,62 +1,108 @@
 package ch.epfl.planair.visual;
 
+import ch.epfl.planair.config.Constants;
+import ch.epfl.planair.config.Utils;
 import processing.core.PApplet;
 import processing.core.PImage;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.function.IntUnaryOperator;
 
-public class Hough2 extends PApplet {
+public class Pipeline extends PApplet {
 
-	private PApplet parent;
+	private final PApplet parent;
 
-	/* TODO remove or keep, depending on refactoring */
-	private final static float[][] kernelH = {
+	private final static float[][] neutralKernel = {
+			{ 0, 0, 0 },
+			{ 0, 1, 0 },
+			{ 0, 0, 0 }
+	};
+
+	private final static float[][] surroundKernel = {
+			{ 0, 1, 0 },
+			{ 1, 0, 1 },
+			{ 0, 1, 0 }
+	};
+
+	public final static float[][] gaussianKernel = {
+			{  9, 12,  9 },
+			{ 12, 15, 12 },
+			{  9, 12,  9 }
+	};
+
+	private final static float[][] sobelKernelH = {
 			{ 0,  1, 0 },
 			{ 0,  0, 0 },
 			{ 0, -1, 0 }
 	};
-	private final static float[][] kernelV = {
+	private final static float[][] sobelKernelV = {
 			{ 0, 0,  0 },
 			{ 1, 0, -1 },
 			{ 0, 0,  0 }
 	};
 
-	private static float discretizationStepsPhi = 0.06f;
-	private static float discretizationStepsR = 2.5f;
-
-	public Hough2(PApplet parent) {
+	public Pipeline(PApplet parent) {
 		this.parent = parent;
 	}
 
-	public Hough2() {
-		super();
-		this.parent = this;
+	public PImage threshold(PImage source, IntUnaryOperator op) {
+		PImage result = createImage(source.width, source.height, ALPHA);
+		for (int i = 0; i < result.width * result.height; ++i) {
+			result.pixels[i] = op.applyAsInt(source.pixels[i]);
+		}
+		return result;
 	}
 
-	public void setup() {
-		size(800, 600);
-		noLoop();
-		image(loadImage("board/board1.jpg"), 0, 0);
+	public PImage convolute(PImage source, float[][] kernel) {
+		PImage result = createImage(source.width, source.height, ALPHA);
+		float weight = 0;
+		for (float[] x: kernel) {
+			for (float f: x) {
+				weight += abs(f);
+			}
+		}
+		int margin = kernel.length / 2;
+
+		for (int x = margin; x + margin < result.width; ++x) {
+			for (int y = margin; y + margin < result.height; ++y) {
+
+				float sum = 0;
+				for (int px = x - margin, sx = 0; px <= x + margin; ++px, ++sx) {
+					for (int py = y - margin, sy = 0; py <= y + margin; ++py, ++sy) {
+						sum += brightness(source.pixels[align(source, px, py)]) * kernel[sx][sy];
+					}
+				}
+				result.pixels[align(result, x, y)] = color(sum / weight);
+			}
+		}
+		return result;
 	}
 
-	public void draw() {
-		hough(sobel(loadImage("board/board1.jpg")));
+
+	public PImage sobel(PImage source, float threshold) {
+		return sobel(source, threshold, 255, 0);
 	}
 
-	public PImage apply(PImage source) {
-		return hough(sobel(source));
-	}
-
-
-	/* TODO refactor sobel + hough into a single class ?*/
-	public PImage sobel(PImage source) {
-
+	/**
+	 *
+	 * NB: default createImage background is black
+	 *
+	 * @param source
+	 * @param threshold (0-1)
+	 * @param minColor greyscale (0-255)
+	 * @param maxColor greyscale (0-255)
+	 * @return
+	 */
+	public PImage sobel(PImage source, float threshold, int minColor, int maxColor) {
+		Utils.require(0, minColor, 255, "invalid grey color");
+		Utils.require(0, maxColor, 255, "invalid grey color");
 		PImage result = createImage(source.width, source.height, ALPHA);
 
-		int margin = kernelH.length / 2;
-		float max = 0;
-		float[][] buffer = new float[source.width][source.height];
+		int margin = sobelKernelH.length / 2;
+		float maxValue = 0;
+		int size = source.width * source.height;
+		float[] buffer = new float[size];
 
 		for (int x = margin; x + margin < result.width; ++x) {
 			for (int y = margin; y + margin < result.height; ++y) {
@@ -66,22 +112,22 @@ public class Hough2 extends PApplet {
 				for (int px = x - margin, sx = 0; px <= x + margin; ++px, ++sx) {
 					for (int py = y - margin, sy = 0; py <= y + margin; ++py, ++sy) {
 
-						int id = pixel(source, px, py);
-						sumH += parent.brightness(source.pixels[id]) * kernelH[sx][sy];
-						sumV += parent.brightness(source.pixels[id]) * kernelV[sx][sy];
+						int sid = align(source, px, py);
+						sumH += parent.brightness(source.pixels[sid]) * sobelKernelH[sx][sy];
+						sumV += parent.brightness(source.pixels[sid]) * sobelKernelV[sx][sy];
 					}
 				}
-				buffer[x][y] = sqrt(sumH * sumH + sumV * sumV);
-				if (buffer[x][y] > max) {
-					max = buffer[x][y];
+
+				int bid = align(result, x, y);
+				buffer[bid] = sqrt(sumH * sumH + sumV * sumV);
+				if (buffer[bid] > maxValue) {
+					maxValue = buffer[bid];
 				}
 			}
 		}
 
-		for (int x = margin; x + margin < result.width; ++x) {
-			for (int y = margin; y + margin < result.height; ++y) {
-				result.pixels[pixel(source, x, y)] = buffer[x][y] > 0.3 * max ? color(255): color(0);
-			}
+		for (int i = margin * result.width; i < size; ++i) {
+			result.pixels[i] = buffer[i] / maxValue > threshold ? color(minColor): color(maxColor);
 		}
 
 		return result;
@@ -89,8 +135,8 @@ public class Hough2 extends PApplet {
 
 	public PImage hough(PImage edgeImg) {
 		// dimensions of the accumulator
-		int phiDim = (int) (Math.PI / discretizationStepsPhi);
-		int rDim = (int) (((edgeImg.width + edgeImg.height) * 2 + 1) / discretizationStepsR);
+		int phiDim = (int) (Math.PI / Constants.PIPELINE_DISCRETIZATION_STEPS_PHI);
+		int rDim = (int) (((edgeImg.width + edgeImg.height) * 2 + 1) / Constants.PIPELINE_DISCRETIZATION_STEPS_R);
 
 		// Updated at each pass of the inner-most for-loop (for each value of phi for each align)
 
@@ -108,10 +154,10 @@ public class Hough2 extends PApplet {
 					// align (x,y), convert (r,phi) to coordinates in the
 					// accumulator, and increment accordingly the accumulator.
 
-					for (float phi = 0; phi < PI; phi += discretizationStepsPhi) {
-						float accPhi = phi / discretizationStepsPhi;
+					for (float phi = 0; phi < PI; phi += Constants.PIPELINE_DISCRETIZATION_STEPS_PHI) {
+						float accPhi = phi / Constants.PIPELINE_DISCRETIZATION_STEPS_PHI;
 						double radius = x * cos(phi) + y * sin(phi);
-						float accR = (float) (radius / discretizationStepsR) + (rDim - 1) * 0.5f;
+						float accR = (float) (radius / Constants.PIPELINE_DISCRETIZATION_STEPS_R) + (rDim - 1) * 0.5f;
 
 						accumulator[(int) (accPhi * (rDim + 2) + accR)] += 1;
 					}
@@ -120,7 +166,6 @@ public class Hough2 extends PApplet {
 		}
 
 		PImage houghImg = createImage(rDim + 2, phiDim + 2, ALPHA);
-
 		for (int i = 0; i < accumulator.length; i++) {
 			houghImg.pixels[i] = color(min(255, accumulator[i]));
 		}
@@ -173,11 +218,6 @@ public class Hough2 extends PApplet {
 			}
 		}
 
-		/*for (int idx = 0; idx < accumulator.length; ++idx) {
-			if (accumulator[idx] > 200) {
-				best.add(idx);
-			}
-		}*/
 		Collections.sort(best, (a, b) -> Integer.compare(accumulator[a], accumulator[b]));
 
 		for (int i = 0; i < best.size() && i < 20; ++i) {
@@ -187,8 +227,8 @@ public class Hough2 extends PApplet {
 			// first, compute back the (r, phi) polar coordinates:
 			float accPhi = (int) (idx / (rDim + 2)) - 1;
 			float accR = idx - (accPhi + 1) * (rDim + 2) - 1;
-			float r = (accR - (rDim - 1) * 0.5f) * discretizationStepsR;
-			float phi = accPhi * discretizationStepsPhi;
+			float r = (accR - (rDim - 1) * 0.5f) * Constants.PIPELINE_DISCRETIZATION_STEPS_R;
+			float phi = accPhi * Constants.PIPELINE_DISCRETIZATION_STEPS_PHI;
 			// Cartesian equation of a line: y = ax + b
 			// in polar, y = (-cos(phi)/sin(phi))x + (r/sin(phi))
 			// => y = 0 : x = r / cos(phi)
@@ -226,11 +266,10 @@ public class Hough2 extends PApplet {
 			}
 		}
 
-
 		return houghImg;
 	}
 
-	public int pixel(PImage source, int x, int y) {
+	private int align(PImage source, int x, int y) {
 		return y * source.width + x;
 	}
 }

@@ -3,6 +3,7 @@ package ch.epfl.planair.visual;
 import processing.core.PApplet;
 import processing.core.PImage;
 
+@Deprecated
 public final class Sobel extends PApplet {
 
 	private PImage img;

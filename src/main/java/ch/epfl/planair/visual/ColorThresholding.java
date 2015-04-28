@@ -1,5 +1,6 @@
 package ch.epfl.planair.visual;
 
+import ch.epfl.planair.config.Utils;
 import processing.core.PApplet;
 import processing.core.PImage;
 
@@ -9,6 +10,7 @@ public final class ColorThresholding extends PApplet {
 
 	private HScrollBar thresholdBar1, thresholdBar2;
 	private PImage img;
+	private Pipeline pipeline;
 
 	@Override
 	public void setup() {
@@ -17,6 +19,7 @@ public final class ColorThresholding extends PApplet {
 		thresholdBar1 = new HScrollBar(this, 0, 580, 800, 20);
 		thresholdBar2 = new HScrollBar(this, 0, 550, 800, 20);
 		frameRate(60);
+		pipeline = new Pipeline(this);
 	}
 
 	@Override
@@ -27,23 +30,16 @@ public final class ColorThresholding extends PApplet {
 		int firstThreshold = (int) (255 * min(thresholdBar1.getPos(), thresholdBar2.getPos()));
 		int secondThreshold = (int) (255 * max(thresholdBar1.getPos(), thresholdBar2.getPos()));
 
-		PImage result = thresholding(img, hueThreshold(firstThreshold, secondThreshold, color(0)));
+		PImage result = pipeline.threshold(img, hueThreshold(firstThreshold, secondThreshold, 0));
 
 		image(result, 0, 0);
 		thresholdBar1.display();
 		thresholdBar2.display();
 	}
 
-	public IntUnaryOperator hueThreshold(int firstThreshold, int secondThreshold, int other) {
-		return v -> firstThreshold <= hue(v) && hue(v) <= secondThreshold ? color(hue(v)) : other;
-	}
-
-	public PImage thresholding(PImage source, IntUnaryOperator op) {
-		PImage result = createImage(source.width, source.height, RGB);
-		for (int i = 0; i < result.width * result.height; ++i) {
-			result.pixels[i] = op.applyAsInt(source.pixels[i]);
-		}
-		return result;
+	public IntUnaryOperator hueThreshold(int firstThreshold, int secondThreshold, int otherColor) {
+		Utils.require(0, otherColor, 255, "invalid grey color");
+		return v -> firstThreshold <= hue(v) && hue(v) <= secondThreshold ? color(hue(v)) : color(otherColor);
 	}
 
 }

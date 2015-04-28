@@ -3,6 +3,7 @@ package ch.epfl.planair.visual;
 import processing.core.PApplet;
 import processing.core.PImage;
 
+@Deprecated
 public class Hough extends PApplet {
 
 	private PApplet parent;
