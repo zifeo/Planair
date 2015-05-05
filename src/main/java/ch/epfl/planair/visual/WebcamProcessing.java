@@ -47,7 +47,7 @@ public final class WebcamProcessing extends PApplet {
 		result = pipeline.sobel(result, 0.35f);
 		pipeline.debugPlotLine(result, pipeline.hough(result));
 
-		image(result, 0, 0);
+
 	}
 
 }
