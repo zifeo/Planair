@@ -5,6 +5,7 @@ import processing.core.PImage;
 import processing.core.PVector;
 import processing.video.Capture;
 
+import java.awt.*;
 import java.util.List;
 import java.util.Random;
 
@@ -68,15 +69,19 @@ public final class WebcamProcessing extends PApplet {
 			PVector c23 = intersection(l2, l3);
 			PVector c34 = intersection(l3, l4);
 			PVector c41 = intersection(l4, l1);
-			// Choose a random, semi-transparent colour
-			Random random = new Random(); fill(color(min(255, random.nextInt(300)),
-					min(255, random.nextInt(300)),
-					min(255, random.nextInt(300)), 50));
-			quad(c12.x,c12.y,c23.x,c23.y,c34.x,c34.y,c41.x,c41.y);
+
+			if(quad.isConvex(c12,c23, c34, c41) &&
+					quad.validArea(c12, c23, c34, c41, 600000000, 0) &&
+					quad.nonFlatQuad(c12, c23, c34, c41)) {
+				// Choose a random, semi-transparent colour
+				Random random = new Random();
+				fill(Color.ORANGE.getRGB());
+				quad(c12.x, c12.y, c23.x, c23.y, c34.x, c34.y, c41.x, c41.y);
+			}
 		}
 		// Fin QUAD
-
-		image(result, 0, 0);
+		pipeline.debugPlotLine(result, lines);
+		//image(result, 0, 0);
 	}
 
 	public static PVector intersection(PVector line1, PVector line2) {

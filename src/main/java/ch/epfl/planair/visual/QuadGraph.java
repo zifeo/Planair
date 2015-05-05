@@ -3,6 +3,7 @@ package ch.epfl.planair.visual;
 import java.util.List;
 import java.util.ArrayList;
 
+import ch.epfl.planair.config.Constants;
 import processing.core.PVector;
 
 final public class QuadGraph {
@@ -50,7 +51,8 @@ final public class QuadGraph {
 		int x = (int) ((r2 * sin_t1 - r1 * sin_t2) / denom);
 		int y = (int) ((-r2 * cos_t1 + r1 * cos_t2) / denom);
 
-		return 0 <= x && 0 <= y && width >= x && height >= y;
+		return 0 - Constants.PIPELINE_DETECT_OFFSET <= x && 0 - Constants.PIPELINE_DETECT_OFFSET <= y &&
+				width + Constants.PIPELINE_DETECT_OFFSET >= x && height + Constants.PIPELINE_DETECT_OFFSET >= y;
 	}
 
 	public List<int[]> findCycles() {
@@ -242,7 +244,7 @@ final public class QuadGraph {
 	public static boolean nonFlatQuad(PVector c1, PVector c2, PVector c3, PVector c4){
 
 		// cos(70deg) ~= 0.3
-		float min_cos = 0.3f;
+		float min_cos = 0.7f;
 
 		PVector v21 = PVector.sub(c1, c2);
 		PVector v32 = PVector.sub(c2, c3);

@@ -268,7 +268,7 @@ public class Pipeline extends PApplet {
 		Collections.sort(best, (a, b) -> Integer.compare(accumulator[a], accumulator[b]));
 		List<PVector> selected = new ArrayList<>();
 
-		for (int i = 0; i < best.size() && i < 20; ++i) {
+		for (int i = 0; i < best.size() && i < Constants.PIPELINE_LINES; ++i) {
 
 			int idx = best.get(i);
 

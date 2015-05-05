@@ -33,5 +33,7 @@ public interface Constants {
 	// visual.Pipeline
 	float PIPELINE_DISCRETIZATION_STEPS_PHI = 0.06f;
 	float PIPELINE_DISCRETIZATION_STEPS_R = 2.5f;
+	int PIPELINE_DETECT_OFFSET = 200;
+	int PIPELINE_LINES = 6;
 
 }
