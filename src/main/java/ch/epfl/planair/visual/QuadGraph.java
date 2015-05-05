@@ -18,14 +18,12 @@ final public class QuadGraph {
 		graph = new int[n * (n + 1)/2][2];
 
 		int idx =0;
-
 		for (int i = 0; i < lines.size(); i++) {
 			for (int j = i + 1; j < lines.size(); j++) {
 				if (intersect(lines.get(i), lines.get(j), width, height)) {
 
-					// TODO
-					// fill the graph using intersect() to check if two lines are
-					// connected in the graph.
+					graph[idx][0] = i;
+					graph[idx][1] = j;
 
 					idx++;
 				}
@@ -58,7 +56,7 @@ final public class QuadGraph {
 
 	}
 
-	List<int[]> findCycles() {
+	public List<int[]> findCycles() {
 
 		cycles.clear();
 		for (int i = 0; i < graph.length; i++) {
@@ -94,9 +92,10 @@ final public class QuadGraph {
 						sub[0] = x;
 						System.arraycopy(path, 0, sub, 1, path.length);
 						//  explore extended path
-						findNewCycles(sub);
+						if(sub.length <= 4)
+							findNewCycles(sub);
 					}
-					else if ((path.length > 2) && (x == path[path.length - 1]))
+					else if ((path.length > 3) && (x == path[path.length - 1]))
 					//  cycle found
 					{
 						int[] p = normalize(path);

@@ -4,14 +4,18 @@ import ch.epfl.planair.config.Constants;
 import ch.epfl.planair.config.Utils;
 import processing.core.PApplet;
 import processing.core.PImage;
+import processing.core.PVector;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.function.IntUnaryOperator;
 
 public class Pipeline extends PApplet {
 
 	private final PApplet parent;
+
+	public List<PVector> lines = new ArrayList<>();
 
 	public final static float[][] surroundKernel = {
 			{ 0, 1, 0 },
@@ -277,6 +281,8 @@ public class Pipeline extends PApplet {
 
 		Collections.sort(best, (a, b) -> Integer.compare(accumulator[a], accumulator[b]));
 
+		lines.clear();
+
 		for (int i = 0; i < best.size() && i < 4; ++i) {
 
 			int idx = best.get(i);
@@ -286,6 +292,8 @@ public class Pipeline extends PApplet {
 			float accR = idx - (accPhi + 1) * (rDim + 2) - 1;
 			float r = (accR - (rDim - 1) * 0.5f) * Constants.PIPELINE_DISCRETIZATION_STEPS_R;
 			float phi = accPhi * Constants.PIPELINE_DISCRETIZATION_STEPS_PHI;
+			PVector line = new PVector(r, phi);
+			lines.add(line);
 			// Cartesian equation of a line: y = ax + b
 			// in polar, y = (-cos(phi)/sin(phi))x + (r/sin(phi))
 			// => y = 0 : x = r / cos(phi)
