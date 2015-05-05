@@ -36,8 +36,18 @@ public class Pipeline extends PApplet {
 			{ 0, 0,  0 }
 	};
 
+	/* COS and SIN constants, to optimise Hough method */
+	private final static float[] COS = new float[(int) Math.ceil(PI / Constants.PIPELINE_DISCRETIZATION_STEPS_PHI)];
+	private final static float[] SIN = new float[(int) Math.ceil(PI / Constants.PIPELINE_DISCRETIZATION_STEPS_PHI)];
+
 	public Pipeline(PApplet parent) {
 		this.parent = parent;
+
+		/* Construct cos and sin constants */
+		for (int i = 0; i < PI / Constants.PIPELINE_DISCRETIZATION_STEPS_PHI; i += 1) {
+			COS[i] = (float) Math.cos(i * Constants.PIPELINE_DISCRETIZATION_STEPS_PHI);
+			SIN[i] = (float) Math.sin(i * Constants.PIPELINE_DISCRETIZATION_STEPS_PHI);
+		}
 	}
 
 	private PImage threshold(PImage source, IntUnaryOperator op) {
@@ -199,9 +209,8 @@ public class Pipeline extends PApplet {
 					// align (x,y), convert (r,phi) to coordinates in the
 					// accumulator, and increment accordingly the accumulator.
 
-					for (float phi = 0; phi < PI; phi += Constants.PIPELINE_DISCRETIZATION_STEPS_PHI) {
-						float accPhi = phi / Constants.PIPELINE_DISCRETIZATION_STEPS_PHI;
-						double radius = x * cos(phi) + y * sin(phi);
+					for (int accPhi = 0; accPhi < PI / Constants.PIPELINE_DISCRETIZATION_STEPS_PHI; accPhi += 1) {
+						double radius = x * COS[accPhi] + y * SIN[accPhi];
 						float accR = (float) (radius / Constants.PIPELINE_DISCRETIZATION_STEPS_R) + (rDim - 1) * 0.5f;
 
 						accumulator[(int) ((accPhi + 1) * (rDim + 2) + accR + 1)] += 1;
