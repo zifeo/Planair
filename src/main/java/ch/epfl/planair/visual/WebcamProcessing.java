@@ -7,7 +7,8 @@ import processing.video.Capture;
 public final class WebcamProcessing extends PApplet {
 
 	private Capture cam;
-	private PImage img;
+	private PImage image;
+	private Pipeline pipeline;
 
 	@Override
 	public void setup() {
@@ -26,6 +27,7 @@ public final class WebcamProcessing extends PApplet {
 			// cam = new Capture(this, cameras[4]);
 			cam.start();
 		}
+		pipeline = new Pipeline(this);
 	}
 
 	@Override
@@ -34,12 +36,18 @@ public final class WebcamProcessing extends PApplet {
 			cam.read();
 		}
 
-		img = cam.get();
-		image(img, 0, 0);
+		image = cam.get();
+		image(image, 0, 0);
+		PImage result = image;
 
-		Pipeline pipeline = new Pipeline(this);
+		result = pipeline.selectHueThreshold(result, 80, 125, 0);
+		result = pipeline.selectBrightnessThreshold(result, 30, 255, 0);
+		result = pipeline.selectSaturationThreshold(result, 80, 255, 0);
+		result = pipeline.convolute(result, Pipeline.gaussianKernel);
+		result = pipeline.sobel(result, 0.35f);
+		result = pipeline.hough(result);
 
-		image(img, 0, 0);
+		image(result, 0, 0);
 	}
 
 }

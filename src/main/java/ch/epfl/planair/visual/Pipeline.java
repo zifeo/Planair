@@ -13,13 +13,7 @@ public class Pipeline extends PApplet {
 
 	private final PApplet parent;
 
-	private final static float[][] neutralKernel = {
-			{ 0, 0, 0 },
-			{ 0, 1, 0 },
-			{ 0, 0, 0 }
-	};
-
-	private final static float[][] surroundKernel = {
+	public final static float[][] surroundKernel = {
 			{ 0, 1, 0 },
 			{ 1, 0, 1 },
 			{ 0, 1, 0 }
@@ -46,12 +40,63 @@ public class Pipeline extends PApplet {
 		this.parent = parent;
 	}
 
-	public PImage threshold(PImage source, IntUnaryOperator op) {
+	private PImage threshold(PImage source, IntUnaryOperator op) {
 		PImage result = createImage(source.width, source.height, ALPHA);
 		for (int i = 0; i < result.width * result.height; ++i) {
 			result.pixels[i] = op.applyAsInt(source.pixels[i]);
 		}
 		return result;
+	}
+
+	/**
+	 * A binary threshold based on brightness.
+	 * If input reaches the limit, max color is set, otherwise min color.
+	 *
+	 * @param threshold brighness limit (0-255)
+	 * @param minColor greyscale (0-255)
+	 * @param maxColor greyscale (0-255)
+	 * @throws IllegalArgumentException when min or max color are invalid
+	 * @return
+	 */
+	public PImage binaryBrightnessThreshold(PImage source, int threshold, int minColor, int maxColor) {
+		Utils.require(0, minColor, 255, "invalid grey color");
+		Utils.require(0, maxColor, 255, "invalid grey color");
+		return threshold(source, v -> parent.brightness(v) > threshold ? color(maxColor): color(minColor));
+	}
+
+	public PImage inverseBinaryBrightnessThreshold(PImage source, int threshold, int minColor, int maxColor) {
+		return binaryBrightnessThreshold(source, threshold, maxColor, minColor);
+	}
+
+	public PImage truncateBrightnessThreshold(PImage source, int threshold) {
+		Utils.require(0, threshold, 255, "invalid grey color");
+		return threshold(source, v -> parent.brightness(v) > threshold ? color(threshold) : color(brightness(v)));
+	}
+
+	public PImage toZeroBrightnessThreshold(PImage source, int threshold, int minColor) {
+		Utils.require(0, threshold, 255, "invalid grey color");
+		Utils.require(0, minColor, 255, "invalid grey color");
+		return threshold(source, v -> parent.brightness(v) > threshold ? color(brightness(v)): color(minColor));
+	}
+
+	public PImage inverseToZeroBrightnessThreshold(PImage source, int threshold) {
+		Utils.require(0, threshold, 255, "invalid grey color");
+		return threshold(source, v -> parent.brightness(v) > threshold ? color(brightness(v)): color(threshold));
+	}
+
+	public PImage selectHueThreshold(PImage source, int firstThreshold, int secondThreshold, int otherColor) {
+		Utils.require(0, otherColor, 255, "invalid grey color");
+		return threshold(source, v -> firstThreshold <= parent.hue(v) && parent.hue(v) <= secondThreshold ? v : color(otherColor));
+	}
+
+	public PImage selectSaturationThreshold(PImage source, int firstThreshold, int secondThreshold, int otherColor) {
+		Utils.require(0, otherColor, 255, "invalid grey color");
+		return threshold(source, v -> firstThreshold <= parent.saturation(v) && parent.saturation(v) <= secondThreshold ? v : color(otherColor));
+	}
+
+	public PImage selectBrightnessThreshold(PImage source, int firstThreshold, int secondThreshold, int otherColor) {
+		Utils.require(0, otherColor, 255, "invalid grey color");
+		return threshold(source, v -> firstThreshold <= parent.brightness(v) && parent.brightness(v) <= secondThreshold ? v : color(otherColor));
 	}
 
 	public PImage convolute(PImage source, float[][] kernel) {
@@ -70,7 +115,7 @@ public class Pipeline extends PApplet {
 				float sum = 0;
 				for (int px = x - margin, sx = 0; px <= x + margin; ++px, ++sx) {
 					for (int py = y - margin, sy = 0; py <= y + margin; ++py, ++sy) {
-						sum += brightness(source.pixels[align(source, px, py)]) * kernel[sx][sy];
+						sum += parent.brightness(source.pixels[align(source, px, py)]) * kernel[sx][sy];
 					}
 				}
 				result.pixels[align(result, x, y)] = color(sum / weight);
@@ -159,7 +204,7 @@ public class Pipeline extends PApplet {
 						double radius = x * cos(phi) + y * sin(phi);
 						float accR = (float) (radius / Constants.PIPELINE_DISCRETIZATION_STEPS_R) + (rDim - 1) * 0.5f;
 
-						accumulator[(int) (accPhi * (rDim + 2) + accR)] += 1;
+						accumulator[(int) ((accPhi + 1) * (rDim + 2) + accR + 1)] += 1;
 					}
 				}
 			}
@@ -218,9 +263,21 @@ public class Pipeline extends PApplet {
 			}
 		}
 
+		/*for (int accR = 0; accR < rDim; accR++) {
+			for (int accPhi = 0; accPhi < phiDim; accPhi++) {
+
+				// compute current index in the accumulator
+
+				int idx = (accPhi + 1) * (rDim + 2) + accR + 1;
+				if (accumulator[idx] > minVotes) {
+					best.add(idx);
+				}
+			}
+		}*/
+
 		Collections.sort(best, (a, b) -> Integer.compare(accumulator[a], accumulator[b]));
 
-		for (int i = 0; i < best.size() && i < 20; ++i) {
+		for (int i = 0; i < best.size() && i < 4; ++i) {
 
 			int idx = best.get(i);
 
