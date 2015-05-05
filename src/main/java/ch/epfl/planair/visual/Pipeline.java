@@ -38,8 +38,18 @@ public class Pipeline extends PApplet {
 			{ 0, 0,  0 }
 	};
 
+	/* COS and SIN constants, to optimise Hough method */
+	private final static float[] COS = new float[(int) Math.ceil(PI / Constants.PIPELINE_DISCRETIZATION_STEPS_PHI)];
+	private final static float[] SIN = new float[(int) Math.ceil(PI / Constants.PIPELINE_DISCRETIZATION_STEPS_PHI)];
+
 	public Pipeline(PApplet parent) {
 		this.parent = parent;
+
+		/* Construct cos and sin constants */
+		for (int i = 0; i < PI / Constants.PIPELINE_DISCRETIZATION_STEPS_PHI; i += 1) {
+			COS[i] = (float) Math.cos(i * Constants.PIPELINE_DISCRETIZATION_STEPS_PHI);
+			SIN[i] = (float) Math.sin(i * Constants.PIPELINE_DISCRETIZATION_STEPS_PHI);
+		}
 	}
 
 	private PImage threshold(PImage source, IntUnaryOperator op) {
@@ -201,9 +211,8 @@ public class Pipeline extends PApplet {
 					// align (x,y), convert (r,phi) to coordinates in the
 					// accumulator, and increment accordingly the accumulator.
 
-					for (float phi = 0; phi < PI; phi += Constants.PIPELINE_DISCRETIZATION_STEPS_PHI) {
-						float accPhi = phi / Constants.PIPELINE_DISCRETIZATION_STEPS_PHI;
-						double radius = x * cos(phi) + y * sin(phi);
+					for (int accPhi = 0; accPhi < PI / Constants.PIPELINE_DISCRETIZATION_STEPS_PHI; accPhi += 1) {
+						double radius = x * COS[accPhi] + y * SIN[accPhi];
 						float accR = (float) (radius / Constants.PIPELINE_DISCRETIZATION_STEPS_R) + (rDim - 1) * 0.5f;
 
 						accumulator[(int) ((accPhi + 1) * (rDim + 2) + accR + 1)] += 1;
@@ -276,7 +285,7 @@ public class Pipeline extends PApplet {
 			int idx = best.get(i);
 
 			// first, compute back the (r, phi) polar coordinates:
-			float accPhi = (int) (idx / (rDim + 2)) - 1;
+			int accPhi = (int) (idx / (rDim + 2)) - 1;
 			float accR = idx - (accPhi + 1) * (rDim + 2) - 1;
 			float r = (accR - (rDim - 1) * 0.5f) * Constants.PIPELINE_DISCRETIZATION_STEPS_R;
 			float phi = accPhi * Constants.PIPELINE_DISCRETIZATION_STEPS_PHI;
@@ -301,13 +310,13 @@ public class Pipeline extends PApplet {
 			// compute the intersection of this line with the 4 borders of
 			// the image
 			int x0 = 0;
-			int y0 = (int) (r / sin(phi));
-			int x1 = (int) (r / cos(phi));
+			int y0 = (int) (r / SIN[accPhi]);
+			int x1 = (int) (r / COS[accPhi]);
 			int y1 = 0;
 			int x2 = edgeImg.width;
-			int y2 = (int) (-cos(phi) / sin(phi) * x2 + r / sin(phi));
+			int y2 = (int) (-COS[accPhi] / SIN[accPhi] * x2 + r / SIN[accPhi]);
 			int y3 = edgeImg.width;
-			int x3 = (int) (-(y3 - r / sin(phi)) * (sin(phi) / cos(phi)));
+			int x3 = (int) (-(y3 - r / SIN[accPhi]) * (SIN[accPhi] / COS[accPhi]));
 
 			// Finally, plot the lines
 			parent.stroke(204, 102, 0);
