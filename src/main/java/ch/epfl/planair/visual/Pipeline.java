@@ -265,18 +265,6 @@ public class Pipeline extends PApplet {
 			}
 		}
 
-		/*for (int accR = 0; accR < rDim; accR++) {
-			for (int accPhi = 0; accPhi < phiDim; accPhi++) {
-
-				// compute current index in the accumulator
-
-				int idx = (accPhi + 1) * (rDim + 2) + accR + 1;
-				if (accumulator[idx] > minVotes) {
-					best.add(idx);
-				}
-			}
-		}*/
-
 		Collections.sort(best, (a, b) -> Integer.compare(accumulator[a], accumulator[b]));
 		List<PVector> selected = new ArrayList<>();
 
@@ -302,6 +290,7 @@ public class Pipeline extends PApplet {
 
 			float r = line.x;
 			float phi = line.y;
+			int accPhi = (int) (phi / Constants.PIPELINE_DISCRETIZATION_STEPS_PHI);
 
 			// Cartesian equation of a line: y = ax + b
 			// in polar, y = (-cos(phi)/sin(phi))x + (r/sin(phi))

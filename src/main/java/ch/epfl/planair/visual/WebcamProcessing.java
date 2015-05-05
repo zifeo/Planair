@@ -45,7 +45,7 @@ public final class WebcamProcessing extends PApplet {
 		result = pipeline.selectSaturationThreshold(result, 80, 255, 0);
 		result = pipeline.convolute(result, Pipeline.gaussianKernel);
 		result = pipeline.sobel(result, 0.35f);
-		result = pipeline.hough(result);
+		pipeline.debugPlotLine(result, pipeline.hough(result));
 
 		image(result, 0, 0);
 	}
