@@ -4,9 +4,11 @@ import ch.epfl.planair.config.Constants;
 import ch.epfl.planair.config.Utils;
 import processing.core.PApplet;
 import processing.core.PImage;
+import processing.core.PVector;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.function.IntUnaryOperator;
 
 public class Pipeline extends PApplet {
@@ -61,7 +63,7 @@ public class Pipeline extends PApplet {
 	public PImage binaryBrightnessThreshold(PImage source, int threshold, int minColor, int maxColor) {
 		Utils.require(0, minColor, 255, "invalid grey color");
 		Utils.require(0, maxColor, 255, "invalid grey color");
-		return threshold(source, v -> parent.brightness(v) > threshold ? color(maxColor): color(minColor));
+		return threshold(source, v -> parent.brightness(v) > threshold ? color(maxColor) : color(minColor));
 	}
 
 	public PImage inverseBinaryBrightnessThreshold(PImage source, int threshold, int minColor, int maxColor) {
@@ -178,7 +180,7 @@ public class Pipeline extends PApplet {
 		return result;
 	}
 
-	public PImage hough(PImage edgeImg) {
+	public List<PVector> hough(PImage edgeImg) {
 		// dimensions of the accumulator
 		int phiDim = (int) (Math.PI / Constants.PIPELINE_DISCRETIZATION_STEPS_PHI);
 		int rDim = (int) (((edgeImg.width + edgeImg.height) * 2 + 1) / Constants.PIPELINE_DISCRETIZATION_STEPS_R);
@@ -210,21 +212,12 @@ public class Pipeline extends PApplet {
 			}
 		}
 
-		PImage houghImg = createImage(rDim + 2, phiDim + 2, ALPHA);
-		for (int i = 0; i < accumulator.length; i++) {
-			houghImg.pixels[i] = color(min(255, accumulator[i]));
-		}
-		houghImg.updatePixels();
-		//houghImg.resize(640, 480);
-
-        /* TODO remove debug lines */
-
 		// size of the region we search for a local maximum
 		int neighbourhood = 10;
 		// only search around lines with more that this amount of votes
 		// (to be adapted to your image)
 		int minVotes = 200;
-		ArrayList<Integer> best = new ArrayList<>();
+		List<Integer> best = new ArrayList<>();
 
 		for (int accR = 0; accR < rDim; accR++) {
 			for (int accPhi = 0; accPhi < phiDim; accPhi++) {
@@ -235,11 +228,11 @@ public class Pipeline extends PApplet {
 					boolean bestCandidate = true;
 
 					// iterate over the neighbourhood
-					for (int dPhi=-neighbourhood/2; dPhi < neighbourhood/2+1; ++dPhi) {
+					for (int dPhi = -neighbourhood / 2; dPhi < neighbourhood / 2 + 1; ++dPhi) {
 
 						// check we are not outside the image
-						if ( accPhi+dPhi < 0 || accPhi+dPhi >= phiDim) continue;
-						for (int dR=-neighbourhood/2; dR < neighbourhood/2 +1; ++dR) {
+						if ( accPhi + dPhi < 0 || accPhi + dPhi >= phiDim) continue;
+						for (int dR = -neighbourhood / 2; dR < neighbourhood / 2 +1; ++dR) {
 
 							// check we are not outside the image
 							if (accR+dR < 0 || accR+dR >= rDim) continue;
@@ -249,7 +242,7 @@ public class Pipeline extends PApplet {
 							if (accumulator[idx] < accumulator[neighbourIdx]) {
 
 								// the current idx is not a local maximum!
-								bestCandidate=false;
+								bestCandidate = false;
 								break;
 							}
 						}
@@ -276,8 +269,9 @@ public class Pipeline extends PApplet {
 		}*/
 
 		Collections.sort(best, (a, b) -> Integer.compare(accumulator[a], accumulator[b]));
+		List<PVector> selected = new ArrayList<>();
 
-		for (int i = 0; i < best.size() && i < 4; ++i) {
+		for (int i = 0; i < best.size() && i < 20; ++i) {
 
 			int idx = best.get(i);
 
@@ -286,6 +280,20 @@ public class Pipeline extends PApplet {
 			float accR = idx - (accPhi + 1) * (rDim + 2) - 1;
 			float r = (accR - (rDim - 1) * 0.5f) * Constants.PIPELINE_DISCRETIZATION_STEPS_R;
 			float phi = accPhi * Constants.PIPELINE_DISCRETIZATION_STEPS_PHI;
+
+			selected.add(new PVector(r, phi));
+		}
+
+		return selected;
+	}
+
+	public void debugPlotLine(PImage edgeImg, List<PVector> lines) {
+
+		for (PVector line: lines) {
+
+			float r = line.x;
+			float phi = line.y;
+
 			// Cartesian equation of a line: y = ax + b
 			// in polar, y = (-cos(phi)/sin(phi))x + (r/sin(phi))
 			// => y = 0 : x = r / cos(phi)
@@ -304,26 +312,17 @@ public class Pipeline extends PApplet {
 			// Finally, plot the lines
 			parent.stroke(204, 102, 0);
 			if (y0 > 0) {
-				if (x1 > 0)
-					parent.line(x0, y0, x1, y1);
-				else if (y2 > 0)
-					parent.line(x0, y0, x2, y2);
-				else
-					parent.line(x0, y0, x3, y3);
-			}
-			else {
+				if (x1 > 0) parent.line(x0, y0, x1, y1);
+				else if (y2 > 0) parent.line(x0, y0, x2, y2);
+				else parent.line(x0, y0, x3, y3);
+			} else {
 				if (x1 > 0) {
-					if (y2 > 0)
-						parent.line(x1, y1, x2, y2);
-					else
-						parent.line(x1, y1, x3, y3);
-				}
-				else
-					parent.line(x2, y2, x3, y3);
+					if (y2 > 0) parent.line(x1, y1, x2, y2);
+					else parent.line(x1, y1, x3, y3);
+				} else parent.line(x2, y2, x3, y3);
 			}
 		}
 
-		return houghImg;
 	}
 
 	private int align(PImage source, int x, int y) {
