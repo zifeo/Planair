@@ -2,6 +2,9 @@ package ch.epfl.planair.visual;
 
 import processing.core.PApplet;
 import processing.core.PImage;
+import processing.core.PVector;
+
+import java.util.List;
 
 public final class ParametersSelector extends PApplet {
 
@@ -33,7 +36,7 @@ public final class ParametersSelector extends PApplet {
 		result = pipeline.selectSaturationThreshold(result, 80, 255, 0);
 		result = pipeline.convolute(result, Pipeline.gaussianKernel);
 		result = pipeline.sobel(result, 0.35f);
-		result = pipeline.hough(result);
+		pipeline.debugPlotLine(result, pipeline.hough(result));
 		//println("first: "+firstThreshold+"\tsecond: "+secondThreshold);
 
 		image(result, 0, 0);

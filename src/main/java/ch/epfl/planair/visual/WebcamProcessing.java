@@ -51,11 +51,10 @@ public final class WebcamProcessing extends PApplet {
 		result = pipeline.selectSaturationThreshold(result, 80, 255, 0);
 		result = pipeline.convolute(result, Pipeline.gaussianKernel);
 		result = pipeline.sobel(result, 0.35f);
-		result = pipeline.hough(result);
 
 		// Partie QUAD a refactorer
-		List<PVector> lines = pipeline.lines;
-		quad.build(pipeline.lines, image.width, image.height);
+		List<PVector> lines = pipeline.hough(result);
+		quad.build(lines, image.width, image.height);
 		for (int[] cycle : quad.findCycles()) {
 
 			PVector l1 = lines.get(cycle[0]);
