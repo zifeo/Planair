@@ -1,26 +1,27 @@
-package ch.epfl.planair.visual;
+package cs211.imageprocessing;
 
+import ch.epfl.planair.visual.Pipeline;
 import processing.core.PApplet;
 import processing.core.PImage;
 
 public final class ImageProcessing extends PApplet {
 
+	private final String BOARD = "board1.jpg";
+	private final int WIDTH = 800;
+	private final int HEIGHT = 600;
+
 	@Override
 	public void setup() {
-		size(800, 600);
+		size(WIDTH * 3, HEIGHT);
 		noLoop();
 	}
 
 	@Override
 	public void draw() {
 
-		PImage image = loadImage("board/board1.jpg");
+		PImage image = loadImage("board/"+BOARD);
 		Pipeline pipeline = new Pipeline(this);
 
-		image = pipeline.convolute(image, Pipeline.gaussianKernel);
-		image = pipeline.convolute(image, Pipeline.surroundKernel);
-		image = pipeline.sobel(image, 0.1f);
-		image(image, 0, 0);
 		PImage result = image;
 
 		result = pipeline.selectHueThreshold(result, 80, 125, 0);

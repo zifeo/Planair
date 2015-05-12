@@ -6,6 +6,7 @@ import processing.core.PApplet;
  * Given... @todo Refactor ! and maybe use score.scrollBar instead
  */
 public final class HScrollBar {
+
 	private PApplet parent;
 
 	private float barWidth; // Bar's width in pixels
