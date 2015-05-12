@@ -90,7 +90,7 @@ public class TwoDThreeD {
 		assert(points2D.size() == 4);
 
 		// Sort corners in the clockwise order
-		// points2D = sortCorners(points2D);
+		points2D = sortCorners(points2D);
 		
 		for(int i=0;i<4;i++) {
 		    // store in projectedCorners the result of (K^(-1) · p), for each 
