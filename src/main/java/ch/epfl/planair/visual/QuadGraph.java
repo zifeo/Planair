@@ -90,8 +90,9 @@ final public class QuadGraph {
 						sub[0] = x;
 						System.arraycopy(path, 0, sub, 1, path.length);
 						//  explore extended path
-						if(sub.length <= 4)
+						if(sub.length < 4) {
 							findNewCycles(sub);
+						}
 					}
 					else if ((path.length > 3) && (x == path[path.length - 1])){//  cycle found
 						int[] p = normalize(path);
@@ -229,7 +230,7 @@ final public class QuadGraph {
 
 		float area = Math.abs(0.5f * (i1 + i2 + i3 + i4));
 
-		//System.out.println(area);
+		System.out.println(area);
 
 		boolean valid = area < max_area && area > min_area;
 
@@ -244,7 +245,7 @@ final public class QuadGraph {
 	public static boolean nonFlatQuad(PVector c1, PVector c2, PVector c3, PVector c4){
 
 		// cos(70deg) ~= 0.3
-		float min_cos = 0.7f;
+		float min_cos = 0.6f;
 
 		PVector v21 = PVector.sub(c1, c2);
 		PVector v32 = PVector.sub(c2, c3);

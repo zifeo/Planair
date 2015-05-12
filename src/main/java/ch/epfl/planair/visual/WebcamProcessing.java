@@ -56,6 +56,7 @@ public final class WebcamProcessing extends PApplet {
 		// Partie QUAD a refactorer
 		List<PVector> lines = pipeline.hough(result);
 		quad.build(lines, image.width, image.height);
+
 		for (int[] cycle : quad.findCycles()) {
 
 			PVector l1 = lines.get(cycle[0]);
@@ -71,7 +72,7 @@ public final class WebcamProcessing extends PApplet {
 			PVector c41 = intersection(l4, l1);
 
 			if(quad.isConvex(c12,c23, c34, c41) &&
-					quad.validArea(c12, c23, c34, c41, 600000000, 0) &&
+					quad.validArea(c12, c23, c34, c41, 500000, 60000) &&
 					quad.nonFlatQuad(c12, c23, c34, c41)) {
 				// Choose a random, semi-transparent colour
 				Random random = new Random();
