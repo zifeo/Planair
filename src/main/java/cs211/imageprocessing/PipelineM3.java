@@ -310,7 +310,7 @@ public class PipelineM3 extends PApplet {
 
 		List<int[]> cycles = quad.findCycles();
 		if (!cycles.isEmpty()) {
-			for (int[] cycle : quad.findCycles()) {
+			for (int[] cycle : cycles) {
 
 				PVector l1 = lines.get(cycle[0]);
 				PVector l2 = lines.get(cycle[1]);
