@@ -6,8 +6,8 @@ import processing.core.PVector;
 import processing.video.Capture;
 
 import java.awt.*;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 public final class WebcamProcessing extends PApplet {
 
@@ -15,6 +15,7 @@ public final class WebcamProcessing extends PApplet {
 	private PImage image;
 	private Pipeline pipeline;
 	private QuadGraph quad;
+	private TwoDThreeD twoDThreeD;
 
 	@Override
 	public void setup() {
@@ -35,6 +36,8 @@ public final class WebcamProcessing extends PApplet {
 		}
 		pipeline = new Pipeline(this);
 		quad = new QuadGraph();
+
+		twoDThreeD = new TwoDThreeD(cam.width, cam.height);
 	}
 
 	@Override
@@ -56,6 +59,7 @@ public final class WebcamProcessing extends PApplet {
 		// Partie QUAD a refactorer
 		List<PVector> lines = pipeline.hough(result);
 		quad.build(lines, image.width, image.height);
+
 		for (int[] cycle : quad.findCycles()) {
 
 			PVector l1 = lines.get(cycle[0]);
@@ -71,11 +75,13 @@ public final class WebcamProcessing extends PApplet {
 			PVector c41 = intersection(l4, l1);
 
 			if(quad.isConvex(c12,c23, c34, c41) &&
-					quad.validArea(c12, c23, c34, c41, 600000000, 0) &&
+					quad.validArea(c12, c23, c34, c41, 500000, 60000) &&
 					quad.nonFlatQuad(c12, c23, c34, c41)) {
-				// Choose a random, semi-transparent colour
+
 				fill(Color.ORANGE.getRGB());
 				quad(c12.x, c12.y, c23.x, c23.y, c34.x, c34.y, c41.x, c41.y);
+
+				System.out.println(twoDThreeD.get3DRotations(Arrays.asList(c12, c23, c34, c41)));
 			}
 		}
 		// Fin QUAD
@@ -98,7 +104,5 @@ public final class WebcamProcessing extends PApplet {
 		int y = (int) ((-r2 * cos_t1 + r1 * cos_t2) / denom);
 
 		return new PVector(x, y);
-
 	}
-
 }
