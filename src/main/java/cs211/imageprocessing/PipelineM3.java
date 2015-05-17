@@ -327,7 +327,6 @@ public class PipelineM3 extends PApplet {
 				if (quad.isConvex(c12, c23, c34, c41) &&
 						quad.validArea(c12, c23, c34, c41, 600000, 60000) &&
 						quad.nonFlatQuad(c12, c23, c34, c41)) {
-					// Choose a random, semi-transparent colour
 
 					return Arrays.asList(c12, c23, c34, c41, l1, l2, l3, l4);
 				}

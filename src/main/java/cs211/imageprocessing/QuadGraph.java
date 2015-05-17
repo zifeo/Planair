@@ -5,6 +5,9 @@ import processing.core.PVector;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Modified version of QuadGraph class for assignment 3.
+ */
 final public class QuadGraph {
 
 	private List<int[]> cycles = new ArrayList<>();
@@ -18,7 +21,6 @@ final public class QuadGraph {
 		graph = new int[n * (n + 1)/2][2];
 
 		int idx = 0;
-
 		for (int i = 0; i < lines.size(); ++i) {
 			for (int j = i + 1; j < lines.size(); ++j) {
 				if (intersect(lines.get(i), lines.get(j), width, height)) {
@@ -30,7 +32,6 @@ final public class QuadGraph {
 				}
 			}
 		}
-
 	}
 
 	/** Returns true if polar lines 1 and 2 intersect
@@ -46,7 +47,6 @@ final public class QuadGraph {
 		float r2 = line2.x;
 
 		double denom = cos_t2 * sin_t1 - cos_t1 * sin_t2;
-
 		int x = (int) ((r2 * sin_t1 - r1 * sin_t2) / denom);
 		int y = (int) ((-r2 * cos_t1 + r1 * cos_t2) / denom);
 
@@ -63,14 +63,6 @@ final public class QuadGraph {
 			}
 		}
 
-		for (int[] cy : cycles) {
-			String s = "" + cy[0];
-
-			for (int i = 1; i < cy.length; ++i) {
-				s += "," + cy[i];
-			}
-
-		}
 		return cycles;
 	}
 
@@ -116,6 +108,7 @@ final public class QuadGraph {
 				return false;
 			}
 		}
+
 		return true;
 	}
 
@@ -135,7 +128,6 @@ final public class QuadGraph {
 		int[] p = new int[path.length];
 		int x = smallest(path);
 		int n = 0;
-
 		System.arraycopy(path, 0, p, 0, path.length);
 
 		while (p[0] != x) {
@@ -143,6 +135,7 @@ final public class QuadGraph {
 			System.arraycopy(p, 1, p, 0, p.length - 1);
 			p[p.length - 1] = n;
 		}
+
 		return p;
 	}
 
@@ -155,6 +148,7 @@ final public class QuadGraph {
 				return false;
 			}
 		}
+
 		return true;
 	}
 
@@ -167,6 +161,7 @@ final public class QuadGraph {
 				min = p;
 			}
 		}
+
 		return min;
 	}
 
@@ -178,6 +173,7 @@ final public class QuadGraph {
 				return true;
 			}
 		}
+
 		return false;
 	}
 
@@ -194,21 +190,17 @@ final public class QuadGraph {
 	 */
 	public static boolean isConvex(PVector c1, PVector c2, PVector c3, PVector c4) {
 
-		PVector v21= PVector.sub(c1, c2);
-		PVector v32= PVector.sub(c2, c3);
-		PVector v43= PVector.sub(c3, c4);
-		PVector v14= PVector.sub(c4, c1);
+		PVector v21 = PVector.sub(c1, c2);
+		PVector v32 = PVector.sub(c2, c3);
+		PVector v43 = PVector.sub(c3, c4);
+		PVector v14 = PVector.sub(c4, c1);
 
 		float i1 = v21.cross(v32).z;
 		float i2 = v32.cross(v43).z;
 		float i3 = v43.cross(v14).z;
 		float i4 = v14.cross(v21).z;
 
-		if ((i1 > 0 && i2 > 0 && i3 > 0 && i4 > 0) || (i1 < 0 && i2 < 0 && i3 < 0 && i4 < 0)) {
-			return true;
-		} else {
-			return false;
-		}
+		return (i1 > 0 && i2 > 0 && i3 > 0 && i4 > 0) || (i1 < 0 && i2 < 0 && i3 < 0 && i4 < 0);
 	}
 
 	/** Compute the area of a quad, and check it lays within a specific range
@@ -227,9 +219,7 @@ final public class QuadGraph {
 
 		float area = Math.abs(0.5f * (i1 + i2 + i3 + i4));
 
-		boolean valid = area < max_area && area > min_area;
-
-		return valid;
+		return area < max_area && area > min_area;
 	}
 
 	/** Compute the (cosine) of the four angles of the quad, and check they are all large enough
@@ -237,9 +227,7 @@ final public class QuadGraph {
 	 */
 	public static boolean nonFlatQuad(PVector c1, PVector c2, PVector c3, PVector c4){
 
-		// cos(70deg) ~= 0.3
-		float min_cos = 0.5f;
-
+		float min_cos = Constants.GRAPH_NON_FLAT_QUAD_MIN_COS;
 		PVector v21 = PVector.sub(c1, c2);
 		PVector v32 = PVector.sub(c2, c3);
 		PVector v43 = PVector.sub(c3, c4);
@@ -250,11 +238,7 @@ final public class QuadGraph {
 		float cos3 = Math.abs(v43.dot(v14) / (v43.mag() * v14.mag()));
 		float cos4 = Math.abs(v14.dot(v21) / (v14.mag() * v21.mag()));
 
-		if (cos1 < min_cos && cos2 < min_cos && cos3 < min_cos && cos4 < min_cos) {
-			return true;
-		} else {
-			return false;
-		}
+		return cos1 < min_cos && cos2 < min_cos && cos3 < min_cos && cos4 < min_cos;
 	}
 
 }
