@@ -1,4 +1,4 @@
-package ch.epfl.planair.config;
+package cs211.imageprocessing;
 
 import processing.core.PVector;
 
@@ -6,9 +6,13 @@ public final class Utils {
 
     private Utils() {}
 
-    public static float trim(float value, float min, float max) { return value > max ? max : value < min ? min : value; }
+    public static float trim(float value, float min, float max) {
+        return value > max ? max : value < min ? min : value;
+    }
 
-    public static float trim(float value, float bound) { return trim(value, -bound, bound); }
+    public static float trim(float value, float bound) {
+        return trim(value, -bound, bound);
+    }
 
     public static PVector nullVector() { return new PVector(0, 0, 0); }
 

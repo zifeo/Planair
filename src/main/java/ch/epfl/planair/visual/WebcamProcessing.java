@@ -74,7 +74,6 @@ public final class WebcamProcessing extends PApplet {
 					quad.validArea(c12, c23, c34, c41, 600000000, 0) &&
 					quad.nonFlatQuad(c12, c23, c34, c41)) {
 				// Choose a random, semi-transparent colour
-				Random random = new Random();
 				fill(Color.ORANGE.getRGB());
 				quad(c12.x, c12.y, c23.x, c23.y, c34.x, c34.y, c41.x, c41.y);
 			}

@@ -1,5 +1,4 @@
-package ch.epfl.planair.config;
-
+package cs211.imageprocessing;
 
 public interface Constants {
 
@@ -31,18 +30,9 @@ public interface Constants {
 	int EYE_HEIGHT             = 200;
 
 	// visual.Pipeline
-	float PIPELINE_DISCRETIZATION_STEPS_PHI = 0.06f;
+	float PIPELINE_DISCRETIZATION_STEPS_PHI = 0.01f;
 	float PIPELINE_DISCRETIZATION_STEPS_R = 2.5f;
 	int PIPELINE_DETECT_OFFSET = 200;
 	int PIPELINE_LINES = 6;
-
-
-	/* Zifeo config
-	result = pipeline.selectHueThreshold(result, 80, 125, 0);
-	result = pipeline.selectBrightnessThreshold(result, 30, 255, 0);
-	result = pipeline.selectSaturationThreshold(result, 80, 255, 0);
-	result = pipeline.convolute(result, Pipeline.gaussianKernel);
-	result = pipeline.sobel(result, 0.35f);
-	 */
 
 }
