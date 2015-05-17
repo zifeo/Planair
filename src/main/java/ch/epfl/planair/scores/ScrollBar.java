@@ -1,6 +1,6 @@
 package ch.epfl.planair.scores;
 
-import ch.epfl.planair.Utils;
+import ch.epfl.planair.config.Utils;
 import ch.epfl.planair.specs.Drawable;
 import processing.core.PApplet;
 import processing.core.PGraphics;
@@ -32,7 +32,7 @@ public final class ScrollBar extends Drawable {
      * @param context output canvas
      */
     public ScrollBar(PApplet parent, float x, float y, PGraphics context) {
-        super(parent, new PVector(0, 0, 0));
+        super(parent, Utils.nullVector());
         this.barWidth = context.width;
         this.barHeight = context.height;
         this.xPosition = x;

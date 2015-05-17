@@ -1,14 +1,15 @@
 package ch.epfl.planair.specs;
 
+import ch.epfl.planair.config.Utils;
 import processing.core.PApplet;
 import processing.core.PVector;
 import java.util.ArrayList;
 
 public abstract class Movable extends Drawable {
 
-    private PVector velocity = new PVector(0, 0, 0);
-    private PVector maxBounds = new PVector(Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE);
-    private PVector minBounds = new PVector(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY);
+    private PVector velocity = Utils.nullVector();
+    private PVector maxBounds = Utils.maxVector();
+    private PVector minBounds = Utils.minVector();
 
     public Movable(PApplet parent, PVector location) {
         super(parent, location);

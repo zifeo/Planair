@@ -1,18 +1,15 @@
 package ch.epfl.planair.specs;
 
+import ch.epfl.planair.config.Constants;
+import ch.epfl.planair.config.Utils;
 import processing.core.PVector;
 import processing.core.PApplet;
 
 public abstract class Accelerable extends Movable {
 
-    private PVector force = new PVector(0, 0, 0);
-    private PVector environmentRotation = new PVector(0, 0, 0);
+    private PVector force = Utils.nullVector();
+    private PVector environmentRotation = Utils.nullVector();
     private boolean computeGravity = false;
-
-    // todo : move to JSON config
-    private final float normalForce = 1;
-    private final float G = 0.1f;
-    private final float MU = 0.03f;
 
     public Accelerable(PApplet parent, PVector location) {
         super(parent, location);
@@ -32,9 +29,9 @@ public abstract class Accelerable extends Movable {
 
     private void applyGravity() {
         if (computeGravity) {
-            force.x = G * (float)Math.sin(environmentRotation.z);
+            force.x = Constants.ACCELERABLE_G * (float)Math.sin(environmentRotation.z);
             // force.y = 0;
-            force.z = - G * (float)Math.sin(environmentRotation.x);
+            force.z = - Constants.ACCELERABLE_G * (float)Math.sin(environmentRotation.x);
         }
     }
 
@@ -44,7 +41,7 @@ public abstract class Accelerable extends Movable {
         PVector friction = velocity();
         friction.mult(-1);
         friction.normalize();
-        friction.setMag(normalForce * MU);
+        friction.setMag(Constants.ACCELERABLE_NORMAL_FORCE * Constants.ACCELERABLE_MU);
 
         PVector newVelocity = velocity();
         newVelocity.add(force);

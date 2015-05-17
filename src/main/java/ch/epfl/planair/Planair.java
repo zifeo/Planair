@@ -1,29 +1,17 @@
 package ch.epfl.planair;
 
+import ch.epfl.planair.config.Constants;
+import ch.epfl.planair.config.Status;
+import ch.epfl.planair.config.Utils;
 import ch.epfl.planair.scores.Scoreboard;
 import ch.epfl.planair.specs.Drawable;
 import processing.core.*;
-import ch.epfl.planair.objects.*;
+import ch.epfl.planair.scene.*;
+import processing.event.MouseEvent;
 
-import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
 
 public class Planair extends PApplet {
-
-    // @todo : to put in JSON config loader
-    public static final boolean DEBUG              = true;
-    public static final int PLATE_SIZE             = 250;
-    public static final int PLATE_THICKNESS        = 10;
-    public static final int SPHERE_RADIUS          = 10;
-    public static final int CYLINDER_HEIGHT        = 20;
-    public static final int CYLINDER_RADIUS        = 15;
-    public static final int CYLINDER_RESOLUTION    = 8;
-    public static final int SCOREBOARD_HEIGHT      = 100;
-    public static final int WINDOWS_WIDTH          = 500;
-    public static final int WINDOWS_HEIGHT         = 600;
-    public static final int FRAMERATE              = 60;
-    public static final float PI_3                 = PI/3;
-    public static final int EYE_HEIGHT             = 200;
 
     private Status status = Status.PLAY;
     private PVector environmentRotation = new PVector(0, 0, 0);
@@ -35,7 +23,7 @@ public class Planair extends PApplet {
     //private Cylinder shiftCylinder;
     private ArrayList<Drawable> cylinders = new ArrayList<Drawable>();
     private Scoreboard scoreboard;
-    private BackgroundScene background;
+    private Background background;
 
     public static void main(String args[]) {
         String[] appletArgs = new String[] { "ch.epfl.planair.Planair" };
@@ -46,31 +34,45 @@ public class Planair extends PApplet {
         }
     }
 
+	@Override
     public void setup() {
-        size(WINDOWS_WIDTH, WINDOWS_HEIGHT, P3D);
-        frameRate(FRAMERATE);
+        size(Constants.WINDOWS_WIDTH, Constants.WINDOWS_HEIGHT, P3D);
+        frameRate(Constants.FRAMERATE);
 
-        PVector onPlate = new PVector(0, -PLATE_THICKNESS/2, 0);
+        PVector onPlate = new PVector(0, -Constants.PLATE_THICKNESS/2, 0);
 
-        sphere = new Sphere(this, onPlate, SPHERE_RADIUS);
-        sphere.setXBounds(-PLATE_SIZE / 2 + SPHERE_RADIUS, PLATE_SIZE / 2 - SPHERE_RADIUS);
-        sphere.setZBounds(-PLATE_SIZE / 2 + SPHERE_RADIUS, PLATE_SIZE / 2 - SPHERE_RADIUS);
+        sphere = new Sphere(this, onPlate, Constants.SPHERE_RADIUS);
+        sphere.setXBounds(
+		        -Constants.PLATE_SIZE / 2 + Constants.SPHERE_RADIUS,
+		        Constants.PLATE_SIZE / 2 - Constants.SPHERE_RADIUS
+        );
+        sphere.setZBounds(
+		        -Constants.PLATE_SIZE / 2 + Constants.SPHERE_RADIUS,
+		        Constants.PLATE_SIZE / 2 - Constants.SPHERE_RADIUS
+        );
         sphere.enableGravity();
 
-        plate = new Plate(this, new PVector(0, 0, 0), PLATE_SIZE, PLATE_THICKNESS);
+        plate = new Plate(this, new PVector(0, 0, 0), Constants.PLATE_SIZE, Constants.PLATE_THICKNESS);
 
         shiftCylinder = new Tree(this, onPlate);
-        //shiftCylinder = new Cylinder(this, onPlate, CYLINDER_RADIUS, CYLINDER_HEIGHT, CYLINDER_RESOLUTION);
-        shiftCylinder.setXBounds(-PLATE_SIZE / 2 + CYLINDER_RADIUS, PLATE_SIZE / 2 - CYLINDER_RADIUS);
-        shiftCylinder.setZBounds(-PLATE_SIZE / 2 + CYLINDER_RADIUS, PLATE_SIZE / 2 - CYLINDER_RADIUS);
+        //shiftCylinder = new Cylinder(this, onPlate, Constants.CYLINDER_RADIUS, Constants.CYLINDER_HEIGHT, Constants.CYLINDER_RESOLUTION);
+        shiftCylinder.setXBounds(
+		        -Constants.PLATE_SIZE / 2 + Constants.CYLINDER_RADIUS,
+		        Constants.PLATE_SIZE / 2 - Constants.CYLINDER_RADIUS
+        );
+        shiftCylinder.setZBounds(
+		        -Constants.PLATE_SIZE / 2 + Constants.CYLINDER_RADIUS,
+		        Constants.PLATE_SIZE / 2 - Constants.CYLINDER_RADIUS
+        );
 
-        scoreboard = new Scoreboard(this, width, SCOREBOARD_HEIGHT, sphere);
+        scoreboard = new Scoreboard(this, width, Constants.SCOREBOARD_HEIGHT, sphere);
         scoreboard.addForProjection(plate);
         scoreboard.addForProjection(sphere);
 
-        background = new BackgroundScene(this);
+        background = new Background(this);
     }
 
+    @Override
     public void draw() {
         pushMatrix();
         background(200);
@@ -78,7 +80,7 @@ public class Planair extends PApplet {
 
         switch (status) {
             case PLAY:
-                camera(0, -EYE_HEIGHT, (height/2.0f) / tan(PI*30.0f / 180.0f), 0, 0, 0, 0, 1, 0);
+                camera(0, -Constants.EYE_HEIGHT, (height/2.0f) / tan(PI*30.0f / 180.0f), 0, 0, 0, 0, 1, 0);
 
                 background.draw();
 
@@ -95,7 +97,7 @@ public class Planair extends PApplet {
             case ADD_CYLINDER:
                 camera(0, -(height/2.0f) / tan(PI*30.0f / 180.0f), 0, 0, 0, 0, 0, 0, 1);
 
-                shiftCylinder.setLocation(new PVector(mouseX - width/2, -PLATE_THICKNESS/2, mouseY - height/2));
+                shiftCylinder.setLocation(new PVector(mouseX - width/2, -Constants.PLATE_THICKNESS/2, mouseY - height/2));
                 shiftCylinder.draw();
                 break;
         }
@@ -110,20 +112,22 @@ public class Planair extends PApplet {
         scoreboard.update();
         scoreboard.draw();
 
-        fill(color(0));
-        textSize(11f);
-        text(frameRate, 2, 13);
+	    if (Constants.DEBUG) {
+		    fill(color(0));
+		    textSize(11f);
+		    text(String.format("fps: %.1f   motion factor: %.1f", frameRate, motionFactor), 2, 13);
+	    }
     }
 
-    public void mouseWheel(MouseWheelEvent e) {
-        motionFactor -= e.getPreciseWheelRotation() / 5.0f;
+    public void mouseWheel(MouseEvent e) {
+        motionFactor -= e.getCount() / 15.0f;
         motionFactor = Utils.trim(motionFactor, 0.2f, 2);
     }
 
     public void mouseDragged() {
-        if (mouseY < height - SCOREBOARD_HEIGHT) {
-            environmentRotation.x = Utils.trim(environmentRotation.x - motionFactor * (mouseY - pmouseY) / 100.0f, PI_3);
-            environmentRotation.z = Utils.trim(environmentRotation.z + motionFactor * (mouseX - pmouseX) / 100.0f, PI_3);
+        if (mouseY < height - Constants.SCOREBOARD_HEIGHT) {
+            environmentRotation.x = Utils.trim(environmentRotation.x - motionFactor * (mouseY - pmouseY) / 100.0f, Constants.PI_3);
+            environmentRotation.z = Utils.trim(environmentRotation.z + motionFactor * (mouseX - pmouseX) / 100.0f, Constants.PI_3);
         }
     }
 

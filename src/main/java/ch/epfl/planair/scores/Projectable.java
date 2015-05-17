@@ -12,6 +12,6 @@ public interface Projectable {
      *
      * @param graphic the PGraphics canvas
      */
-    public void projectOn(PGraphics graphic);
+    void projectOn(PGraphics graphic);
 
 }
