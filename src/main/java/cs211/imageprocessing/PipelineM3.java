@@ -262,7 +262,7 @@ public class PipelineM3 extends PApplet {
 		return selected;
 	}
 
-	public void debugPlotLine(PImage edgeImg, List<PVector> lines, int SCALE, int h) {
+	public void debugPlotLine(PImage edgeImg, List<PVector> lines) {
 
 		for (PVector line: lines) {
 
@@ -288,18 +288,15 @@ public class PipelineM3 extends PApplet {
 			// Finally, plot the lines
 			parent.stroke(min(255, line.z), 0, 0);
 			if (y0 > 0) {
-				if (x1 > 0) parent.line(x0 / SCALE, y0 / SCALE + h, x1 / SCALE, y1 / SCALE + h);
-				else if (y2 > 0) parent.line(x0 / SCALE, y0 / SCALE + h, x2 / SCALE, y2 / SCALE + h);
-				else parent.line(x0 / SCALE, y0 / SCALE + h, x3 / SCALE, y3 / SCALE + h);
-				//parent.text(line.z, x0 / SCALE, y0 / SCALE + h);
+				if (x1 > 0) parent.line(x0, y0, x1, y1);
+				else if (y2 > 0) parent.line(x0, y0, x2, y2);
+				else parent.line(x0, y0, x3, y3);
 			} else {
 				if (x1 > 0) {
-					if (y2 > 0) parent.line(x1 / SCALE, y1 / SCALE + h, x2 / SCALE, y2 / SCALE + h);
-					else parent.line(x1 / SCALE, y1 / SCALE + h, x3 / SCALE, y3 / SCALE + h);
-					//parent.text(line.z, x1 / SCALE, y1 / SCALE + h);
+					if (y2 > 0) parent.line(x1, y1, x2, y2);
+					else parent.line(x1, y1, x3, y3);
 				} else {
-					parent.line(x2 / SCALE, y2 / SCALE + h, x3 / SCALE, y3 / SCALE + h);
-					//parent.text(line.z, x2 / SCALE, y2 / SCALE + h);
+					parent.line(x2, y2, x3, y3);
 				}
 			}
 		}
@@ -333,9 +330,7 @@ public class PipelineM3 extends PApplet {
 					// Choose a random, semi-transparent colour
 
 					return Arrays.asList(c12, c23, c34, c41, l1, l2, l3, l4);
-				} else if (!quad.isConvex(c12, c23, c34, c41) ) println("convex");
-				else if (!quad.validArea(c12, c23, c34, c41, 600000, 60000)) println("area");
-				else if (!quad.nonFlatQuad(c12, c23, c34, c41)) println("nonFlat");
+				}
 			}
 		}
 		return Collections.emptyList();

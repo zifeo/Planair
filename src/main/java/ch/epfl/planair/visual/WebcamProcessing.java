@@ -51,7 +51,7 @@ public final class WebcamProcessing extends PApplet {
 		PImage result = image;
 
 		result = pipeline.selectHueThreshold(result, 80, 125, 0);
-		result = pipeline.selectBrightnessThreshold(result, 30, 255, 0);
+		result = pipeline.selectBrightnessThreshold(result, 30, 180, 0);
 		result = pipeline.selectSaturationThreshold(result, 80, 255, 0);
 		result = pipeline.convolute(result, Pipeline.gaussianKernel);
 		result = pipeline.sobel(result, 0.35f);
