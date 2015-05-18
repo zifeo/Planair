@@ -12,7 +12,7 @@ import java.util.List;
  */
 public final class ImageProcessing extends PApplet {
 
-	private final static String BOARD = "board4.jpg";
+	private final static String BOARD = "board1.jpg";
 	private final static float SCALE = 0.7f;
 	private final static int WIDTH = 800;
 	private final static int HEIGHT = 600;

@@ -5,6 +5,7 @@ import ch.epfl.planair.config.Status;
 import ch.epfl.planair.config.Utils;
 import ch.epfl.planair.scores.Scoreboard;
 import ch.epfl.planair.specs.Drawable;
+import ch.epfl.planair.visual.WebcamProcessor;
 import processing.core.*;
 import ch.epfl.planair.scene.*;
 import processing.event.MouseEvent;
@@ -16,6 +17,8 @@ public class Planair extends PApplet {
     private Status status = Status.PLAY;
     private PVector environmentRotation = new PVector(0, 0, 0);
     private float motionFactor = 1.5f;
+
+    private WebcamProcessor cam;
 
     private Sphere sphere;
     private Plate plate;
@@ -61,8 +64,8 @@ public class Planair extends PApplet {
 		        Constants.PLATE_SIZE / 2 - Constants.CYLINDER_RADIUS
         );
         shiftCylinder.setZBounds(
-		        -Constants.PLATE_SIZE / 2 + Constants.CYLINDER_RADIUS,
-		        Constants.PLATE_SIZE / 2 - Constants.CYLINDER_RADIUS
+                -Constants.PLATE_SIZE / 2 + Constants.CYLINDER_RADIUS,
+                Constants.PLATE_SIZE / 2 - Constants.CYLINDER_RADIUS
         );
 
         scoreboard = new Scoreboard(this, width, Constants.SCOREBOARD_HEIGHT, sphere);
@@ -70,6 +73,8 @@ public class Planair extends PApplet {
         scoreboard.addForProjection(sphere);
 
         background = new Background(this);
+
+        cam = new WebcamProcessor(this);
     }
 
     @Override
@@ -80,9 +85,12 @@ public class Planair extends PApplet {
 
         switch (status) {
             case PLAY:
-                camera(0, -Constants.EYE_HEIGHT, (height/2.0f) / tan(PI*30.0f / 180.0f), 0, 0, 0, 0, 1, 0);
+                camera(0, -Constants.EYE_HEIGHT, (height / 2.0f) / tan(PI * 30.0f / 180.0f), 0, 0, 0, 0, 1, 0);
 
                 background.draw();
+
+                PVector r = cam.getRotation();
+                environmentRotation = r;
 
                 rotateX(environmentRotation.x);
                 rotateY(environmentRotation.y);

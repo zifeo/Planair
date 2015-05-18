@@ -27,10 +27,10 @@ public class TwoDThreeD {
 		// Store here the 3D coordinates of the corners of
 		// the real Lego board, in homogenous coordinates
 		// and clockwise.
-			{-128, -128, 0, 1},
-			{128, -128, 0, 1},
-			{128, 128, 0, 1},
-			{-128, 128, 0, 1}
+			{-127, -127, 0, 1},
+			{127, -127, 0, 1},
+			{127, 127, 0, 1},
+			{-127, 127, 0, 1}
 		};
 	
 	public TwoDThreeD(int width, int height) {
@@ -52,11 +52,13 @@ public class TwoDThreeD {
         float[] firstColumn = {(float)E[0][0],
         					   (float)E[1][0],
         					   (float)E[2][0]};
+
         firstColumn = Mat.multiply(firstColumn, 1/Mat.norm2(firstColumn)); // normalize
         
         float[] secondColumn={(float)E[0][1],
         					  (float)E[1][1],
         					  (float)E[2][1]};
+
         secondColumn = Mat.multiply(secondColumn, 1/Mat.norm2(secondColumn)); // normalize
         
         float[] thirdColumn = Mat.cross(firstColumn, secondColumn);
@@ -83,7 +85,7 @@ public class TwoDThreeD {
 		//
 		// => We want to solve: (K^(-1) · p) X ([R|t] · P) = 0
 		
-		float[][] invK=Mat.inverse(K);
+		float[][] invK = Mat.inverse(K);
 
 		float[][] projectedCorners = new float[4][3];
 
@@ -103,12 +105,12 @@ public class TwoDThreeD {
 		}
 		
 		// 'A' contains the cross-product (K^(-1) · p) X P
-	    float[][] A= new float[12][9];
+	    float[][] A = new float[12][9];
 	    
 	    for(int i=0;i<4;i++){
-	      A[i*3][0]=0;
-	      A[i*3][1]=0;
-	      A[i*3][2]=0;
+	      A[i*3][0] = 0;
+	      A[i*3][1] = 0;
+	      A[i*3][2] = 0;
 	      
 	      // note that we take physicalCorners[0,1,*3*]: we drop the Z
 	      // coordinate and use the 2D homogenous coordinates of the physical
@@ -182,9 +184,9 @@ public class TwoDThreeD {
 			return rot;
 		}
 
-		rot.y =-(float)Math.asin(mat[2][0]);
-		rot.x = (float)Math.atan2(mat[2][1]/Math.cos(rot.y), mat[2][2]/Math.cos(rot.y));
-		rot.z = (float)Math.atan2(mat[1][0]/Math.cos(rot.y), mat[0][0]/Math.cos(rot.y));
+		rot.y = -(float)Math.asin(mat[2][0]);
+		rot.x = (float)Math.atan2(mat[2][1] / Math.cos(rot.y), mat[2][2] / Math.cos(rot.y));
+		rot.z = (float)Math.atan2(mat[1][0] / Math.cos(rot.y), mat[0][0] / Math.cos(rot.y));
 
 		return rot;
 	}
@@ -234,8 +236,8 @@ public class TwoDThreeD {
 
 		for (int i = 0; i < 4; i++) {
 			double dist = quad.get(i).dist(origin);
-			if (dist < minDistToOrigin) {
-				nearestToOrigin= i;
+			if (dist <= minDistToOrigin) {
+				nearestToOrigin = i;
 				minDistToOrigin = dist;
 			}
 		}

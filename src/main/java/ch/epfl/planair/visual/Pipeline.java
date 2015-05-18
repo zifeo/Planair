@@ -7,6 +7,7 @@ import processing.core.PImage;
 import processing.core.PVector;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.IntUnaryOperator;
@@ -268,7 +269,7 @@ public class Pipeline extends PApplet {
 		Collections.sort(best, (a, b) -> - Integer.compare(accumulator[a], accumulator[b]));
 		List<PVector> selected = new ArrayList<>();
 
-		for (int i = 0; i < best.size() && i < Constants.PIPELINE_LINES; ++i) {
+		for (int i = 0; i < best.size() && i < Constants.PIPELINE_LINES_COUNT; ++i) {
 
 			int idx = best.get(i);
 
@@ -325,5 +326,55 @@ public class Pipeline extends PApplet {
 
 	private int align(PImage source, int x, int y) {
 		return y * source.width + x;
+	}
+
+	public List<PVector> getPlane(PImage image, List<PVector> lines) {
+
+		QuadGraph quad = new QuadGraph();
+		quad.build(lines, image.width, image.height);
+
+		List<int[]> cycles = quad.findCycles();
+
+		if (!cycles.isEmpty()) {
+			for (int[] cycle : cycles) {
+
+				PVector l1 = lines.get(cycle[0]);
+				PVector l2 = lines.get(cycle[1]);
+				PVector l3 = lines.get(cycle[2]);
+				PVector l4 = lines.get(cycle[3]);
+				// (intersection() is a simplified version of the
+				// intersections() method you wrote last week, that simply
+				// return the coordinates of the intersection between 2 lines)
+				PVector c12 = intersection(l1, l2);
+				PVector c23 = intersection(l2, l3);
+				PVector c34 = intersection(l3, l4);
+				PVector c41 = intersection(l4, l1);
+
+				if (quad.isConvex(c12, c23, c34, c41) &&
+						quad.validArea(c12, c23, c34, c41, 70000000, 600) &&
+						quad.nonFlatQuad(c12, c23, c34, c41)) {
+
+					return Arrays.asList(c12, c23, c34, c41, l1, l2, l3, l4);
+				}
+			}
+		}
+		return Collections.emptyList();
+	}
+
+	public static PVector intersection(PVector line1, PVector line2) {
+
+		double sin_t1 = Math.sin(line1.y);
+		double sin_t2 = Math.sin(line2.y);
+		double cos_t1 = Math.cos(line1.y);
+		double cos_t2 = Math.cos(line2.y);
+		float r1 = line1.x;
+		float r2 = line2.x;
+
+		double denom = cos_t2 * sin_t1 - cos_t1 * sin_t2;
+
+		int x = (int) ((r2 * sin_t1 - r1 * sin_t2) / denom);
+		int y = (int) ((-r2 * cos_t1 + r1 * cos_t2) / denom);
+
+		return new PVector(x, y);
 	}
 }
