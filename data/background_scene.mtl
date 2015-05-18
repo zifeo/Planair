@@ -1,7 +1,16 @@
 # Blender MTL File: 'background_scene.blend'
-# Material Count: 8
+# Material Count: 9
 
-newmtl bec
+newmtl Material.002
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.640000 0.137217 0.068125
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+
+newmtl bec.001
 Ns 96.078431
 Ka 0.000000 0.000000 0.000000
 Kd 0.640000 0.548187 0.000000
@@ -10,7 +19,7 @@ Ni 1.000000
 d 1.000000
 illum 2
 
-newmtl corps
+newmtl corps.001
 Ns 96.078431
 Ka 0.000000 0.000000 0.000000
 Kd 0.261100 0.082209 0.000000
@@ -55,7 +64,7 @@ Ni 1.000000
 d 1.000000
 illum 2
 
-newmtl yeux_blancs
+newmtl yeux_blancs.001
 Ns 96.078431
 Ka 0.000000 0.000000 0.000000
 Kd 0.800000 0.800000 0.800000
@@ -64,7 +73,7 @@ Ni 1.000000
 d 0.631579
 illum 2
 
-newmtl yeux_noirs
+newmtl yeux_noirs.001
 Ns 96.078431
 Ka 0.000000 0.000000 0.000000
 Kd 0.000000 0.000000 0.000000

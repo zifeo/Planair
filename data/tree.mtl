@@ -9,7 +9,7 @@ Ks 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 1
-# map_Kd /Users/teostocco/Dropbox/EPFL/BA4/CS-211-IntroductionInformatiqueVisuelle/foliage.jpg
+map_Kd foliage-512.jpg
 
 newmtl Tronc
 Ns 96.078431
@@ -19,4 +19,4 @@ Ks 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 1
-# map_Kd /Users/teostocco/Dropbox/EPFL/BA4/CS-211-IntroductionInformatiqueVisuelle/trunk.jpg
+map_Kd trunk-512.jpg

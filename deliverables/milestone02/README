@@ -1,0 +1,9 @@
+== Groupe E - Milestone II ==
+
+Nous avons créé en un premier temps un joli arbre, avec textures, sculpté, avec des jolies branches et racines. Malheureusement il était impossible de le rendre "3D-printable", nous avons donc du nous rabattre sur un modèle bien plus simple, et bien moins joli, bien que plus pratique. 
+Nous avons tout de même inclus les deux .blend, afin que vous puissiez aprécier le design du premier, et la 3D-printabilité du deuxième.
+
+Le joli arbre: tree.blend
+L'objet 3d-printable (lampe de chevet): lamp.blend
+
+L'objet lamp possède une texture - comme demandé - qui s'affiche lorsqu'on fait un rendu de l'image (F12).
