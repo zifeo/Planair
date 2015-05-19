@@ -14,7 +14,7 @@ public final class Utils {
 
     public static PVector maxVector() { return new PVector(Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE); }
 
-    public static PVector minVector() { return new PVector(Float.MIN_VALUE, Float.MIN_VALUE, Float.MIN_VALUE); }
+    public static PVector minVector() { return new PVector(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY); }
 
 	public static void require(boolean predicat, String message) {
 		if (!predicat) throw new IllegalArgumentException(message);
