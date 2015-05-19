@@ -351,7 +351,7 @@ public class Pipeline extends PApplet {
 				PVector c41 = intersection(l4, l1);
 
 				if (quad.isConvex(c12, c23, c34, c41) &&
-						quad.validArea(c12, c23, c34, c41, 70000000, 600) &&
+						quad.validArea(c12, c23, c34, c41, 700000000, 50000) &&
 						quad.nonFlatQuad(c12, c23, c34, c41)) {
 
 					return Arrays.asList(c12, c23, c34, c41, l1, l2, l3, l4);

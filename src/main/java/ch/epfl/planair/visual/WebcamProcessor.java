@@ -1,5 +1,6 @@
 package ch.epfl.planair.visual;
 
+import cs211.imageprocessing.PipelineM3;
 import processing.core.PApplet;
 import processing.core.PImage;
 import processing.core.PVector;
@@ -50,17 +51,22 @@ public class WebcamProcessor {
         image = cam.get();
         //parent.image(image, 0, 0);
         PImage result = image;
+        //result.resize(parent.width/3, parent.height/4);
 
         result = pipeline.selectHueThreshold(result, 80, 125, 0);
         //result = pipeline.selectHueThreshold(result, 95, 140, 0);
-        result = pipeline.selectBrightnessThreshold(result, 30, 180, 0);
+        result = pipeline.selectBrightnessThreshold(result, 30, 240, 0);
         result = pipeline.selectSaturationThreshold(result, 80, 255, 0);
         result = pipeline.convolute(result, Pipeline.gaussianKernel);
+        result = pipeline.binaryBrightnessThreshold(result, 20, 0, 180);
         result = pipeline.sobel(result, 0.35f);
 
         // Partie QUAD a refactorer
         List<PVector> lines = pipeline.hough(result);
         List<PVector> corners = pipeline.getPlane(result, lines);
+
+        result.resize(parent.width/3, parent.height/4);
+        parent.image(result, parent.width/2, -parent.height/2);
 
         if(corners.size() < 8)
             return new PVector(0, 0, 0);

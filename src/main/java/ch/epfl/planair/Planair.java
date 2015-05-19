@@ -90,7 +90,9 @@ public class Planair extends PApplet {
                 background.draw();
 
                 PVector r = cam.getRotation();
-                environmentRotation = r;
+                environmentRotation.x = r.x;
+                environmentRotation.y = r.z;
+                environmentRotation.z = r.y;
 
                 rotateX(environmentRotation.x);
                 rotateY(environmentRotation.y);
