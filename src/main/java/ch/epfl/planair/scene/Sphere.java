@@ -3,7 +3,7 @@ package ch.epfl.planair.scene;
 import java.util.ArrayList;
 
 import ch.epfl.planair.specs.Drawable;
-import ch.epfl.planair.scores.Projectable;
+import ch.epfl.planair.scene.scores.Projectable;
 import ch.epfl.planair.specs.Scorable;
 import processing.core.PApplet;
 import processing.core.PVector;

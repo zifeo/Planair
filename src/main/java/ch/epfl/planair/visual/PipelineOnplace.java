@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.IntUnaryOperator;
 
-public class Pipeline extends PApplet {
+public class PipelineOnplace extends PApplet {
 
 	private final PApplet parent;
 
@@ -43,7 +43,7 @@ public class Pipeline extends PApplet {
 	private final static float[] COS = new float[(int) Math.ceil(PI / Constants.PIPELINE_DISCRETIZATION_STEPS_PHI)];
 	private final static float[] SIN = new float[(int) Math.ceil(PI / Constants.PIPELINE_DISCRETIZATION_STEPS_PHI)];
 
-	public Pipeline(PApplet parent) {
+	public PipelineOnplace(PApplet parent) {
 		this.parent = parent;
 
 		/* Construct cos and sin constants */
@@ -53,12 +53,10 @@ public class Pipeline extends PApplet {
 		}
 	}
 
-	private PImage threshold(PImage source, IntUnaryOperator op) {
-		PImage result = createImage(source.width, source.height, ALPHA);
-		for (int i = 0; i < result.width * result.height; ++i) {
-			result.pixels[i] = op.applyAsInt(source.pixels[i]);
+	private void threshold(PImage source, IntUnaryOperator op) {
+		for (int i = 0; i < source.width * source.height; ++i) {
+			source.pixels[i] = op.applyAsInt(source.pixels[i]);
 		}
-		return result;
 	}
 
 	/**
@@ -71,49 +69,48 @@ public class Pipeline extends PApplet {
 	 * @throws IllegalArgumentException when min or max color are invalid
 	 * @return
 	 */
-	public PImage binaryBrightnessThreshold(PImage source, int threshold, int minColor, int maxColor) {
+	public void binaryBrightnessThreshold(PImage source, int threshold, int minColor, int maxColor) {
 		Utils.require(0, minColor, 255, "invalid grey color");
 		Utils.require(0, maxColor, 255, "invalid grey color");
-		return threshold(source, v -> parent.brightness(v) > threshold ? color(maxColor) : color(minColor));
+		threshold(source, v -> parent.brightness(v) > threshold ? color(maxColor) : color(minColor));
 	}
 
-	public PImage inverseBinaryBrightnessThreshold(PImage source, int threshold, int minColor, int maxColor) {
-		return binaryBrightnessThreshold(source, threshold, maxColor, minColor);
+	public void inverseBinaryBrightnessThreshold(PImage source, int threshold, int minColor, int maxColor) {
+		binaryBrightnessThreshold(source, threshold, maxColor, minColor);
 	}
 
-	public PImage truncateBrightnessThreshold(PImage source, int threshold) {
+	public void truncateBrightnessThreshold(PImage source, int threshold) {
 		Utils.require(0, threshold, 255, "invalid grey color");
-		return threshold(source, v -> parent.brightness(v) > threshold ? color(threshold) : color(brightness(v)));
+		threshold(source, v -> parent.brightness(v) > threshold ? color(threshold) : color(brightness(v)));
 	}
 
-	public PImage toZeroBrightnessThreshold(PImage source, int threshold, int minColor) {
+	public void toZeroBrightnessThreshold(PImage source, int threshold, int minColor) {
 		Utils.require(0, threshold, 255, "invalid grey color");
 		Utils.require(0, minColor, 255, "invalid grey color");
-		return threshold(source, v -> parent.brightness(v) > threshold ? color(brightness(v)): color(minColor));
+		threshold(source, v -> parent.brightness(v) > threshold ? color(brightness(v)): color(minColor));
 	}
 
-	public PImage inverseToZeroBrightnessThreshold(PImage source, int threshold) {
+	public void inverseToZeroBrightnessThreshold(PImage source, int threshold) {
 		Utils.require(0, threshold, 255, "invalid grey color");
-		return threshold(source, v -> parent.brightness(v) > threshold ? color(brightness(v)): color(threshold));
+		threshold(source, v -> parent.brightness(v) > threshold ? color(brightness(v)): color(threshold));
 	}
 
-	public PImage selectHueThreshold(PImage source, int firstThreshold, int secondThreshold, int otherColor) {
+	public void selectHueThreshold(PImage source, int firstThreshold, int secondThreshold, int otherColor) {
 		Utils.require(0, otherColor, 255, "invalid grey color");
-		return threshold(source, v -> firstThreshold <= parent.hue(v) && parent.hue(v) <= secondThreshold ? v : color(otherColor));
+		threshold(source, v -> firstThreshold <= parent.hue(v) && parent.hue(v) <= secondThreshold ? v : color(otherColor));
 	}
 
-	public PImage selectSaturationThreshold(PImage source, int firstThreshold, int secondThreshold, int otherColor) {
+	public void selectSaturationThreshold(PImage source, int firstThreshold, int secondThreshold, int otherColor) {
 		Utils.require(0, otherColor, 255, "invalid grey color");
-		return threshold(source, v -> firstThreshold <= parent.saturation(v) && parent.saturation(v) <= secondThreshold ? v : color(otherColor));
+		threshold(source, v -> firstThreshold <= parent.saturation(v) && parent.saturation(v) <= secondThreshold ? v : color(otherColor));
 	}
 
-	public PImage selectBrightnessThreshold(PImage source, int firstThreshold, int secondThreshold, int otherColor) {
+	public void selectBrightnessThreshold(PImage source, int firstThreshold, int secondThreshold, int otherColor) {
 		Utils.require(0, otherColor, 255, "invalid grey color");
-		return threshold(source, v -> firstThreshold <= parent.brightness(v) && parent.brightness(v) <= secondThreshold ? v : color(otherColor));
+		threshold(source, v -> firstThreshold <= parent.brightness(v) && parent.brightness(v) <= secondThreshold ? v : color(otherColor));
 	}
 
-	public PImage convolute(PImage source, float[][] kernel) {
-		PImage result = createImage(source.width, source.height, ALPHA);
+	public void convolute(PImage source, float[][] kernel) {
 		float weight = 0;
 		for (float[] x: kernel) {
 			for (float f: x) {
@@ -122,8 +119,8 @@ public class Pipeline extends PApplet {
 		}
 		int margin = kernel.length / 2;
 
-		for (int x = margin; x + margin < result.width; ++x) {
-			for (int y = margin; y + margin < result.height; ++y) {
+		for (int x = margin; x + margin < source.width; ++x) {
+			for (int y = margin; y + margin < source.height; ++y) {
 
 				float sum = 0;
 				for (int px = x - margin, sx = 0; px <= x + margin; ++px, ++sx) {
@@ -131,15 +128,14 @@ public class Pipeline extends PApplet {
 						sum += parent.brightness(source.pixels[align(source, px, py)]) * kernel[sx][sy];
 					}
 				}
-				result.pixels[align(result, x, y)] = color(sum / weight);
+				source.pixels[align(source, x, y)] = color(sum / weight);
 			}
 		}
-		return result;
 	}
 
 
-	public PImage sobel(PImage source, float threshold) {
-		return sobel(source, threshold, 255, 0);
+	public void sobel(PImage source, float threshold) {
+		sobel(source, threshold, 255, 0);
 	}
 
 	/**
@@ -152,18 +148,17 @@ public class Pipeline extends PApplet {
 	 * @param maxColor greyscale (0-255)
 	 * @return
 	 */
-	public PImage sobel(PImage source, float threshold, int minColor, int maxColor) {
+	public void sobel(PImage source, float threshold, int minColor, int maxColor) {
 		Utils.require(0, minColor, 255, "invalid grey color");
 		Utils.require(0, maxColor, 255, "invalid grey color");
-		PImage result = createImage(source.width, source.height, ALPHA);
 
 		int margin = sobelKernelH.length / 2;
 		float maxValue = 0;
 		int size = source.width * source.height;
 		float[] buffer = new float[size];
 
-		for (int x = margin; x + margin < result.width; ++x) {
-			for (int y = margin; y + margin < result.height; ++y) {
+		for (int x = margin; x + margin < source.width; ++x) {
+			for (int y = margin; y + margin < source.height; ++y) {
 
 				float sumH = 0;
 				float sumV = 0;
@@ -176,7 +171,7 @@ public class Pipeline extends PApplet {
 					}
 				}
 
-				int bid = align(result, x, y);
+				int bid = align(source, x, y);
 				buffer[bid] = sqrt(sumH * sumH + sumV * sumV);
 				if (buffer[bid] > maxValue) {
 					maxValue = buffer[bid];
@@ -184,11 +179,9 @@ public class Pipeline extends PApplet {
 			}
 		}
 
-		for (int i = margin * result.width; i < size; ++i) {
-			result.pixels[i] = buffer[i] / maxValue > threshold ? color(minColor): color(maxColor);
+		for (int i = margin * source.width; i < size; ++i) {
+			source.pixels[i] = buffer[i] / maxValue > threshold ? color(minColor): color(maxColor);
 		}
-
-		return result;
 	}
 
 	public List<PVector> hough(PImage edgeImg) {
@@ -351,7 +344,7 @@ public class Pipeline extends PApplet {
 				PVector c41 = intersection(l4, l1);
 
 				if (quad.isConvex(c12, c23, c34, c41) &&
-						quad.validArea(c12, c23, c34, c41, 700000000, 50000) &&
+						quad.validArea(c12, c23, c34, c41, 70000000, 50000) &&
 						quad.nonFlatQuad(c12, c23, c34, c41)) {
 
 					return Arrays.asList(c12, c23, c34, c41, l1, l2, l3, l4);

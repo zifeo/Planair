@@ -3,7 +3,7 @@ package ch.epfl.planair.visual;
 import java.util.List;
 import java.util.ArrayList;
 
-import ch.epfl.planair.config.Constants;
+import ch.epfl.planair.meta.Constants;
 import processing.core.PVector;
 
 final public class QuadGraph {
@@ -64,14 +64,6 @@ final public class QuadGraph {
 			}
 		}
 
-		for (int[] cy : cycles) {
-			String s = "" + cy[0];
-
-			for (int i = 1; i < cy.length; ++i) {
-				s += "," + cy[i];
-			}
-			System.out.println(s);
-		}
 		return cycles;
 	}
 
@@ -90,7 +82,7 @@ final public class QuadGraph {
 						sub[0] = x;
 						System.arraycopy(path, 0, sub, 1, path.length);
 						//  explore extended path
-						if(sub.length < 4) {
+						if(sub.length < 5) {
 							findNewCycles(sub);
 						}
 					}
@@ -230,8 +222,6 @@ final public class QuadGraph {
 
 		float area = Math.abs(0.5f * (i1 + i2 + i3 + i4));
 
-		System.out.println(area);
-
 		boolean valid = area < max_area && area > min_area;
 
 		if (!valid) System.out.println("Area out of range");
@@ -245,7 +235,7 @@ final public class QuadGraph {
 	public static boolean nonFlatQuad(PVector c1, PVector c2, PVector c3, PVector c4){
 
 		// cos(70deg) ~= 0.3
-		float min_cos = 0.6f;
+		float min_cos = 0.8f;
 
 		PVector v21 = PVector.sub(c1, c2);
 		PVector v32 = PVector.sub(c2, c3);
