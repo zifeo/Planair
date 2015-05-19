@@ -18,7 +18,7 @@ public class WebcamProcessor {
     PApplet parent;
     private Capture cam;
     private PImage image;
-    private Pipeline pipeline;
+    private PipelineOnplace pipeline;
     private QuadGraph quad;
     private TwoDThreeD twoDThreeD;
 
@@ -37,7 +37,7 @@ public class WebcamProcessor {
             // cam = new Capture(this, cameras[4]);
             cam.start();
         }
-        pipeline = new Pipeline(parent);
+        pipeline = new PipelineOnplace(parent);
         quad = new QuadGraph();
 
         twoDThreeD = new TwoDThreeD(cam.width, cam.height);
@@ -50,23 +50,19 @@ public class WebcamProcessor {
 
         image = cam.get();
         //parent.image(image, 0, 0);
-        PImage result = image;
         //result.resize(parent.width/3, parent.height/4);
 
-        result = pipeline.selectHueThreshold(result, 80, 125, 0);
+        pipeline.selectHueThreshold(image, 80, 125, 0);
         //result = pipeline.selectHueThreshold(result, 95, 140, 0);
-        result = pipeline.selectBrightnessThreshold(result, 30, 240, 0);
-        result = pipeline.selectSaturationThreshold(result, 80, 255, 0);
-        result = pipeline.convolute(result, Pipeline.gaussianKernel);
-        result = pipeline.binaryBrightnessThreshold(result, 20, 0, 180);
-        result = pipeline.sobel(result, 0.35f);
+        pipeline.selectBrightnessThreshold(image, 30, 240, 0);
+        pipeline.selectSaturationThreshold(image, 80, 255, 0);
+        pipeline.convolute(image, Pipeline.gaussianKernel);
+        pipeline.binaryBrightnessThreshold(image, 20, 0, 180);
+        pipeline.sobel(image, 0.35f);
 
         // Partie QUAD a refactorer
-        List<PVector> lines = pipeline.hough(result);
-        List<PVector> corners = pipeline.getPlane(result, lines);
-
-        result.resize(parent.width/3, parent.height/4);
-        parent.image(result, parent.width/2, -parent.height/2);
+        List<PVector> lines = pipeline.hough(image);
+        List<PVector> corners = pipeline.getPlane(image, lines);
 
         if(corners.size() < 8)
             return new PVector(0, 0, 0);
