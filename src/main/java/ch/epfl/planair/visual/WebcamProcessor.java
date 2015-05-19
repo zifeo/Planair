@@ -45,8 +45,8 @@ public class WebcamProcessor {
 		}
 
         image = cam.get();
-        //parent.image(image, 0, 0);
-        //result.resize(parent.width/3, parent.height/4);
+        //p.image(image, 0, 0);
+        //result.resize(p.width/3, p.height/4);
 
         pipeline.selectHueThreshold(image, 80, 125, 0);
         //result = pipeline.selectHueThreshold(result, 95, 140, 0);

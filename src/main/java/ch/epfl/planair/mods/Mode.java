@@ -5,15 +5,14 @@ import processing.event.MouseEvent;
 
 public abstract class Mode {
 
-	protected final PApplet parent;
+	protected final PApplet p;
 
-	public Mode(PApplet parent) {
-		this.parent = parent;
+	public Mode(PApplet p) {
+		this.p = p;
 	}
 
+	public void update() {} // call before draw
 	public abstract void draw();
-
-	public abstract void update();
 
 	public void mousePressed() {}
 	public void mouseReleased() {}

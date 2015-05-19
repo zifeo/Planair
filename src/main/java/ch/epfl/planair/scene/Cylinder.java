@@ -1,7 +1,7 @@
 package ch.epfl.planair.scene;
 
 import ch.epfl.planair.specs.Movable;
-import ch.epfl.planair.scores.Projectable;
+import ch.epfl.planair.scene.scores.Projectable;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.core.PVector;

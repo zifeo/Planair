@@ -1,4 +1,4 @@
-package ch.epfl.planair.config;
+package ch.epfl.planair.meta;
 
 import processing.core.PVector;
 

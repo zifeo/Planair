@@ -1,14 +1,13 @@
 package ch.epfl.planair.mods;
 
 import ch.epfl.planair.Planair;
-import ch.epfl.planair.config.Constants;
-import ch.epfl.planair.config.Status;
-import ch.epfl.planair.config.Utils;
+import ch.epfl.planair.meta.Constants;
+import ch.epfl.planair.meta.Utils;
 import ch.epfl.planair.scene.Background;
 import ch.epfl.planair.scene.Plate;
 import ch.epfl.planair.scene.Sphere;
-import ch.epfl.planair.scene.Tree;
-import ch.epfl.planair.scores.Scoreboard;
+import ch.epfl.planair.scene.scores.Projectable;
+import ch.epfl.planair.scene.scores.Scoreboard;
 import ch.epfl.planair.specs.Drawable;
 import ch.epfl.planair.visual.WebcamProcessor;
 import processing.core.PApplet;
@@ -16,18 +15,17 @@ import processing.core.PVector;
 import processing.event.MouseEvent;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public final class PlayMode extends Mode {
 
 	private final Sphere sphere;
 	private final Plate plate;
-	private final Tree shiftCylinder;
-	//private final Cylinder shiftCylinder;
-	private final ArrayList<Drawable> cylinders = new ArrayList<>();
+
+	private final List<Drawable> obstacles;
 	private final Scoreboard scoreboard;
 	private final Background background;
 	private float motionFactor = 1.5f;
-
 
 	private final int width;
 	private final int height;
@@ -38,11 +36,10 @@ public final class PlayMode extends Mode {
 
 	public PlayMode(PApplet parent, int width, int heigth) {
 		super(parent);
-		PVector onPlate = new PVector(0, -Constants.PLATE_THICKNESS/2, 0);
 		this.width = width;
 		this.height = heigth;
-
-		this.sphere = new Sphere(parent, onPlate, Constants.SPHERE_RADIUS);
+		this.obstacles = new ArrayList<>();
+		this.sphere = new Sphere(parent, new PVector(0, -Constants.PLATE_THICKNESS/2, 0), Constants.SPHERE_RADIUS);
 		sphere.setXBounds(
 				-Constants.PLATE_SIZE / 2 + Constants.SPHERE_RADIUS,
 				Constants.PLATE_SIZE / 2 - Constants.SPHERE_RADIUS
@@ -55,17 +52,6 @@ public final class PlayMode extends Mode {
 
 		this.plate = new Plate(parent, new PVector(0, 0, 0), Constants.PLATE_SIZE, Constants.PLATE_THICKNESS);
 
-		this.shiftCylinder = new Tree(parent, onPlate);
-		//shiftCylinder = new Cylinder(this, onPlate, Constants.CYLINDER_RADIUS, Constants.CYLINDER_HEIGHT, Constants.CYLINDER_RESOLUTION);
-		shiftCylinder.setXBounds(
-				-Constants.PLATE_SIZE / 2 + Constants.CYLINDER_RADIUS,
-				Constants.PLATE_SIZE / 2 - Constants.CYLINDER_RADIUS
-		);
-		this.shiftCylinder.setZBounds(
-				-Constants.PLATE_SIZE / 2 + Constants.CYLINDER_RADIUS,
-				Constants.PLATE_SIZE / 2 - Constants.CYLINDER_RADIUS
-		);
-
 		this.scoreboard = new Scoreboard(parent, width, Constants.SCOREBOARD_HEIGHT, sphere);
 		this.scoreboard.addForProjection(plate);
 		this.scoreboard.addForProjection(sphere);
@@ -75,47 +61,53 @@ public final class PlayMode extends Mode {
 		this.cam = new WebcamProcessor(parent);
 	}
 
-
-	@Override
-	public void draw() {
-		parent.pushMatrix();
-		parent.background(200);
-		parent.lights();
-		parent.camera(0, -Constants.EYE_HEIGHT, (height / 2.0f) / parent.tan(parent.PI * 30.0f / 180.0f), 0, 0, 0, 0, 1, 0);
-
-		background.draw();
-
-		PVector r = cam.getRotation();
-		environmentRotation.x = r.x;
-		environmentRotation.y = r.z;
-		environmentRotation.z = - r.z;
-
-		parent.rotateX(environmentRotation.x);
-		parent.rotateY(environmentRotation.y);
-		parent.rotateZ(environmentRotation.z);
-		sphere.setEnvironmentRotation(environmentRotation);
-
-		sphere.update();
-		sphere.checkCollisions(cylinders);
-		plate.update();
-
-		sphere.draw();
-		plate.draw();
-		for (Drawable cylinder : cylinders) {
-			cylinder.draw();
-		}
-
-		parent.popMatrix();
-
-		scoreboard.update();
-		scoreboard.draw();
-		System.out.println("draw ?");
-
+	public <T extends Drawable & Projectable> void addObstacles(T o) {
+		obstacles.add(o);
+		scoreboard.addForProjection(o);
 	}
 
 	@Override
 	public void update() {
-		System.out.println("updated ?");
+		PVector r = cam.getRotation();
+		environmentRotation.x = r.x;
+		environmentRotation.y = r.z;
+		environmentRotation.z = - r.z;
+		sphere.setEnvironmentRotation(environmentRotation);
+		sphere.update();
+		sphere.checkCollisions(obstacles);
+		plate.update();
+		scoreboard.update();
+	}
+
+	protected void rotateEnvironnement() {
+		p.rotateX(environmentRotation.x);
+		p.rotateY(environmentRotation.y);
+		p.rotateZ(environmentRotation.z);
+	}
+
+	protected Sphere sphere() {
+		return sphere;
+	}
+
+	protected void drawMetaPlate() {
+		p.pushMatrix();
+		rotateEnvironnement();
+		sphere.draw();
+		plate.draw();
+
+		for (Drawable cylinder : obstacles) {
+			cylinder.draw();
+		}
+		p.popMatrix();
+	}
+
+	@Override
+	public void draw() {
+		p.noCursor();
+		p.camera(0, - Constants.EYE_HEIGHT, (height / 2.0f) / p.tan(p.PI * 30.0f / 180.0f), 0, 0, 0, 0, 1, 0);
+		background.draw();
+		drawMetaPlate();
+		scoreboard.draw();
 	}
 
 	public void mouseWheel(MouseEvent e) {
@@ -124,15 +116,16 @@ public final class PlayMode extends Mode {
 	}
 
 	public void mouseDragged() {
-		if (parent.mouseY < height - Constants.SCOREBOARD_HEIGHT) {
-			environmentRotation.x = Utils.trim(environmentRotation.x - motionFactor * (parent.mouseY - parent.pmouseY) / 100.0f, Constants.PI_3);
-			environmentRotation.z = Utils.trim(environmentRotation.z + motionFactor * (parent.mouseX - parent.pmouseX) / 100.0f, Constants.PI_3);
+		if (p.mouseY < height - Constants.SCOREBOARD_HEIGHT) {
+			environmentRotation.x = Utils.trim(environmentRotation.x - motionFactor * (p.mouseY - p.pmouseY) / 100.0f, Constants.PI_3);
+			environmentRotation.z = Utils.trim(environmentRotation.z + motionFactor * (p.mouseX - p.pmouseX) / 100.0f, Constants.PI_3);
 		}
 	}
 
 	public void keyPressed() {
-		switch (parent.keyCode) {
+		switch (p.keyCode) {
 			case 16: Planair.become(ObstaclesMode.class); break; // SHIFT
+			case 27: Planair.become(MenuMode.class); p.key = 0; break; // ESC
 		}
 	}
 

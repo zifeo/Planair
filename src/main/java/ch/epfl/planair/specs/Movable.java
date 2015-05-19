@@ -1,9 +1,10 @@
 package ch.epfl.planair.specs;
 
-import ch.epfl.planair.config.Utils;
+import ch.epfl.planair.meta.Utils;
 import processing.core.PApplet;
 import processing.core.PVector;
-import java.util.ArrayList;
+
+import java.util.List;
 
 public abstract class Movable extends Drawable {
 
@@ -70,7 +71,7 @@ public abstract class Movable extends Drawable {
         return maxBounds.z;
     }
 
-    public int checkCollisions(ArrayList<Drawable> obstacles) {
+    public int checkCollisions(List<Drawable> obstacles) {
         int count = 0;
         PVector location = location();
         PVector correction = new PVector(0, 0, 0);
