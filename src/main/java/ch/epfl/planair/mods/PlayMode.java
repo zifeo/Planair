@@ -86,7 +86,9 @@ public final class PlayMode extends Mode {
 		background.draw();
 
 		PVector r = cam.getRotation();
-		environmentRotation = r;
+		environmentRotation.x = r.x;
+		environmentRotation.y = r.z;
+		environmentRotation.z = - r.z;
 
 		parent.rotateX(environmentRotation.x);
 		parent.rotateY(environmentRotation.y);

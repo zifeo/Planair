@@ -1,5 +1,6 @@
 package ch.epfl.planair.visual;
 
+import cs211.imageprocessing.PipelineM3;
 import processing.core.PApplet;
 import processing.core.PImage;
 import processing.core.PVector;
@@ -52,9 +53,10 @@ public final class WebcamProcessing extends PApplet {
 
 		result = pipeline.selectHueThreshold(result, 80, 125, 0);
 		//result = pipeline.selectHueThreshold(result, 95, 140, 0);
-		result = pipeline.selectBrightnessThreshold(result, 30, 180, 0);
+		result = pipeline.selectBrightnessThreshold(result, 30, 240, 0);
 		result = pipeline.selectSaturationThreshold(result, 80, 255, 0);
-		result = pipeline.convolute(result, Pipeline.gaussianKernel);
+		result = pipeline.convolute(result, PipelineM3.gaussianKernel);
+		result = pipeline.binaryBrightnessThreshold(result, 20, 0, 180);
 		result = pipeline.sobel(result, 0.35f);
 
 		// Partie QUAD a refactorer
@@ -75,7 +77,7 @@ public final class WebcamProcessing extends PApplet {
 
 
 		// Fin QUAD
-		//pipeline.debugPlotLine(result, lines);
+		pipeline.debugPlotLine(result, lines);
 		//image(result, 0, 0);
 	}
 
