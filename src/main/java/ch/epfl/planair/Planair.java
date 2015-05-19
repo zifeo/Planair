@@ -1,172 +1,142 @@
 package ch.epfl.planair;
 
 import ch.epfl.planair.config.Constants;
-import ch.epfl.planair.config.Status;
-import ch.epfl.planair.config.Utils;
-import ch.epfl.planair.scores.Scoreboard;
-import ch.epfl.planair.specs.Drawable;
-import ch.epfl.planair.visual.WebcamProcessor;
+import ch.epfl.planair.mods.MenuMode;
+import ch.epfl.planair.mods.ObstaclesMode;
+import ch.epfl.planair.mods.PlayMode;
 import processing.core.*;
 import ch.epfl.planair.scene.*;
 import processing.event.MouseEvent;
+import ch.epfl.planair.mods.Mode;
 
-import java.util.ArrayList;
+import java.util.*;
 
 public class Planair extends PApplet {
 
-    private Status status = Status.PLAY;
-    private PVector environmentRotation = new PVector(0, 0, 0);
-    private float motionFactor = 1.5f;
+	private static Mode status = null;
+	private static Planair self = null;
 
-    private WebcamProcessor cam;
+	private final Map<Class, Mode> logic;
 
-    private Sphere sphere;
-    private Plate plate;
-    private Tree shiftCylinder;
-    //private Cylinder shiftCylinder;
-    private ArrayList<Drawable> cylinders = new ArrayList<Drawable>();
-    private Scoreboard scoreboard;
-    private Background background;
+	private final Timer clock;
+	//private Status status = Status.MENU;
 
-    public static void main(String args[]) {
-        String[] appletArgs = new String[] { "ch.epfl.planair.Planair" };
-        if (args != null) {
-            PApplet.main(concat(appletArgs, args));
-        } else {
-            PApplet.main(appletArgs);
-        }
-    }
+	private final List<Integer> colors = Arrays.asList(0xFF2C3E50, 0xFF34495E, 0xFF7F8C8D, 0xFF95A5A6);
+	private Button playButton = new Button(this, 20, 30, 100, 40, "Play", () -> println("cliqued"));
+	private PFont mainFont = createFont("fonts/SF-Archery-Black/SF_Archery_Black.ttf", 32);
+
+	public static void main(String args[]) {
+		String[] appletArgs = new String[] { "ch.epfl.planair.Planair" };
+		PApplet.main(args != null ? concat(appletArgs, args): appletArgs);
+	}
+
+	public static void become(Class<? extends Mode> mode) {
+		status = self.logic.get(mode);
+		assert status != null;
+	}
+
+	public Planair() {
+
+		assert self == null;
+		self = this;
+
+		this.logic = new HashMap<>();
+		this.clock = new Timer();
+		this.clock.scheduleAtFixedRate(new TimerTask() {
+			public void run() {  if (status != null) status.update(); }
+		}, 0, 1000 / Constants.FRAMERATE);
+	}
 
 	@Override
-    public void setup() {
-        size(Constants.WINDOWS_WIDTH, Constants.WINDOWS_HEIGHT, P3D);
-        frameRate(Constants.FRAMERATE);
+	public void setup() {
+		size(Constants.WINDOWS_WIDTH, Constants.WINDOWS_HEIGHT, P3D);
+		frameRate(Constants.FRAMERATE);
 
-        PVector onPlate = new PVector(0, -Constants.PLATE_THICKNESS/2, 0);
+		assert status == null;
+		this.logic.put(PlayMode.class, new PlayMode(this, width, height));
+		this.logic.put(ObstaclesMode.class, new ObstaclesMode(this));
+		this.logic.put(MenuMode.class, new MenuMode(this));
+		status = this.logic.get(PlayMode.class);
+		assert status != null;
+	}
 
-        sphere = new Sphere(this, onPlate, Constants.SPHERE_RADIUS);
-        sphere.setXBounds(
-		        -Constants.PLATE_SIZE / 2 + Constants.SPHERE_RADIUS,
-		        Constants.PLATE_SIZE / 2 - Constants.SPHERE_RADIUS
-        );
-        sphere.setZBounds(
-		        -Constants.PLATE_SIZE / 2 + Constants.SPHERE_RADIUS,
-		        Constants.PLATE_SIZE / 2 - Constants.SPHERE_RADIUS
-        );
-        sphere.enableGravity();
+	@Override
+	public void draw() {
+		background(200);
+		lights();
 
-        plate = new Plate(this, new PVector(0, 0, 0), Constants.PLATE_SIZE, Constants.PLATE_THICKNESS);
+		status.draw();
 
-        shiftCylinder = new Tree(this, onPlate);
-        //shiftCylinder = new Cylinder(this, onPlate, Constants.CYLINDER_RADIUS, Constants.CYLINDER_HEIGHT, Constants.CYLINDER_RESOLUTION);
-        shiftCylinder.setXBounds(
-		        -Constants.PLATE_SIZE / 2 + Constants.CYLINDER_RADIUS,
-		        Constants.PLATE_SIZE / 2 - Constants.CYLINDER_RADIUS
-        );
-        shiftCylinder.setZBounds(
-                -Constants.PLATE_SIZE / 2 + Constants.CYLINDER_RADIUS,
-                Constants.PLATE_SIZE / 2 - Constants.CYLINDER_RADIUS
-        );
+		/*switch (status) {
 
-        scoreboard = new Scoreboard(this, width, Constants.SCOREBOARD_HEIGHT, sphere);
-        scoreboard.addForProjection(plate);
-        scoreboard.addForProjection(sphere);
+			case MENU:
+				//playButton.draw();
+				fill(colors.get(0));
+				textFont(mainFont);
+				textAlign(CENTER, CENTER);
+				text("Planair", width/2, height/2);
 
-        background = new Background(this);
+				break;
 
-        cam = new WebcamProcessor(this);
-    }
+			case ADD_CYLINDER:
+				camera(0, -(height/2.0f) / tan(PI*30.0f / 180.0f), 0, 0, 0, 0, 0, 0, 1);
 
-    @Override
-    public void draw() {
-        pushMatrix();
-        background(200);
-        lights();
+				shiftCylinder.setLocation(new PVector(mouseX - width/2, -Constants.PLATE_THICKNESS/2, mouseY - height/2));
+				shiftCylinder.draw();
+				break;
+		}*/
 
-        switch (status) {
-            case PLAY:
-                camera(0, -Constants.EYE_HEIGHT, (height / 2.0f) / tan(PI * 30.0f / 180.0f), 0, 0, 0, 0, 1, 0);
+		if (Constants.DEBUG) {
+			fill(color(0));
+			textSize(11f);
+			text(String.format("fps: %.1f", frameRate), 2, 13);
+		}
+	}
 
-                background.draw();
+	@Override public boolean sketchFullScreen() {
+		return true;
+	}
 
-                PVector r = cam.getRotation();
-                environmentRotation = r;
+	@Override public void mouseWheel(MouseEvent e) {
+		status.mouseWheel(e);
+	}
+	@Override public void mouseDragged() {
+		status.mouseDragged();
+	}
+	@Override public void mouseMoved() {
+		status.mouseMoved();
+	}
+	@Override public void mouseReleased() {
+		status.mousePressed();
+	}
+	@Override public void mousePressed() {
+		status.mousePressed();
 
-                rotateX(environmentRotation.x);
-                rotateY(environmentRotation.y);
-                rotateZ(environmentRotation.z);
-                sphere.setEnvironmentRotation(environmentRotation);
+		/*switch (status) {
 
-                sphere.update();
-                sphere.checkCollisions(cylinders);
-                plate.update();
-                break;
+			case MENU:
+				playButton.mousePressed();
 
-            case ADD_CYLINDER:
-                camera(0, -(height/2.0f) / tan(PI*30.0f / 180.0f), 0, 0, 0, 0, 0, 0, 1);
+			case ADD_CYLINDER:
+				PVector wantedLocation = shiftCylinder.location();
+				PVector sphereLocation = sphere.location();
+				float angle = PVector.angleBetween(wantedLocation, sphereLocation);
+				float distance = PVector.dist(wantedLocation, sphereLocation);
+				float borders = shiftCylinder.get2DDistanceFrom(angle) + sphere.get2DDistanceFrom(angle + PI);
 
-                shiftCylinder.setLocation(new PVector(mouseX - width/2, -Constants.PLATE_THICKNESS/2, mouseY - height/2));
-                shiftCylinder.draw();
-                break;
-        }
-
-        sphere.draw();
-        plate.draw();
-        for (Drawable cylinder : cylinders) {
-            cylinder.draw();
-        }
-        popMatrix();
-
-        scoreboard.update();
-        scoreboard.draw();
-
-	    if (Constants.DEBUG) {
-		    fill(color(0));
-		    textSize(11f);
-		    text(String.format("fps: %.1f   motion factor: %.1f", frameRate, motionFactor), 2, 13);
-	    }
-    }
-
-    public void mouseWheel(MouseEvent e) {
-        motionFactor -= e.getCount() / 15.0f;
-        motionFactor = Utils.trim(motionFactor, 0.2f, 2);
-    }
-
-    public void mouseDragged() {
-        if (mouseY < height - Constants.SCOREBOARD_HEIGHT) {
-            environmentRotation.x = Utils.trim(environmentRotation.x - motionFactor * (mouseY - pmouseY) / 100.0f, Constants.PI_3);
-            environmentRotation.z = Utils.trim(environmentRotation.z + motionFactor * (mouseX - pmouseX) / 100.0f, Constants.PI_3);
-        }
-    }
-
-    public void mousePressed() {
-        if (status == Status.ADD_CYLINDER) {
-            PVector wantedLocation = shiftCylinder.location();
-            PVector sphereLocation = sphere.location();
-            float angle = PVector.angleBetween(wantedLocation, sphereLocation);
-            float distance = PVector.dist(wantedLocation, sphereLocation);
-            float borders = shiftCylinder.get2DDistanceFrom(angle) + sphere.get2DDistanceFrom(angle + PI);
-
-            if (distance > borders) {
-                //Cylinder obstacle = new Cylinder(shiftCylinder);
-                Tree obstacle = new Tree(shiftCylinder);
-                cylinders.add(obstacle);
-                scoreboard.addForProjection(obstacle);
-            }
-        }
-    }
-
-    public void keyReleased() {
-        switch (keyCode) {
-            case SHIFT:
-                status = Status.PLAY;
-        }
-    }
-
-    public void keyPressed() {
-        switch (keyCode) {
-            case SHIFT:
-                status = Status.ADD_CYLINDER;
-        }
-    }
+				if (distance > borders) {
+					//Cylinder obstacle = new Cylinder(shiftCylinder);
+					Tree obstacle = new Tree(shiftCylinder);
+					cylinders.add(obstacle);
+					scoreboard.addForProjection(obstacle);
+				}
+				break;
+		}*/
+	}
+	@Override public void keyReleased() {
+		status.keyReleased();
+	}
+	@Override public void keyPressed() {
+		status.keyPressed();
+	}
 }

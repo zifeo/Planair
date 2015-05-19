@@ -21,7 +21,11 @@ public final class Utils {
 	}
 
     public static void require(double min, double value, double max, String message) {
-        require(min <= value && value <= max, message);
+        require(in(min, value, max), message);
+    }
+
+    public static boolean in(double low, double value, double high) {
+        return low <= value && value <= high;
     }
 
 }

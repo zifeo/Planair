@@ -55,10 +55,10 @@ public final class Tree extends Movable implements Projectable {
     }
 
     private PShape createTree() {
-        PShape tree = parent.loadShape("treeLight.obj");
-        tree.scale(scale);
-        tree.rotate((float)Math.PI);
-        return tree;
+        //PShape tree = parent.loadShape("3D/treeLight.obj");
+        //tree.scale(scale);
+        //tree.rotate(parent.PI);
+        return parent.createShape(parent.RECT, 0, 0, 80, 80);
     }
 }
 
