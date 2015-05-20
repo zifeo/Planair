@@ -1,7 +1,7 @@
 package ch.epfl.planair.visual;
 
-import ch.epfl.planair.config.Constants;
-import ch.epfl.planair.config.Utils;
+import ch.epfl.planair.meta.Constants;
+import ch.epfl.planair.meta.Utils;
 import processing.core.PApplet;
 import processing.core.PImage;
 import processing.core.PVector;

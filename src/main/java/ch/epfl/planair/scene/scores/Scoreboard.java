@@ -1,8 +1,9 @@
-package ch.epfl.planair.scores;
+package ch.epfl.planair.scene.scores;
 
 import java.util.ArrayList;
 
-import ch.epfl.planair.config.Constants;
+import ch.epfl.planair.meta.Constants;
+import ch.epfl.planair.scene.ScrollBar;
 import ch.epfl.planair.specs.Drawable;
 import ch.epfl.planair.specs.Scorable;
 import processing.core.*;

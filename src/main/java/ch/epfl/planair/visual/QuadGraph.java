@@ -3,7 +3,7 @@ package ch.epfl.planair.visual;
 import java.util.List;
 import java.util.ArrayList;
 
-import ch.epfl.planair.config.Constants;
+import ch.epfl.planair.meta.Constants;
 import processing.core.PVector;
 
 final public class QuadGraph {

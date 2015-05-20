@@ -1,4 +1,4 @@
-package ch.epfl.planair.scores;
+package ch.epfl.planair.scene.scores;
 
 import processing.core.PGraphics;
 

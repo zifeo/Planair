@@ -2,7 +2,7 @@ package ch.epfl.planair.specs;
 
 import java.util.ArrayList;
 
-import ch.epfl.planair.scores.Scorer;
+import ch.epfl.planair.scene.scores.Scorer;
 import processing.core.PApplet;
 import processing.core.PVector;
 
