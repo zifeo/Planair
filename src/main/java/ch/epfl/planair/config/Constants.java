@@ -11,7 +11,7 @@ public interface Constants {
 	int SCOREBOARD_SCROLL_HEIGHT    = 10;
 
 	// specs.Accelerable
-	float ACCELERABLE_NORMAL_FORCE  = 1;
+	float ACCELERABLE_NORMAL_FORCE  = 1f;
 	float ACCELERABLE_G             = 0.1f;
 	float ACCELERABLE_MU            = 0.03f;
 
