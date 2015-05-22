@@ -10,6 +10,11 @@ public final class SetupMode extends Mode {
 	}
 
 	@Override
+	public void update() {
+
+	}
+
+	@Override
 	public void draw() {
 
 	}

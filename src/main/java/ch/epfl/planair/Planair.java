@@ -58,14 +58,12 @@ public class Planair extends PApplet {
 	public void draw() {
 		background(Constants.COLORBG);
 		lights();
-
-		status.update();
-		status.draw();
+		status.tick();
 
 		if (Constants.DEBUG) {
 			fill(Constants.BLACK);
 			textSize(11f);
-			text(String.format("fps: %.1f", frameRate), 2, 13);
+			text(String.format("fps: %.1f", frameRate), 4 - width / 2, 13 - height / 2);
 		}
 	}
 

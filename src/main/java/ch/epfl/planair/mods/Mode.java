@@ -11,7 +11,12 @@ public abstract class Mode {
 		this.p = p;
 	}
 
-	public void update() {} // call before draw
+	public void tick() {
+		update();
+		draw();
+	}
+
+	public void update() {}
 	public abstract void draw();
 
 	public void mousePressed() {}

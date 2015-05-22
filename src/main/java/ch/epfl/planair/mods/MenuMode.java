@@ -5,6 +5,7 @@ import ch.epfl.planair.scene.ui.Action;
 import ch.epfl.planair.meta.Constants;
 import ch.epfl.planair.scene.ui.Button;
 import processing.core.PApplet;
+import processing.core.PConstants;
 import processing.core.PFont;
 import processing.core.PGraphics;
 
@@ -36,7 +37,7 @@ public final class MenuMode extends Mode {
 		int count = 0;
 		menu.add(createMenuButton(count++, "Play!", () -> Planair.become(PlayMode.class)));
 		menu.add(createMenuButton(count++, "Setup", () -> Planair.become(SetupMode.class)));
-		menu.add(createMenuButton(count++, "Exit", () -> p.exit()));
+		menu.add(createMenuButton(count++, "Exit", p::exit));
 	}
 
 	private Button createMenuButton(int count, String text, Action action) {
@@ -45,13 +46,13 @@ public final class MenuMode extends Mode {
 
 	@Override
 	public void draw() {
-		p.camera(0, 0, (p.height / 2.0f) / p.tan(p.PI * 30.0f / 180.0f), 0, 0, 0, 0, 1, 0);
+		p.camera(0, 0, (p.height / 2.0f) / PApplet.tan(PConstants.PI * 30.0f / 180.0f), 0, 0, 0, 0, 1, 0);
 
 		screen.beginDraw();
 		screen.background(Constants.COLORBG);
 		screen.fill(Constants.COLOR1);
 		screen.textFont(logoFont);
-		screen.textAlign(p.CENTER, p.TOP);
+		screen.textAlign(PConstants.CENTER, PConstants.TOP);
 		screen.text(Constants.LOGO, Constants.MENU_WIDTH / 2, 0);
 
 		boolean hovered = false;
@@ -59,31 +60,23 @@ public final class MenuMode extends Mode {
 			hovered |= b.hover();
 			b.draw();
 		}
-		p.cursor(hovered ? p.HAND: p.ARROW);
+		p.cursor(hovered ? PConstants.HAND : PConstants.ARROW);
 		screen.endDraw();
 
-		p.translate(- p.width/2, - p.height/2);
-
-		p.image(screen, (p.width - Constants.MENU_WIDTH) / 2, p.height / 4);
+		p.image(screen, - Constants.MENU_WIDTH / 2, - p.height / 4);
 
 	}
 
 	@Override public void mousePressed() {
-		for (Button b : menu) {
-			b.mousePressed();
-		}
+		menu.forEach(Button::mousePressed);
 	}
 
 	@Override public void mouseReleased() {
-		for (Button b : menu) {
-			b.mouseReleased();
-		}
+		menu.forEach(Button::mouseReleased);
 	}
 
 	@Override public void mouseMoved() {
-		for (Button b : menu) {
-			b.mouseMoved();
-		}
+		menu.forEach(Button::mouseMoved);
 	}
 
 }

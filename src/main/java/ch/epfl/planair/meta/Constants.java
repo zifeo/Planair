@@ -39,8 +39,8 @@ public interface Constants {
 	int WINDOWS_WIDTH          = 500;
 	int WINDOWS_HEIGHT         = 600;
 	int FRAMERATE              = 60;
-	float PI_3                 = (float) Math.PI/3;
 	int EYE_HEIGHT             = 200;
+	float MOTION_FACTOR        = 1.5f;
 
 	// visual.Pipeline
 	float PIPELINE_DISCRETIZATION_STEPS_PHI = 0.01f;

@@ -46,14 +46,14 @@ public final class ScrollBar extends Drawable {
     /** @inheritdoc */
     public void update() {
         mouseover = isMouseOver();
-        if (parent.mousePressed && mouseover) {
+        if (p.mousePressed && mouseover) {
             locked = true;
         }
-        if (!parent.mousePressed) {
+        if (!p.mousePressed) {
             locked = false;
         }
         if (locked) {
-            newSliderPosition = Utils.trim(parent.mouseX - xPosition - barHeight / 2, sliderPositionMin, sliderPositionMax);
+            newSliderPosition = Utils.trim(p.mouseX - xPosition - barHeight / 2, sliderPositionMin, sliderPositionMax);
         }
         if (Math.abs(newSliderPosition - sliderPosition) > 1) {
             sliderPosition = sliderPosition + (newSliderPosition - sliderPosition);
@@ -79,7 +79,7 @@ public final class ScrollBar extends Drawable {
     }
 
     private boolean isMouseOver() {
-        return parent.mouseX > xPosition && parent.mouseX < xPosition+barWidth
-                && parent.mouseY > yPosition && parent.mouseY < yPosition+barHeight;
+        return p.mouseX > xPosition && p.mouseX < xPosition+barWidth
+                && p.mouseY > yPosition && p.mouseY < yPosition+barHeight;
     }
 }

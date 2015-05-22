@@ -11,6 +11,7 @@ import ch.epfl.planair.scene.scores.Scoreboard;
 import ch.epfl.planair.specs.Drawable;
 import ch.epfl.planair.visual.WebcamProcessor;
 import processing.core.PApplet;
+import processing.core.PConstants;
 import processing.core.PVector;
 import processing.event.MouseEvent;
 
@@ -25,7 +26,7 @@ public final class PlayMode extends Mode {
 	private final List<Drawable> obstacles;
 	private final Scoreboard scoreboard;
 	private final Background background;
-	private float motionFactor = 1.5f;
+	private float motionFactor;
 
 	private final int width;
 	private final int height;
@@ -36,6 +37,7 @@ public final class PlayMode extends Mode {
 
 	public PlayMode(PApplet parent, int width, int heigth) {
 		super(parent);
+		this.motionFactor = Constants.MOTION_FACTOR;
 		this.width = width;
 		this.height = heigth;
 		this.obstacles = new ArrayList<>();
@@ -79,34 +81,27 @@ public final class PlayMode extends Mode {
 		scoreboard.update();
 	}
 
-	protected void rotateEnvironnement() {
-		p.rotateX(environmentRotation.x);
-		p.rotateY(environmentRotation.y);
-		p.rotateZ(environmentRotation.z);
-	}
-
 	protected Sphere sphere() {
 		return sphere;
 	}
 
-	protected void drawMetaPlate() {
+	protected void drawMetaPlate(PVector envRot) {
 		p.pushMatrix();
-		rotateEnvironnement();
-		sphere.draw();
+		p.rotateX(envRot.x);
+		p.rotateY(envRot.y);
+		p.rotateZ(envRot.z);
 		plate.draw();
-
-		for (Drawable cylinder : obstacles) {
-			cylinder.draw();
-		}
+		sphere.draw();
+		obstacles.forEach(Drawable::draw);
 		p.popMatrix();
 	}
 
 	@Override
 	public void draw() {
 		p.noCursor();
-		p.camera(0, - Constants.EYE_HEIGHT, (height / 2.0f) / p.tan(p.PI * 30.0f / 180.0f), 0, 0, 0, 0, 1, 0);
+		p.camera(0, - Constants.EYE_HEIGHT, (height / 2.0f) / PApplet.tan(PConstants.PI * 30.0f / 180.0f), 0, 0, 0, 0, 1, 0);
 		background.draw();
-		drawMetaPlate();
+		drawMetaPlate(environmentRotation);
 		scoreboard.draw();
 	}
 
@@ -117,8 +112,8 @@ public final class PlayMode extends Mode {
 
 	public void mouseDragged() {
 		if (p.mouseY < height - Constants.SCOREBOARD_HEIGHT) {
-			environmentRotation.x = Utils.trim(environmentRotation.x - motionFactor * (p.mouseY - p.pmouseY) / 100.0f, Constants.PI_3);
-			environmentRotation.z = Utils.trim(environmentRotation.z + motionFactor * (p.mouseX - p.pmouseX) / 100.0f, Constants.PI_3);
+			environmentRotation.x = Utils.trim(environmentRotation.x - motionFactor * (p.mouseY - p.pmouseY) / 100.0f, PConstants.THIRD_PI);
+			environmentRotation.z = Utils.trim(environmentRotation.z + motionFactor * (p.mouseX - p.pmouseX) / 100.0f, PConstants.THIRD_PI);
 		}
 	}
 

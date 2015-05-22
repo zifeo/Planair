@@ -7,15 +7,15 @@ import processing.core.PVector;
 
 public abstract class Drawable {
 
-    protected PApplet parent;
+    protected PApplet p;
     private PVector location = Utils.nullVector();
 
-    public Drawable(PApplet parent){
-        this.parent = parent;
+    public Drawable(PApplet p){
+        this.p = p;
     }
 
-    public Drawable(PApplet parent, PVector location) {
-        this.parent = parent;
+    public Drawable(PApplet p, PVector location) {
+        this.p = p;
         this.location.set(location);
     }
 
@@ -37,17 +37,17 @@ public abstract class Drawable {
 
     protected void drawAxes() {
         if (Constants.DEBUG) {
-            parent.textSize(15);
-            parent.noStroke();
-            parent.fill(0, 200, 0);
-            parent.box(1, 250, 1);
-            parent.text("Y", -4, 140, 0);
-            parent.fill(200, 0, 0);
-            parent.box(250, 1, 1);
-            parent.text("X", 130, 6, 0);
-            parent.fill(0, 0, 200);
-            parent.box(1, 1, 250);
-            parent.text("Z", -4, 0, 130);
+            p.textSize(15);
+            p.noStroke();
+            p.fill(0, 200, 0);
+            p.box(1, 250, 1);
+            p.text("Y", -4, 140, 0);
+            p.fill(200, 0, 0);
+            p.box(250, 1, 1);
+            p.text("X", 130, 6, 0);
+            p.fill(0, 0, 200);
+            p.box(1, 1, 250);
+            p.text("Z", -4, 0, 130);
         }
     }
 }

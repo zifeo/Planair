@@ -90,11 +90,11 @@ public final class Scoreboard extends Drawable implements Scorer {
     /** @inheritdoc */
     public void update() {
 
-        if (parent.frameCount % 5 == 0) {
+        if (p.frameCount % 5 == 0) {
             currentVelocity = scoreTrack.velocity().mag();
         }
 
-        if (parent.frameCount % dt == 0) {
+        if (p.frameCount % dt == 0) {
             scores.add(0.0f);
             ++time;
         }
@@ -115,8 +115,8 @@ public final class Scoreboard extends Drawable implements Scorer {
 
     /** @inheritdoc */
     public void draw() {
-        parent.pushMatrix();
-        parent.noLights();
+        p.pushMatrix();
+        p.noLights();
 
         overlay.beginDraw();
         overlay.background(220);
@@ -126,10 +126,10 @@ public final class Scoreboard extends Drawable implements Scorer {
         overlay.image(slider, 2 * moduleSize + 3 * Constants.SCOREBOARD_PADDING, 2 * Constants.SCOREBOARD_PADDING + barChart.height);
         overlay.endDraw();
 
-        parent.image(overlay, 0, parent.height - overlay.height);
+        p.image(overlay, - p.width / 2, p.height / 2 - overlay.height);
 
-        parent.lights();
-        parent.popMatrix();
+        p.lights();
+        p.popMatrix();
     }
 
     private void drawMiniMap() {
