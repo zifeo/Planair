@@ -101,9 +101,9 @@ public final class PlayMode extends Mode {
 		p.noCursor();
 		p.camera(0, - Constants.EYE_HEIGHT, (height / 2.0f) / PApplet.tan(PConstants.PI * 30.0f / 180.0f), 0, 0, 0, 0, 1, 0);
 		background.draw();
-		scoreboard.draw();
-
 		drawMetaPlate(environmentRotation);
+		p.camera();
+		scoreboard.draw();
 	}
 
 	public void mouseWheel(MouseEvent e) {
