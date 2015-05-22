@@ -68,10 +68,7 @@ public final class PlayMode extends Mode {
 
 	@Override
 	public void update() {
-		PVector r = cam.getRotation();
-		environmentRotation.x = r.x;
-		environmentRotation.y = r.z;
-		environmentRotation.z = - r.z;
+		environmentRotation.set(cam.getRotation());
 		sphere.setEnvironmentRotation(environmentRotation);
 		sphere.update();
 		sphere.checkCollisions(obstacles);

@@ -77,10 +77,16 @@ public class PipelineOnplace extends PApplet {
 	 * @throws IllegalArgumentException when min or max color are invalid
 	 * @return
 	 */
-	public int[] binaryBrightnessThreshold(PImage source, int threshold, int minColor, int maxColor) {
+	public int[] binaryBrightnessThresholdTab(PImage source, int threshold, int minColor, int maxColor) {
 		Utils.require(0, minColor, 255, "invalid grey color");
 		Utils.require(0, maxColor, 255, "invalid grey color");
 		return thresholdBinary(source, v -> parent.brightness(v) > threshold ? color(maxColor) : color(minColor));
+	}
+
+	public void binaryBrightnessThreshold(PImage source, int threshold, int minColor, int maxColor) {
+		Utils.require(0, minColor, 255, "invalid grey color");
+		Utils.require(0, maxColor, 255, "invalid grey color");
+		threshold(source, v -> parent.brightness(v) > threshold ? color(maxColor) : color(minColor));
 	}
 
 	public void inverseBinaryBrightnessThreshold(PImage source, int threshold, int minColor, int maxColor) {
