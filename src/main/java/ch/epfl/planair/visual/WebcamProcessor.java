@@ -1,6 +1,5 @@
 package ch.epfl.planair.visual;
 
-import cs211.imageprocessing.PipelineM3;
 import processing.core.PApplet;
 import processing.core.PImage;
 import processing.core.PVector;
@@ -52,8 +51,8 @@ public class WebcamProcessor {
         //result = pipeline.selectHueThreshold(result, 95, 140, 0);
         pipeline.selectBrightnessThreshold(image, 30, 240, 0);
         pipeline.selectSaturationThreshold(image, 80, 255, 0);
-        pipeline.convolute(image, Pipeline.gaussianKernel);
         pipeline.binaryBrightnessThreshold(image, 20, 0, 180);
+        pipeline.convolute(image, Pipeline.gaussianKernel);
         pipeline.sobel(image, 0.35f);
 
         // Partie QUAD a refactorer
