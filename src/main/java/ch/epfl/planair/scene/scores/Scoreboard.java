@@ -115,9 +115,6 @@ public final class Scoreboard extends Drawable implements Scorer {
 
     /** @inheritdoc */
     public void draw() {
-        p.pushMatrix();
-        p.noLights();
-
         overlay.beginDraw();
         overlay.background(220);
         overlay.image(projection, Constants.SCOREBOARD_PADDING, Constants.SCOREBOARD_PADDING);
@@ -126,10 +123,9 @@ public final class Scoreboard extends Drawable implements Scorer {
         overlay.image(slider, 2 * moduleSize + 3 * Constants.SCOREBOARD_PADDING, 2 * Constants.SCOREBOARD_PADDING + barChart.height);
         overlay.endDraw();
 
-        p.image(overlay, - p.width / 2, p.height / 2 - overlay.height);
-
-        p.lights();
-        p.popMatrix();
+	    p.noLights();
+	    p.image(overlay, - p.width / 2, p.height / 2 - overlay.height);
+	    p.lights();
     }
 
     private void drawMiniMap() {

@@ -24,7 +24,7 @@ public final class MenuMode extends Mode {
 
 	public MenuMode(PApplet parent) {
 		super(parent);
-		this.logoFont = p.createFont(Constants.FONT, 80);
+		this.logoFont = p.createFont(Constants.FONT, 120);
 		this.menuFont= p.createFont(Constants.FONT, 20);
 		this.menu = new ArrayList<>();
 		this.menuX = (p.width - Constants.MENU_WIDTH) / 2;
@@ -36,12 +36,14 @@ public final class MenuMode extends Mode {
 	private void constructMenu() {
 		int count = 0;
 		menu.add(createMenuButton(count++, "Play!", () -> Planair.become(PlayMode.class)));
-		menu.add(createMenuButton(count++, "Setup", () -> Planair.become(SetupMode.class)));
+		menu.add(createMenuButton(count++, "Battle!", () -> PApplet.println("battle")));
+		menu.add(createMenuButton(count++, "Cam Setup", () -> Planair.become(SetupMode.class)));
+		menu.add(createMenuButton(count++, "Options", () -> PApplet.println("options")));
 		menu.add(createMenuButton(count++, "Exit", p::exit));
 	}
 
 	private Button createMenuButton(int count, String text, Action action) {
-		return new Button(screen, 0, count * (Constants.MENU_ITEM_HEIGHT + Constants.MENU_ITEM_MARGIN) + 150, Constants.MENU_WIDTH, Constants.MENU_ITEM_HEIGHT, text, action);
+		return new Button(screen, 0, count * (Constants.MENU_ITEM_HEIGHT + Constants.MENU_ITEM_MARGIN) + 180, Constants.MENU_WIDTH, Constants.MENU_ITEM_HEIGHT, text, action);
 	}
 
 	@Override
@@ -54,15 +56,14 @@ public final class MenuMode extends Mode {
 		screen.textFont(logoFont);
 		screen.textAlign(PConstants.CENTER, PConstants.TOP);
 		screen.text(Constants.LOGO, Constants.MENU_WIDTH / 2, 0);
-
 		boolean hovered = false;
 		for (Button b : menu) {
 			hovered |= b.hover();
 			b.draw();
 		}
-		p.cursor(hovered ? PConstants.HAND : PConstants.ARROW);
 		screen.endDraw();
 
+		p.cursor(hovered ? PConstants.HAND : PConstants.ARROW);
 		p.image(screen, - Constants.MENU_WIDTH / 2, - p.height / 4);
 
 	}
