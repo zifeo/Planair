@@ -4,6 +4,7 @@ import ch.epfl.planair.Planair;
 import ch.epfl.planair.meta.Constants;
 import ch.epfl.planair.meta.Utils;
 import ch.epfl.planair.scene.Background;
+import ch.epfl.planair.scene.Airplane;
 import ch.epfl.planair.scene.Plate;
 import ch.epfl.planair.scene.Sphere;
 import ch.epfl.planair.scene.scores.Projectable;
@@ -25,6 +26,7 @@ public final class PlayMode extends Mode {
 	private final List<Drawable> obstacles;
 	private final Scoreboard scoreboard;
 	private final Background background;
+	private final Airplane airplane;
 	private float motionFactor = 1.5f;
 
 	private final int width;
@@ -57,6 +59,7 @@ public final class PlayMode extends Mode {
 		this.scoreboard.addForProjection(sphere);
 
 		this.background = new Background(parent);
+		this.airplane = new Airplane(parent);
 
 		this.cam = new WebcamProcessor(parent);
 	}
@@ -77,6 +80,7 @@ public final class PlayMode extends Mode {
 		sphere.checkCollisions(obstacles);
 		plate.update();
 		scoreboard.update();
+		airplane.update();
 	}
 
 	protected void rotateEnvironnement() {
@@ -104,8 +108,9 @@ public final class PlayMode extends Mode {
 	@Override
 	public void draw() {
 		p.noCursor();
-		p.camera(0, - Constants.EYE_HEIGHT, (height / 2.0f) / p.tan(p.PI * 30.0f / 180.0f), 0, 0, 0, 0, 1, 0);
+		p.camera(0, -Constants.EYE_HEIGHT, (height / 2.0f) / p.tan(p.PI * 30.0f / 180.0f), 0, 0, 0, 0, 1, 0);
 		background.draw();
+		airplane.draw();
 		drawMetaPlate();
 		scoreboard.draw();
 	}
