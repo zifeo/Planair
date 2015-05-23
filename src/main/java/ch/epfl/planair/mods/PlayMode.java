@@ -20,26 +20,21 @@ import java.util.List;
 
 public final class PlayMode extends Mode {
 
-	private final Sphere sphere;
-	private final Plate plate;
+	private final WebcamProcessor cam;
 
+	private final Sphere sphere;
 	private final List<Drawable> obstacles;
+	private final Plate plate;
 	private final Scoreboard scoreboard;
 	private final Background background;
-	private float motionFactor;
-
-	private final int width;
-	private final int height;
 
 	private PVector environmentRotation = Utils.nullVector();
+	private float motionFactor;
 
-	private final WebcamProcessor cam;
 
 	public PlayMode(PApplet parent, int width, int heigth) {
 		super(parent);
 		this.motionFactor = Constants.MOTION_FACTOR;
-		this.width = width;
-		this.height = heigth;
 		this.obstacles = new ArrayList<>();
 		this.sphere = new Sphere(parent, new PVector(0, -Constants.PLATE_THICKNESS/2, 0), Constants.SPHERE_RADIUS);
 		sphere.setXBounds(
@@ -99,7 +94,7 @@ public final class PlayMode extends Mode {
 	@Override
 	public void draw() {
 		p.noCursor();
-		p.camera(0, - Constants.EYE_HEIGHT, (height / 2.0f) / PApplet.tan(PConstants.PI * 30.0f / 180.0f), 0, 0, 0, 0, 1, 0);
+		p.camera(0, - Constants.EYE_HEIGHT, (p.height / 2f) / PApplet.tan(PConstants.PI * 30f / 180f), 0, 0, 0, 0, 1, 0);
 		background.draw();
 		drawMetaPlate(environmentRotation);
 		p.camera();
@@ -112,7 +107,7 @@ public final class PlayMode extends Mode {
 	}
 
 	public void mouseDragged() {
-		if (p.mouseY < height - Constants.SCOREBOARD_HEIGHT) {
+		if (p.mouseY < p.height - Constants.SCOREBOARD_HEIGHT) {
 			environmentRotation.x = Utils.trim(environmentRotation.x - motionFactor * (p.mouseY - p.pmouseY) / 100.0f, PConstants.THIRD_PI);
 			environmentRotation.z = Utils.trim(environmentRotation.z + motionFactor * (p.mouseX - p.pmouseX) / 100.0f, PConstants.THIRD_PI);
 		}

@@ -40,7 +40,7 @@ public class Planair extends PApplet {
 		frameRate(Constants.FRAMERATE);
 
 		List<Mode> modes = new ArrayList<>();
-		PlayMode playMode = new PlayMode(this, width, height);
+		PlayMode playMode = new PlayMode(this);
 		modes.add(playMode);
 		modes.add(new ObstaclesMode(this, playMode));
 		modes.add(new MenuMode(this));
@@ -61,9 +61,10 @@ public class Planair extends PApplet {
 		status.tick();
 
 		if (Constants.DEBUG) {
+			camera();
 			fill(Constants.BLACK);
 			textSize(11f);
-			text(String.format("fps: %.1f", frameRate), 4 - width / 2, 13 - height / 2);
+			text(String.format("fps: %.1f", frameRate), 4, 13);
 		}
 	}
 
