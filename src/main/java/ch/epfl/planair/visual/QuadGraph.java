@@ -6,20 +6,33 @@ import java.util.ArrayList;
 import ch.epfl.planair.meta.Constants;
 import processing.core.PVector;
 
+/**
+ * Tries to find the best Quadrilateral from the lines in output of
+ * the Hough algorithm.
+ *
+ */
 final public class QuadGraph {
 
 	private List<int[]> cycles = new ArrayList<>();
 	private int[][] graph;
 
+	/**
+	 * Initiates with the output of the Hough algorithm
+	 * @param lines the lines representing edges
+	 * @param width the width of the image
+	 * @param height the height of the image
+	 */
 	public void build(List<PVector> lines, int width, int height) {
 
 		int n = lines.size();
 
-		// The maximum possible number of edges is sum(0..n) = n * (n + 1)/2
+		// The maximum possible number of edges is sum(0..n) = n * (n + 1) /2
 		graph = new int[n * (n + 1)/2][2];
 
 		int idx = 0;
 
+		/* For each pair of line, check if lines intersect and add the pair
+		to the graph */
 		for (int i = 0; i < lines.size(); ++i) {
 			for (int j = i + 1; j < lines.size(); ++j) {
 				if (intersect(lines.get(i), lines.get(j), width, height)) {
@@ -55,6 +68,10 @@ final public class QuadGraph {
 				width + Constants.PIPELINE_DETECT_OFFSET >= x && height + Constants.PIPELINE_DETECT_OFFSET >= y;
 	}
 
+	/**
+	 * Finds new cycles in the graph
+	 * @return the List of paths that are a cycle
+	 */
 	public List<int[]> findCycles() {
 
 		cycles.clear();
@@ -67,6 +84,10 @@ final public class QuadGraph {
 		return cycles;
 	}
 
+	/**
+	 * TODO comment
+	 * @param path
+	 */
 	public void findNewCycles(int[] path) {
 		int n = path[0];
 		int x;
@@ -78,7 +99,7 @@ final public class QuadGraph {
 				if (graph[i][y] == n) { //  edge refers to our current node
 					x = graph[i][(y + 1) % 2];
 
-					if (!visited(x, path)) {//  neighbor node not on path yet
+					if (!visited(x, path)) { //  neighbor node not on path yet
 						sub[0] = x;
 						System.arraycopy(path, 0, sub, 1, path.length);
 						//  explore extended path
@@ -86,7 +107,7 @@ final public class QuadGraph {
 							findNewCycles(sub);
 						}
 					}
-					else if ((path.length > 3) && (x == path[path.length - 1])){//  cycle found
+					else if ((path.length > 3) && (x == path[path.length - 1])){ //  cycle found
 						int[] p = normalize(path);
 						int[] inv = invert(p);
 						if (isNew(p) && isNew(inv)) {
@@ -98,9 +119,12 @@ final public class QuadGraph {
 		}
 	}
 
-	//  check of both arrays have same lengths and contents
+	/**
+	 * Checks if two arrays have the same size and content
+ 	 */
 	public static Boolean equals(int[] a, int[] b) {
 
+		// TODO why a[0] == b[0] here ? What if both arrays have size zero ?
 		if (!(a[0] == b[0]) && (a.length == b.length)) {
 			return false;
 		}
@@ -113,7 +137,11 @@ final public class QuadGraph {
 		return true;
 	}
 
-	//  create a path array with reversed order
+	/**
+	 * Creates a path array with reversed order
+	 * @param path the original path
+	 * @return the reversed path
+	 */
 	public static int[] invert(int[] path) {
 		int[] p = new int[path.length];
 
@@ -124,7 +152,11 @@ final public class QuadGraph {
 		return normalize(p);
 	}
 
-	//  rotate cycle path such that it begins with the smallest node
+	/**
+	 * Rotates cycle path such that it begins with the smallest node
+	 * @param path the cycle path to rotate
+	 * @return the rotated path
+	 */
 	public static int[] normalize(int[] path) {
 		int[] p = new int[path.length];
 		int x = smallest(path);
@@ -142,6 +174,12 @@ final public class QuadGraph {
 
 	//  compare path against known cycles
 	//  return true, iff path is not a known cycle
+
+	/**
+	 * Compares path against known cycles, to see if it is new
+	 * @param path the path to compare
+	 * @return True if the path is new, False otherwise
+	 */
 	public Boolean isNew(int[] path) {
 
 		for (int[] p : cycles) {
@@ -152,7 +190,11 @@ final public class QuadGraph {
 		return true;
 	}
 
-	//  return the int of the array which is the smallest
+	/**
+	 * Returns the minimum value in the array
+	 * @param path the array
+	 * @return the minimum value
+	 */
 	public static int smallest(int[] path) {
 		int min = Integer.MAX_VALUE;
 
@@ -164,7 +206,12 @@ final public class QuadGraph {
 		return min;
 	}
 
-	//  check if vertex n is contained in path
+	/**
+	 * Checks if vertex n is contained in path
+	 * @param n the vertex
+	 * @param path the path to check
+	 * @return True if n is contained in path
+	 */
 	public static Boolean visited(int n, int[] path) {
 
 		for (int p : path) {
@@ -175,7 +222,8 @@ final public class QuadGraph {
 		return false;
 	}
 
-	/** Check if a quad is convex or not.
+	/**
+	 * Check if a quad is convex or not.
 	 *
 	 * Algo: take two adjacent edges and compute their cross-product.
 	 * The sign of the z-component of all the cross-products is the
@@ -206,7 +254,8 @@ final public class QuadGraph {
 		}
 	}
 
-	/** Compute the area of a quad, and check it lays within a specific range
+	/**
+	 * Compute the area of a quad, and check it lays within a specific range
 	 */
 	public static boolean validArea(PVector c1, PVector c2, PVector c3, PVector c4, float max_area, float min_area) {
 
@@ -229,7 +278,8 @@ final public class QuadGraph {
 		return valid;
 	}
 
-	/** Compute the (cosine) of the four angles of the quad, and check they are all large enough
+	/**
+	 * Compute the (cosine) of the four angles of the quad, and check they are all large enough
 	 * (the quad representing our board should be close to a rectangle)
 	 */
 	public static boolean nonFlatQuad(PVector c1, PVector c2, PVector c3, PVector c4){

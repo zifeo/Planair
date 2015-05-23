@@ -1,6 +1,5 @@
 package ch.epfl.planair.visual;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -10,19 +9,21 @@ import papaya.*;
 
 public class TwoDThreeD {
 	
-	// default focal length, well suited for most webcams
+	// Default focal length, well-suited for most webcams
 	static float f = 700;
 	
-	// intrisic camera matrix
+	// Intrinsic camera matrix
 	static float [][] K = {{f,0,0},
 			        	   {0,f,0},
 			        	   {0,0,1}};
+
+	// TODO change that to the smaller Lego bord, since it's what we're using
+	// Real physical coordinates of the Lego board in millimeters
+	static float boardSize = 380.f; // Large Duplo board
+
+	//static float boardSize = 255.f; // Smaller Lego board
 	
-	// Real physical coordinates of the Lego board in mm
-	static float boardSize = 380.f; // large Duplo board
-	//static float boardSize = 255.f; // smaller Lego board
-	
-	// the 3D coordinates of the physical board corners, clockwise
+	// The 3D coordinates of the physical board corners, clockwise
 	static float [][] physicalCorners = {
 		// Store here the 3D coordinates of the corners of
 		// the real Lego board, in homogenous coordinates
@@ -32,23 +33,33 @@ public class TwoDThreeD {
 			{127, 127, 0, 1},
 			{-127, 127, 0, 1}
 		};
-	
+
+	/**
+	 * Initiates TwoDThreeD with the width and height of the webcam image
+	 * @param width the width of the image
+	 * @param height the height of the image
+	 */
 	public TwoDThreeD(int width, int height) {
 		
-		// set the offset to the center of the webcam image
+		// Set the offset to the center of the webcam image
 		K[0][2] = 0.5f * width;
 		K[1][2] = 0.5f * height;
 			
 	}
 
+	/**
+	 * Computes the 3D angles from the 4 2D vertex of the quadrilateral
+	 * @param points2D the 4 vertex of the quadrilateral
+	 * @return the corresponding 3D angles
+	 */
 	public PVector get3DRotations(List<PVector> points2D) {
 		
-		// 1- Solve the extrinsic matrix from the projected 2D points
+		// Solve the extrinsic matrix from the projected 2D points
 		double[][] E = solveExtrinsicMatrix(points2D);
 		
 		
-        // 2 - Re-build a proper 3x3 rotation matrix from the camera's 
-		//     extrinsic matrix E
+        /* Re-build a proper 3x3 rotation matrix from the camera's
+		extrinsic matrix E */
         float[] firstColumn = {(float)E[0][0],
         					   (float)E[1][0],
         					   (float)E[2][0]};
@@ -69,12 +80,16 @@ public class TwoDThreeD {
                 {firstColumn[2], secondColumn[2], thirdColumn[2]}
                };
         
-        // 3 - Computes and returns Euler angles (rx, ry, rz) from this matrix
+        // Compute and return Euler angles (rx, ry, rz) from this matrix
         return rotationFromMatrix(rotationMatrix);
 	
 	}
-		
-		
+
+	/**
+	 * Solves the extrinsic matrix equation
+	 * @param points2D the P vector
+	 * @return the resulting matrix [R|t]
+	 */
 	private double[][] solveExtrinsicMatrix(List<PVector> points2D) {
 	
 		// p ~= K · [R|t] · P
@@ -148,7 +163,7 @@ public class TwoDThreeD {
 	      A[i*3+2][8]=0;
 	    }
 
-	    SVD svd=new SVD(A);
+	    SVD svd = new SVD(A);
 	    
 	    double[][] V = svd.getV();
 	    
@@ -162,7 +177,12 @@ public class TwoDThreeD {
 	    return E;
 
 	}
-	  
+
+	/**
+	 * Computes the rotation angles from the extrinsic matrix
+	 * @param mat the extrinsic matrix
+	 * @return a vector of the 3D angles
+	 */
 	private PVector rotationFromMatrix(float[][]  mat) {
 
 		// Assuming rotation order is around x,y,z
@@ -191,13 +211,19 @@ public class TwoDThreeD {
 		return rot;
 	}
 
-	/* Takes a vector (x, y, 0) and returns (x, y, 1) */
+	/**
+	 * Takes a (x, y, 0) vector and returns (x, y, 1)
+	 * @param v
+	 * @return
+	 */
 	private PVector homegenizeVector(PVector v) {
+		assert(v.z == 0);
 		return new PVector(v.x, v.y, 1);
 	}
 
-	/*
-		Compares vectors around their center, to sort them in the clockwise order
+	/**
+	 * Compares vectors around their center, to sort them in the clockwise order
+	 * By center we mean the average vector (v1 + v2 + v3 + v4) / 4
 	 */
 	static class CWComparator implements Comparator<PVector> {
 		PVector center;
@@ -212,10 +238,12 @@ public class TwoDThreeD {
 		}
 	}
 
-	/*
-		Sorts corners in clockwise order accordingly:
-		{Top left, top right, bottom right, bottom left}
- 	*/
+	/**
+	 * Sorts corners in clockwise order accordingly:
+	 * {Top left, top right, bottom right, bottom left}
+	 * @param quad the list of corners
+	 * @return
+	 */
 	public static List<PVector> sortCorners(List<PVector> quad){
 		// Sort corners so that they are ordered clockwise
 		PVector a = quad.get(0);
