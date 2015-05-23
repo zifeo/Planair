@@ -1,7 +1,7 @@
 package ch.epfl.planair;
 
 import ch.epfl.planair.meta.Constants;
-import ch.epfl.planair.mods.*;
+import ch.epfl.planair.modes.*;
 import processing.core.PApplet;
 import processing.event.MouseEvent;
 
@@ -16,7 +16,7 @@ public class Planair extends PApplet {
 
 	public static void main(String args[]) {
 		String[] appletArgs = new String[] { "ch.epfl.planair.Planair" };
-		PApplet.main(args != null ? concat(appletArgs, args): appletArgs);
+		PApplet.main(args != null ? concat(appletArgs, args) : appletArgs);
 	}
 
 	public static void become(Class<? extends Mode> mode) {

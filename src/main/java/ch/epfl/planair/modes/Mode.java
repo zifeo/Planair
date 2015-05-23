@@ -1,4 +1,4 @@
-package ch.epfl.planair.mods;
+package ch.epfl.planair.modes;
 
 import processing.core.PApplet;
 import processing.event.MouseEvent;

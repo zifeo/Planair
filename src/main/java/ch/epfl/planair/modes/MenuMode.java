@@ -1,4 +1,4 @@
-package ch.epfl.planair.mods;
+package ch.epfl.planair.modes;
 
 import ch.epfl.planair.Planair;
 import ch.epfl.planair.scene.ui.Action;

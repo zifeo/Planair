@@ -1,4 +1,4 @@
-package ch.epfl.planair.mods;
+package ch.epfl.planair.modes;
 
 import ch.epfl.planair.Planair;
 import processing.core.PApplet;
