@@ -1,7 +1,6 @@
 package ch.epfl.planair.visual;
 
 import ch.epfl.planair.meta.BoundedQueue;
-import ch.epfl.planair.meta.Consts;
 import ch.epfl.planair.meta.PipelineConfig;
 import processing.core.PApplet;
 import processing.core.PImage;
@@ -23,7 +22,6 @@ public final class WebcamProcessor {
     private final AtomicInteger rx;
     private final AtomicInteger ry;
     private final AtomicInteger rz;
-	private final AtomicBoolean pipelining;
 	public static final AtomicReference<PipelineConfig> config;
 
     private float lastFrameTime;
@@ -42,18 +40,14 @@ public final class WebcamProcessor {
         this.rx = new AtomicInteger(0);
         this.ry = new AtomicInteger(0);
         this.rz = new AtomicInteger(0);
-	    this.pipelining = new AtomicBoolean(false);
-
 	    new Thread(new PipelineRunner()).start();
 	}
 
 	public void start() {
-		pipelining.set(true);
 		webcam.start();
 	}
 
 	public void stop() {
-		pipelining.set(false);
 		webcam.stop();
 	}
 
@@ -89,44 +83,36 @@ public final class WebcamProcessor {
 
 	    @Override
         public void run() {
-		    try {
-                while (true) {
-	                if (pipelining.get() && webcam.available()) {
-		                webcam.read();
-		                PImage image = webcam.get();
-		                //p.image(image, 0, 0);
-		                //result.resize(p.width/3, p.height/4);
+            while (true) {
+                if (webcam.available()) {
+	                webcam.read();
+	                PImage image = webcam.get();
+	                //p.image(image, 0, 0);
+	                //result.resize(p.width/3, p.height/4);
 
-		                pipeline.selectHueThreshold(image, 80, 125, 0);
-		                //result = pipeline.selectHueThreshold(result, 95, 140, 0);
-		                pipeline.selectBrightnessThreshold(image, 30, 240, 0);
-		                pipeline.selectSaturationThreshold(image, 80, 255, 0);
-		                pipeline.binaryBrightnessThreshold(image, 20, 0, 180);
-		                pipeline.convolute(image, PipelineOnPlace.gaussianKernel);
-		                pipeline.sobel(image, 0.35f);
+	                pipeline.selectHueThreshold(image, 80, 125, 0);
+	                //result = pipeline.selectHueThreshold(result, 95, 140, 0);
+	                pipeline.selectBrightnessThreshold(image, 30, 240, 0);
+	                pipeline.selectSaturationThreshold(image, 80, 255, 0);
+	                pipeline.binaryBrightnessThreshold(image, 20, 0, 180);
+	                pipeline.convolute(image, PipelineOnPlace.gaussianKernel);
+	                pipeline.sobel(image, 0.35f);
 
-		                // Partie QUAD a refactorer
-		                List<PVector> lines = pipeline.hough(image);
-		                List<PVector> corners = pipeline.getPlane(image, lines);
+	                // Partie QUAD a refactorer
+	                List<PVector> lines = pipeline.hough(image);
+	                List<PVector> corners = pipeline.getPlane(image, lines);
 
-		                if (corners.size() >= 8) {
-			                PVector r = twoDThreeD.get3DRotations(corners.subList(0, 4));
+	                if (corners.size() >= 8) {
+		                PVector r = twoDThreeD.get3DRotations(corners.subList(0, 4));
 
-			                rx.set(Float.floatToIntBits(r.x));
-			                ry.set(Float.floatToIntBits(r.z));
-			                rz.set(Float.floatToIntBits(-r.y));
+		                rx.set(Float.floatToIntBits(r.x));
+		                ry.set(Float.floatToIntBits(r.z));
+		                rz.set(Float.floatToIntBits(-r.y));
 
-			                //p.println(r.x + " " + r.y);
-		                }
-	                } else {
-		                Thread.sleep((int) (1000 / webcam.frameRate));
+		                //p.println(r.x + " " + r.y);
 	                }
                 }
-		    } catch (InterruptedException e) {
-			    if (Consts.DEBUG) {
-				    p.println("PipelineRunner exited.");
-			    }
-		    }
+            }
         }
     }
 

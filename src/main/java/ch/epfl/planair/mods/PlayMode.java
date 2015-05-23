@@ -105,6 +105,7 @@ public final class PlayMode extends Mode {
 		p.popMatrix();
 	}
 
+	@Override
 	public void entered() {
 		daemon.start();
 	}
