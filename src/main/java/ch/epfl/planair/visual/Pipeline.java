@@ -12,6 +12,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.IntUnaryOperator;
 
+/**
+ * The image processing Pipeline.
+ * @deprecated to be replaced by PipelineOnPlace
+ */
 public class Pipeline extends PApplet {
 
 	private final PApplet parent;
@@ -33,6 +37,7 @@ public class Pipeline extends PApplet {
 			{ 0,  0, 0 },
 			{ 0, -1, 0 }
 	};
+
 	private final static float[][] sobelKernelV = {
 			{ 0, 0,  0 },
 			{ 1, 0, -1 },
@@ -53,6 +58,12 @@ public class Pipeline extends PApplet {
 		}
 	}
 
+	/**
+	 * Applies the threshold operator to every pixel of a PImage
+	 * @param source the source image
+	 * @param op the operator to apply
+	 * @return the modified image
+	 */
 	private PImage threshold(PImage source, IntUnaryOperator op) {
 		PImage result = createImage(source.width, source.height, ALPHA);
 		for (int i = 0; i < result.width * result.height; ++i) {
@@ -63,19 +74,21 @@ public class Pipeline extends PApplet {
 
 	/**
 	 * A binary threshold based on brightness.
-	 * If input reaches the limit, max color is set, otherwise min color.
+	 * If a pixel has a bigger brightness value than threshold,
+	 * it is set to  maxColor, otherwise to minColor.
 	 *
 	 * @param threshold brighness limit (0-255)
 	 * @param minColor greyscale (0-255)
 	 * @param maxColor greyscale (0-255)
 	 * @throws IllegalArgumentException when min or max color are invalid
-	 * @return
+	 * @return the modified image
 	 */
 	public PImage binaryBrightnessThreshold(PImage source, int threshold, int minColor, int maxColor) {
 		Utils.require(0, minColor, 255, "invalid grey color");
 		Utils.require(0, maxColor, 255, "invalid grey color");
 		return threshold(source, v -> parent.brightness(v) > threshold ? color(maxColor) : color(minColor));
 	}
+
 
 	public PImage inverseBinaryBrightnessThreshold(PImage source, int threshold, int minColor, int maxColor) {
 		return binaryBrightnessThreshold(source, threshold, maxColor, minColor);

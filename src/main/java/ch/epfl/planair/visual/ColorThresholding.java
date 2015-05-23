@@ -3,6 +3,10 @@ package ch.epfl.planair.visual;
 import processing.core.PApplet;
 import processing.core.PImage;
 
+/**
+ * A testing class, used to try out the color thresholding
+ * part on a static Image.
+ */
 public final class ColorThresholding extends PApplet {
 
 	private HScrollBar thresholdBar1, thresholdBar2;

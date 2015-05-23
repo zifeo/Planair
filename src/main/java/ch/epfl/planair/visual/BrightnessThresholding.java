@@ -3,6 +3,10 @@ package ch.epfl.planair.visual;
 import processing.core.PApplet;
 import processing.core.PImage;
 
+/**
+ * A testing class, used to try out the brightness thresholding
+ * part on a static Image.
+ */
 public final class BrightnessThresholding extends PApplet {
 
 	private HScrollBar thresholdBar;

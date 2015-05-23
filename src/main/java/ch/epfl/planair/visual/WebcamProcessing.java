@@ -10,6 +10,10 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * A testing class, used to try out the image processing
+ * part on the Webcam input.
+ */
 public final class WebcamProcessing extends PApplet {
 
 	private Capture cam;
@@ -80,9 +84,5 @@ public final class WebcamProcessing extends PApplet {
 		pipeline.debugPlotLine(result, lines);
 		//image(result, 0, 0);
 	}
-
-
-
-
 
 }

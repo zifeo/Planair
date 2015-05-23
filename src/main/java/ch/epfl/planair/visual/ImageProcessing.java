@@ -3,6 +3,10 @@ package ch.epfl.planair.visual;
 import processing.core.PApplet;
 import processing.core.PImage;
 
+/**
+ * A testing class, used to try out the image processing
+ * part on a static Image.
+ */
 public final class ImageProcessing extends PApplet {
 
 	@Override

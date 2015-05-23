@@ -3,7 +3,9 @@ package ch.epfl.planair.visual;
 import processing.core.PApplet;
 
 /**
- * Given... @todo Refactor ! and maybe use score.scrollBar instead
+ * An horizontal scrollbar with a slider, that can be used
+ * as an input.
+ * @todo Refactor ! and maybe use score.scrollBar instead
  */
 public final class HScrollBar {
 
@@ -13,9 +15,8 @@ public final class HScrollBar {
 	private float barHeight; // Bar's height in pixels
 	private float xPosition; // Bar's x position in pixels
 	private float yPosition; // Bar's y position in pixels
-	private float sliderPosition, newSliderPosition;
-	// Position of slider
-	private float sliderPositionMin, sliderPositionMax; // Max and min values of slider
+	private float sliderPosition, newSliderPosition; // Position of slider
+	private float sliderPositionMin, sliderPositionMax; // Max and min values of slider position values
 	private boolean mouseOver;
 	private boolean locked;
 
