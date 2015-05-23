@@ -21,7 +21,7 @@ import java.util.List;
 
 public final class PlayMode extends Mode {
 
-	private final WebcamProcessor cam;
+	private final WebcamProcessor daemon;
 
 	private final Sphere sphere;
 	private final List<Drawable> obstacles;
@@ -31,7 +31,6 @@ public final class PlayMode extends Mode {
 
 	private PVector environmentRotation = Utils.nullVector();
 	private float motionFactor;
-
 
 	public PlayMode(PApplet p, Capture webcam) {
 		super(p);
@@ -57,12 +56,12 @@ public final class PlayMode extends Mode {
 
 		this.background = new Background(p);
 
-		this.cam = new WebcamProcessor(p, webcam);
+		this.daemon = new WebcamProcessor(p, webcam);
 	}
 
 	@Override
 	public void update() {
-		environmentRotation.set(cam.rotation());
+		environmentRotation.set(daemon.rotation());
 		sphere.setEnvironmentRotation(environmentRotation);
 		sphere.update();
 		sphere.checkCollisions(obstacles);
@@ -102,12 +101,12 @@ public final class PlayMode extends Mode {
 
 	@Override
 	public void entered() {
-
+		daemon.start();
 	}
 
 	@Override
 	public void exited() {
-
+		daemon.stop();
 	}
 
 	@Override

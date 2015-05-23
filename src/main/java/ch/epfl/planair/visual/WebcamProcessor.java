@@ -40,13 +40,14 @@ public final class WebcamProcessor {
 	    new Thread(new PipelineRunner()).start();
 	}
 
-
 	public void start() {
 		pipelining.set(true);
+		webcam.start();
 	}
 
 	public void stop() {
 		pipelining.set(false);
+		webcam.stop();
 	}
 
 	public PVector rotation() {
@@ -69,7 +70,6 @@ public final class WebcamProcessor {
         return r;
 	}
 
-
     private final class PipelineRunner implements Runnable {
 
 	    private final PipelineOnplace pipeline;
@@ -83,7 +83,7 @@ public final class WebcamProcessor {
 	    @Override
         public void run() {
             while (true) {
-	            if (pipelining.get() && webcam.available() && webcam.isModified()) {
+	            if (pipelining.get() && webcam.available()) {
 
 		            webcam.read();
 		            PImage image = webcam.get();

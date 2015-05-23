@@ -53,7 +53,7 @@ public final class Button extends Drawable {
 
 	public boolean hover() {
 		return Utils.in(0, p.mouseX - (p.width - Consts.MENU_WIDTH) / 2 - x, width) &&
-				Utils.in(0, p.mouseY - p.height / 4 - y, height);
+				Utils.in(0, p.mouseY - (p.height - Consts.MENU_HEIGHT) / 2 - y, height);
 	}
 
 	public void mousePressed() {

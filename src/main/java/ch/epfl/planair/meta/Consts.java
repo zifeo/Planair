@@ -62,6 +62,7 @@ public interface Consts {
 
 	// mods.menu
 	int MENU_WIDTH          = 400;
+	int MENU_HEIGHT         = 500;
 	int MENU_ITEM_HEIGHT    = 35;
 	int MENU_ITEM_MARGIN    = 15;
 	int MENU_HEIGHT_CENTER  = 100;

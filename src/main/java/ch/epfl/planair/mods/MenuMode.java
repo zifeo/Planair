@@ -29,7 +29,7 @@ public final class MenuMode extends Mode {
 		this.menu = new ArrayList<>();
 		this.menuX = (p.width - Consts.MENU_WIDTH) / 2;
 		this.menuY = (p.height - Consts.MENU_HEIGHT_CENTER) / 2;
-		this.screen = p.createGraphics(Consts.MENU_WIDTH, p.height / 2, PApplet.P2D);
+		this.screen = p.createGraphics(Consts.MENU_WIDTH, Consts.MENU_HEIGHT, PApplet.P2D);
 		constructMenu();
 	}
 
@@ -43,7 +43,14 @@ public final class MenuMode extends Mode {
 	}
 
 	private Button createMenuButton(int count, String text, Action action) {
-		return new Button(screen, 0, count * (Consts.MENU_ITEM_HEIGHT + Consts.MENU_ITEM_MARGIN) + 180, Consts.MENU_WIDTH, Consts.MENU_ITEM_HEIGHT, text, action);
+		return new Button(
+				screen,
+				0,
+				count * (Consts.MENU_ITEM_HEIGHT + Consts.MENU_ITEM_MARGIN) + 180,
+				Consts.MENU_WIDTH, Consts.MENU_ITEM_HEIGHT,
+				text,
+				action
+		);
 	}
 
 	@Override
@@ -64,7 +71,9 @@ public final class MenuMode extends Mode {
 		screen.endDraw();
 
 		p.cursor(hovered ? PConstants.HAND : PConstants.ARROW);
-		p.image(screen, - Consts.MENU_WIDTH / 2, - p.height / 4);
+		p.noLights();
+		p.image(screen, - Consts.MENU_WIDTH / 2, - Consts.MENU_HEIGHT / 2);
+		p.lights();
 	}
 
 	@Override public void mousePressed() {

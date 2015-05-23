@@ -74,14 +74,9 @@ public final class WebcamProcessing extends PApplet {
 			System.out.println("rx = " + (int)Math.toDegrees(r.x) + ", ry = " + (int)Math.toDegrees(r.y) + ", rz = " + (int)Math.toDegrees(r.z) + "°");
 		}
 
-
 		// Fin QUAD
 		pipeline.debugPlotLine(result, lines);
 		//image(result, 0, 0);
 	}
-
-
-
-
 
 }
