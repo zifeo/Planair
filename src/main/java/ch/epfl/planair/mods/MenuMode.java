@@ -11,6 +11,9 @@ import processing.core.PGraphics;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The welcome mode, where the menu is displayed
+ */
 public final class MenuMode extends Mode {
 
 	private final PFont logoFont;

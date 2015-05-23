@@ -3,6 +3,10 @@ package ch.epfl.planair.mods;
 import processing.core.PApplet;
 import processing.event.MouseEvent;
 
+/**
+ * Represents a mode or state of the game.
+ * A mode should handle mouse events, update and draw function
+ */
 public abstract class Mode {
 
 	protected final PApplet p;

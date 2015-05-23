@@ -7,6 +7,10 @@ import ch.epfl.planair.scene.Tree;
 import processing.core.PApplet;
 import processing.core.PVector;
 
+/**
+ * The mode where a top-view of the plate is displayed,
+ * where the user can add obstacles to the terrain.
+ */
 public final class ObstaclesMode extends Mode {
 
 	private final Tree shiftCylinder;

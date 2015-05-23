@@ -17,6 +17,11 @@ import processing.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The main mode of the game. A 3D view of the plate
+ * is presented. The user can control the angle of the plate
+ * to move the ball and try to hit obstacles.
+ */
 public final class PlayMode extends Mode {
 
 	private final Sphere sphere;
@@ -79,7 +84,7 @@ public final class PlayMode extends Mode {
 		scoreboard.update();
 	}
 
-	protected void rotateEnvironnement() {
+	protected void rotateEnvironment() {
 		p.rotateX(environmentRotation.x);
 		p.rotateY(environmentRotation.y);
 		p.rotateZ(environmentRotation.z);
@@ -91,7 +96,7 @@ public final class PlayMode extends Mode {
 
 	protected void drawMetaPlate() {
 		p.pushMatrix();
-		rotateEnvironnement();
+		rotateEnvironment();
 		sphere.draw();
 		plate.draw();
 
@@ -110,11 +115,13 @@ public final class PlayMode extends Mode {
 		scoreboard.draw();
 	}
 
+	@Override
 	public void mouseWheel(MouseEvent e) {
 		motionFactor -= e.getCount() / 15.0f;
 		motionFactor = Utils.trim(motionFactor, 0.2f, 2);
 	}
 
+	@Override
 	public void mouseDragged() {
 		if (p.mouseY < height - Constants.SCOREBOARD_HEIGHT) {
 			environmentRotation.x = Utils.trim(environmentRotation.x - motionFactor * (p.mouseY - p.pmouseY) / 100.0f, Constants.PI_3);
@@ -122,6 +129,7 @@ public final class PlayMode extends Mode {
 		}
 	}
 
+	@Override
 	public void keyPressed() {
 		switch (p.keyCode) {
 			case 16: Planair.become(ObstaclesMode.class); break; // SHIFT
