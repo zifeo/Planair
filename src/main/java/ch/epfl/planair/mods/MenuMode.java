@@ -47,7 +47,10 @@ public final class MenuMode extends Mode {
 				screen,
 				0,
 				count * (Consts.MENU_ITEM_HEIGHT + Consts.MENU_ITEM_MARGIN) + 180,
-				Consts.MENU_WIDTH, Consts.MENU_ITEM_HEIGHT,
+				Consts.MENU_WIDTH,
+				Consts.MENU_HEIGHT,
+				Consts.MENU_WIDTH,
+				Consts.MENU_ITEM_HEIGHT,
 				text,
 				action
 		);

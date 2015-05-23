@@ -26,11 +26,16 @@ import java.util.Map;
  */
 public class Planair extends PApplet {
 
-	private static Mode status = null;
-	private static Planair self = null;
+	private static Mode status;
+	private static Planair self;
 
 	private final Map<Class<? extends Mode>, Mode> semantic;
 	private Capture webcam;
+
+	static {
+		status = null;
+		self = null;
+	}
 
 	/** Switch mode. */
 	public static void become(Class<? extends Mode> mode) {

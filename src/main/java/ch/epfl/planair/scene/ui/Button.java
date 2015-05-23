@@ -3,6 +3,7 @@ package ch.epfl.planair.scene.ui;
 import ch.epfl.planair.meta.Consts;
 import ch.epfl.planair.meta.Utils;
 import ch.epfl.planair.specs.Drawable;
+import processing.core.PConstants;
 import processing.core.PFont;
 import processing.core.PGraphics;
 import processing.core.PVector;
@@ -13,6 +14,8 @@ public final class Button extends Drawable {
 	private boolean active;
 	private final int x;
 	private final int y;
+	private final int sx;
+	private final int sy;
 	private final int width;
 	private final int height;
 	private final String text;
@@ -21,13 +24,27 @@ public final class Button extends Drawable {
 	private int stroke;
 	private final PGraphics screen;
 
-	public Button(PGraphics screen, int x, int y, int width, int height, String text, Action callback) {
+	/**
+	 *
+	 * @param screen
+	 * @param x
+	 * @param y
+	 * @param sx x correction for mouse hover
+	 * @param sy y correction for mouse hover
+	 * @param width
+	 * @param height
+	 * @param text
+	 * @param callback
+	 */
+	public Button(PGraphics screen, int x, int y, int sx, int sy, int width, int height, String text, Action callback) {
 		super(screen.parent, new PVector(x, y, 0));
 		this.screen = screen;
 		this.callback = callback;
 		this.active = true;
 		this.x = x;
 		this.y = y;
+		this.sx = sx;
+		this.sy = sy;
 		this.width = width;
 		this.height = height;
 		this.text = text.toUpperCase();
@@ -43,7 +60,7 @@ public final class Button extends Drawable {
 		screen.rect(x, y, width - 1, height - 1);
 		screen.fill(Consts.COLOR1);
 		screen.textFont(font);
-		screen.textAlign(p.CENTER, p.CENTER);
+		screen.textAlign(PConstants.CENTER, PConstants.CENTER);
 		screen.text(text, x + width / 2, y + height / 2 - 2);
 	}
 
@@ -52,8 +69,8 @@ public final class Button extends Drawable {
 	public void enable() { active = false; }
 
 	public boolean hover() {
-		return Utils.in(0, p.mouseX - (p.width - Consts.MENU_WIDTH) / 2 - x, width) &&
-				Utils.in(0, p.mouseY - (p.height - Consts.MENU_HEIGHT) / 2 - y, height);
+		return Utils.in(0, p.mouseX - (p.width - sx) / 2 - x, width) &&
+				Utils.in(0, p.mouseY - (p.height - sy) / 2 - y, height);
 	}
 
 	public void mousePressed() {

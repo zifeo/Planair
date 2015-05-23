@@ -72,57 +72,54 @@ public final class WebcamProcessor {
 
     private final class PipelineRunner implements Runnable {
 
-	    private final PipelineOnplace pipeline;
+	    private final PipelineOnPlace pipeline;
 	    private final TwoDThreeD twoDThreeD;
 
 	    private PipelineRunner() {
-		    this.pipeline = new PipelineOnplace(p);
+		    this.pipeline = new PipelineOnPlace(p);
 		    this.twoDThreeD = new TwoDThreeD(webcam.width, webcam.height);
 	    }
 
 	    @Override
         public void run() {
-            while (true) {
-	            if (pipelining.get() && webcam.available()) {
+		    try {
+                while (true) {
+	                if (pipelining.get() && webcam.available()) {
+		                webcam.read();
+		                PImage image = webcam.get();
+		                //p.image(image, 0, 0);
+		                //result.resize(p.width/3, p.height/4);
 
-		            webcam.read();
-		            PImage image = webcam.get();
-		            //p.image(image, 0, 0);
-		            //result.resize(p.width/3, p.height/4);
+		                pipeline.selectHueThreshold(image, 80, 125, 0);
+		                //result = pipeline.selectHueThreshold(result, 95, 140, 0);
+		                pipeline.selectBrightnessThreshold(image, 30, 240, 0);
+		                pipeline.selectSaturationThreshold(image, 80, 255, 0);
+		                pipeline.binaryBrightnessThreshold(image, 20, 0, 180);
+		                pipeline.convolute(image, Pipeline.gaussianKernel);
+		                pipeline.sobel(image, 0.35f);
 
-		            pipeline.selectHueThreshold(image, 80, 125, 0);
-		            //result = pipeline.selectHueThreshold(result, 95, 140, 0);
-		            pipeline.selectBrightnessThreshold(image, 30, 240, 0);
-		            pipeline.selectSaturationThreshold(image, 80, 255, 0);
-		            pipeline.binaryBrightnessThreshold(image, 20, 0, 180);
-		            pipeline.convolute(image, Pipeline.gaussianKernel);
-		            pipeline.sobel(image, 0.35f);
+		                // Partie QUAD a refactorer
+		                List<PVector> lines = pipeline.hough(image);
+		                List<PVector> corners = pipeline.getPlane(image, lines);
 
-		            // Partie QUAD a refactorer
-		            List<PVector> lines = pipeline.hough(image);
-		            List<PVector> corners = pipeline.getPlane(image, lines);
+		                if (corners.size() >= 8) {
+			                PVector r = twoDThreeD.get3DRotations(corners.subList(0, 4));
 
-		            if (corners.size() >= 8) {
-			            PVector r = twoDThreeD.get3DRotations(corners.subList(0, 4));
+			                rx.set(Float.floatToIntBits(r.x));
+			                ry.set(Float.floatToIntBits(r.z));
+			                rz.set(Float.floatToIntBits(-r.y));
 
-			            rx.set(Float.floatToIntBits(r.x));
-			            ry.set(Float.floatToIntBits(r.z));
-			            rz.set(Float.floatToIntBits(-r.y));
-
-			            //p.println(r.x + " " + r.y);
-		            }
-
-	            } else {
-		            try {
-			            Thread.sleep((int) (1000 / webcam.frameRate));
-		            } catch (InterruptedException e) {
-			            if (Consts.DEBUG) {
-				            p.println("PipelineRunner exited.");
-			            }
-			            return;
-		            }
-	            }
-            }
+			                //p.println(r.x + " " + r.y);
+		                }
+	                } else {
+		                Thread.sleep((int) (1000 / webcam.frameRate));
+	                }
+                }
+		    } catch (InterruptedException e) {
+			    if (Consts.DEBUG) {
+				    p.println("PipelineRunner exited.");
+			    }
+		    }
         }
     }
 
