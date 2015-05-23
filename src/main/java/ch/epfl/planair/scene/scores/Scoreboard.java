@@ -6,7 +6,9 @@ import ch.epfl.planair.meta.Constants;
 import ch.epfl.planair.scene.ScrollBar;
 import ch.epfl.planair.specs.Drawable;
 import ch.epfl.planair.specs.Scorable;
-import processing.core.*;
+import processing.core.PApplet;
+import processing.core.PGraphics;
+import processing.core.PVector;
 
 /**
  * A scoreboard divided in three area:
@@ -17,14 +19,15 @@ import processing.core.*;
 public final class Scoreboard extends Drawable implements Scorer {
 
     private final PGraphics overlay;
-    private final ArrayList<Projectable> toProject;
     private final PGraphics projection;
     private final PGraphics facts;
     private final PGraphics barChart;
     private final PGraphics slider;
     private final Scorable scoreTrack;
     private final ScrollBar scrollbar;
+    private final ArrayList<Projectable> toProject;
     private final ArrayList<Float> scores;
+
     private final int dt;
     private final int moduleSize;
 
@@ -73,21 +76,7 @@ public final class Scoreboard extends Drawable implements Scorer {
         this.timeChart = (int) Math.floor(scrollbar.pos() * Constants.SCOREBOARD_TIME_CHART_BASE);
     }
 
-    /** @inheritdoc */
-    public void notifiedScore(int delta) {
-        lastScore = delta * scoreTrack.velocity().mag();
-        totalScore += lastScore;
-        scores.set(time, scores.get(time) + lastScore);
-
-        if (totalScore < 0) {
-            totalScore = 0;
-        }
-        if (scores.get(time) > maxScore) {
-            maxScore = scores.get(time);
-        }
-    }
-
-    /** @inheritdoc */
+	@Override
     public void update() {
 
         if (p.frameCount % 5 == 0) {
@@ -108,12 +97,8 @@ public final class Scoreboard extends Drawable implements Scorer {
         drawSlider();
     }
 
-    /** Add object on the mini-map. */
-    public void addForProjection(Projectable item) {
-        toProject.add(item);
-    }
 
-    /** @inheritdoc */
+	@Override
     public void draw() {
         overlay.beginDraw();
         overlay.background(220);
@@ -128,16 +113,23 @@ public final class Scoreboard extends Drawable implements Scorer {
         p.lights();
     }
 
-    public PGraphics get() {
-        overlay.beginDraw();
-        overlay.background(220);
-        overlay.image(projection, Constants.SCOREBOARD_PADDING, Constants.SCOREBOARD_PADDING);
-        overlay.image(facts, moduleSize + 2 * Constants.SCOREBOARD_PADDING, Constants.SCOREBOARD_PADDING);
-        overlay.image(barChart, 2 * moduleSize + 3 * Constants.SCOREBOARD_PADDING, Constants.SCOREBOARD_PADDING);
-        overlay.image(slider, 2 * moduleSize + 3 * Constants.SCOREBOARD_PADDING, 2 * Constants.SCOREBOARD_PADDING + barChart.height);
-        overlay.endDraw();
+    /** Add object on the mini-map. */
+    public void addForProjection(Projectable item) {
+        toProject.add(item);
+    }
 
-        return overlay;
+	@Override
+    public void notifiedScore(int delta) {
+        lastScore = delta * scoreTrack.velocity().mag();
+        totalScore += lastScore;
+        scores.set(time, scores.get(time) + lastScore);
+
+        if (totalScore < 0) {
+            totalScore = 0;
+        }
+        if (scores.get(time) > maxScore) {
+            maxScore = scores.get(time);
+        }
     }
 
     private void drawMiniMap() {
