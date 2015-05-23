@@ -3,7 +3,7 @@ package ch.epfl.planair.mods;
 import ch.epfl.planair.Planair;
 import ch.epfl.planair.meta.Consts;
 import ch.epfl.planair.scene.ui.Action;
-import ch.epfl.planair.scene.ui.Button;
+import ch.epfl.planair.scene.ui.ActionButton;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PFont;
@@ -16,7 +16,7 @@ public final class MenuMode extends Mode {
 
 	private final PFont logoFont;
 	private final PFont menuFont;
-	private final List<Button> menu;
+	private final List<ActionButton> menu;
 	private final PGraphics screen;
 
 	private final int menuX;
@@ -38,17 +38,16 @@ public final class MenuMode extends Mode {
 		menu.add(createMenuButton(count++, "Play!", () -> Planair.become(PlayMode.class)));
 		menu.add(createMenuButton(count++, "Battle!", () -> PApplet.println("battle")));
 		menu.add(createMenuButton(count++, "Cam Setup", () -> Planair.become(SetupMode.class)));
-		menu.add(createMenuButton(count++, "Options", () -> PApplet.println("options")));
 		menu.add(createMenuButton(count++, "Exit", p::exit));
 	}
 
-	private Button createMenuButton(int count, String text, Action action) {
-		return new Button(
+	private ActionButton createMenuButton(int count, String text, Action action) {
+		return new ActionButton(
 				screen,
 				0,
 				count * (Consts.MENU_ITEM_HEIGHT + Consts.MENU_ITEM_MARGIN) + 180,
-				Consts.MENU_WIDTH,
-				Consts.MENU_HEIGHT,
+				- Consts.MENU_WIDTH / 2,
+				- Consts.MENU_HEIGHT / 2,
 				Consts.MENU_WIDTH,
 				Consts.MENU_ITEM_HEIGHT,
 				text,
@@ -60,6 +59,14 @@ public final class MenuMode extends Mode {
 	public void draw() {
 		p.camera(0, 0, (p.height / 2f) / PApplet.tan(PConstants.PI * 30f / 180f), 0, 0, 0, 0, 1, 0);
 
+		drawScreen();
+
+		p.noLights();
+		p.image(screen, - Consts.MENU_WIDTH / 2, - Consts.MENU_HEIGHT / 2);
+		p.lights();
+	}
+
+	private void drawScreen() {
 		screen.beginDraw();
 		screen.background(Consts.COLORBG);
 		screen.fill(Consts.COLOR1);
@@ -67,26 +74,26 @@ public final class MenuMode extends Mode {
 		screen.textAlign(PConstants.CENTER, PConstants.TOP);
 		screen.text(Consts.LOGO, Consts.MENU_WIDTH / 2, 0);
 		boolean hovered = false;
-		for (Button b : menu) {
+		for (ActionButton b : menu) {
 			hovered |= b.hover();
 			b.draw();
 		}
 		screen.endDraw();
-
 		p.cursor(hovered ? PConstants.HAND : PConstants.ARROW);
-		p.noLights();
-		p.image(screen, - Consts.MENU_WIDTH / 2, - Consts.MENU_HEIGHT / 2);
-		p.lights();
+	}
+
+	@Override public void entered() {
+		menu.forEach(ActionButton::mouseMoved);
 	}
 
 	@Override public void mousePressed() {
-		menu.forEach(Button::mousePressed);
+		menu.forEach(ActionButton::mousePressed);
 	}
 	@Override public void mouseReleased() {
-		menu.forEach(Button::mouseReleased);
+		menu.forEach(ActionButton::mouseReleased);
 	}
 	@Override public void mouseMoved() {
-		menu.forEach(Button::mouseMoved);
+		menu.forEach(ActionButton::mouseMoved);
 	}
 
 }

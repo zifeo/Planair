@@ -20,7 +20,7 @@ public interface Consts {
 	int SCOREBOARD_FONT_SIZE        = 11;
 	int SCOREBOARD_FONT_HEIGHT      = 15;
 	int SCOREBOARD_TIME_CHART_BASE  = 45;
-	int SCOREBOARD_SCROLL_HEIGHT    = 10;
+	int SCROLL_HEIGHT = 20;
 
 	// specs.Accelerable
 	float ACCELERABLE_NORMAL_FORCE  = 1f;

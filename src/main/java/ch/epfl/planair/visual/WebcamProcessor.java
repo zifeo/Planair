@@ -2,6 +2,7 @@ package ch.epfl.planair.visual;
 
 import ch.epfl.planair.meta.BoundedQueue;
 import ch.epfl.planair.meta.Consts;
+import ch.epfl.planair.meta.PipelineConfig;
 import processing.core.PApplet;
 import processing.core.PImage;
 import processing.core.PVector;
@@ -10,6 +11,7 @@ import processing.video.Capture;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 public final class WebcamProcessor {
 
@@ -22,11 +24,16 @@ public final class WebcamProcessor {
     private final AtomicInteger ry;
     private final AtomicInteger rz;
 	private final AtomicBoolean pipelining;
+	public static final AtomicReference<PipelineConfig> config;
 
     private float lastFrameTime;
     private float lastCalcTime;
     private float frameTimeLength;
     private float calculTimeLength;
+
+	static {
+		config = new AtomicReference<>(new PipelineConfig());
+	}
 
     public WebcamProcessor(PApplet p, Capture webcam){
 	    this.p = p;
@@ -95,7 +102,7 @@ public final class WebcamProcessor {
 		                pipeline.selectBrightnessThreshold(image, 30, 240, 0);
 		                pipeline.selectSaturationThreshold(image, 80, 255, 0);
 		                pipeline.binaryBrightnessThreshold(image, 20, 0, 180);
-		                pipeline.convolute(image, Pipeline.gaussianKernel);
+		                pipeline.convolute(image, PipelineOnPlace.gaussianKernel);
 		                pipeline.sobel(image, 0.35f);
 
 		                // Partie QUAD a refactorer

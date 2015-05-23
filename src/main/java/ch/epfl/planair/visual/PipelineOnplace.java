@@ -163,8 +163,8 @@ public class PipelineOnPlace {
 	 * @return
 	 */
 	public void sobel(PImage source, float threshold, int minColor, int maxColor) {
-		Utils.require(0, minColor, 255, "invalid grey color");
-		Utils.require(0, maxColor, 255, "invalid grey color");
+		//Utils.require(0, minColor, 255, "invalid grey color");
+		//Utils.require(0, maxColor, 255, "invalid grey color");
 
 		int margin = sobelKernelH.length / 2;
 		float maxValue = 0;

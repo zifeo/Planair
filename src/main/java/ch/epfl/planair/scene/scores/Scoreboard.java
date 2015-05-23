@@ -41,26 +41,26 @@ public final class Scoreboard extends Drawable implements Scorer {
     /**
      * Create a scoreboard with given size and score source.
      *
-     * @param parent
+     * @param p
      * @param overlayWidth scoreboard width
      * @param overlayHeight scoreboard height
      * @param scoreTrack score source
      */
-    public Scoreboard(PApplet parent, int overlayWidth, int overlayHeight, Scorable scoreTrack) {
-        super(parent, new PVector(0, parent.height - overlayHeight, 0));
+    public Scoreboard(PApplet p, int overlayWidth, int overlayHeight, Scorable scoreTrack) {
+        super(p, new PVector(0, p.height - overlayHeight, 0));
 
-        this.dt = 2 * (int) parent.frameRate;
+        this.dt = 2 * (int) p.frameRate;
         this.moduleSize = overlayHeight - 2 * Consts.SCOREBOARD_PADDING;
 
-        this.overlay = parent.createGraphics(overlayWidth, overlayHeight, PApplet.P2D);
-        this.projection = parent.createGraphics(moduleSize, moduleSize, PApplet.P2D);
-        this.facts = parent.createGraphics(moduleSize, moduleSize, PApplet.P2D);
-        this.barChart = parent.createGraphics(
+        this.overlay = p.createGraphics(overlayWidth, overlayHeight, PApplet.P2D);
+        this.projection = p.createGraphics(moduleSize, moduleSize, PApplet.P2D);
+        this.facts = p.createGraphics(moduleSize, moduleSize, PApplet.P2D);
+        this.barChart = p.createGraphics(
 		        overlayWidth - 2 * moduleSize - 4 * Consts.SCOREBOARD_PADDING,
-		        moduleSize - Consts.SCOREBOARD_PADDING - Consts.SCOREBOARD_SCROLL_HEIGHT,
+		        moduleSize - Consts.SCOREBOARD_PADDING - Consts.SCROLL_HEIGHT,
 		        PApplet.P2D
         );
-        this.slider = parent.createGraphics(this.barChart.width, Consts.SCOREBOARD_SCROLL_HEIGHT, PApplet.P2D);
+        this.slider = p.createGraphics(this.barChart.width, Consts.SCROLL_HEIGHT, PApplet.P2D);
 
         this.toProject = new ArrayList<>();
         this.scores = new ArrayList<>();
@@ -69,10 +69,9 @@ public final class Scoreboard extends Drawable implements Scorer {
         this.scoreTrack.addScoreObserver(this);
 
         PVector location = location();
-        this.scrollbar = new ScrollBar(parent,
+        this.scrollbar = new ScrollBar(this.slider,
                 location.x + 2 * moduleSize + 3 * Consts.SCOREBOARD_PADDING,
-                location.y + 2 * Consts.SCOREBOARD_PADDING + this.barChart.height,
-                this.slider);
+                location.y + 2 * Consts.SCOREBOARD_PADDING + this.barChart.height);
         this.timeChart = (int) Math.floor(scrollbar.pos() * Consts.SCOREBOARD_TIME_CHART_BASE);
     }
 
@@ -90,23 +89,17 @@ public final class Scoreboard extends Drawable implements Scorer {
 
         scrollbar.update();
         timeChart = (int) Math.floor(scrollbar.pos() * Consts.SCOREBOARD_TIME_CHART_BASE);
-
-        drawMiniMap();
-        drawFacts();
-        drawBarChart();
-        drawSlider();
     }
 
 
 	@Override
     public void draw() {
-        overlay.beginDraw();
-        overlay.background(220);
-        overlay.image(projection, Consts.SCOREBOARD_PADDING, Consts.SCOREBOARD_PADDING);
-        overlay.image(facts, moduleSize + 2 * Consts.SCOREBOARD_PADDING, Consts.SCOREBOARD_PADDING);
-        overlay.image(barChart, 2 * moduleSize + 3 * Consts.SCOREBOARD_PADDING, Consts.SCOREBOARD_PADDING);
-        overlay.image(slider, 2 * moduleSize + 3 * Consts.SCOREBOARD_PADDING, 2 * Consts.SCOREBOARD_PADDING + barChart.height);
-        overlay.endDraw();
+
+		drawMiniMap();
+		drawFacts();
+		drawBarChart();
+		drawSlider();
+		drawOverlay();
 
         p.noLights();
         p.image(overlay, 0, p.height - overlay.height);
@@ -131,6 +124,16 @@ public final class Scoreboard extends Drawable implements Scorer {
             maxScore = scores.get(time);
         }
     }
+
+	private void drawOverlay() {
+		overlay.beginDraw();
+		overlay.background(220);
+		overlay.image(projection, Consts.SCOREBOARD_PADDING, Consts.SCOREBOARD_PADDING);
+		overlay.image(facts, moduleSize + 2 * Consts.SCOREBOARD_PADDING, Consts.SCOREBOARD_PADDING);
+		overlay.image(barChart, 2 * moduleSize + 3 * Consts.SCOREBOARD_PADDING, Consts.SCOREBOARD_PADDING);
+		overlay.image(slider, 2 * moduleSize + 3 * Consts.SCOREBOARD_PADDING, 2 * Consts.SCOREBOARD_PADDING + barChart.height);
+		overlay.endDraw();
+	}
 
     private void drawMiniMap() {
         projection.beginDraw();

@@ -16,7 +16,7 @@ public final class ScrollBar extends Drawable {
     private final float yPosition;
     private final float sliderPositionMin;
     private final float sliderPositionMax;
-    private final PGraphics context;
+    private final PGraphics screen;
     private float sliderPosition;
     private float newSliderPosition;
     private boolean mouseover;
@@ -25,52 +25,47 @@ public final class ScrollBar extends Drawable {
     /**
      * Create a slider with coordinates and an output canvas.
      *
-     * @param parent
+     * @param screen output canvas
      * @param x
      * @param y
-     * @param context output canvas
      */
-    public ScrollBar(PApplet parent, float x, float y, PGraphics context) {
-        super(parent, Utils.nullVector());
-        this.barWidth = context.width;
-        this.barHeight = context.height;
+    public ScrollBar(PGraphics screen, float x, float y) {
+        super(screen.parent, Utils.nullVector());
+        this.barWidth = screen.width;
+        this.barHeight = screen.height;
         this.xPosition = x;
         this.yPosition = y;
-        this.sliderPosition = 0 + barWidth/2 - barHeight/2;
+        this.sliderPosition = 0 + barWidth / 2 - barHeight / 2;
         this.newSliderPosition = sliderPosition;
         this.sliderPositionMin = 0;
         this.sliderPositionMax = barWidth - barHeight;
-        this.context = context;
+        this.screen = screen;
     }
 
-    /** @inheritdoc */
+    @Override
     public void update() {
-        mouseover = isMouseOver();
-        if (p.mousePressed && mouseover) {
-            locked = true;
-        }
-        if (!p.mousePressed) {
-            locked = false;
-        }
-        if (locked) {
-            newSliderPosition = Utils.trim(p.mouseX - xPosition - barHeight / 2, sliderPositionMin, sliderPositionMax);
-        }
-        if (Math.abs(newSliderPosition - sliderPosition) > 1) {
-            sliderPosition = sliderPosition + (newSliderPosition - sliderPosition);
-        }
+	    mouseover = isMouseOver();
+	    if (p.mousePressed && mouseover) {
+		    locked = true;
+	    }
+	    if (!p.mousePressed) {
+		    locked = false;
+	    }
+	    if (locked) {
+		    newSliderPosition = Utils.trim(p.mouseX - xPosition - barHeight / 2, sliderPositionMin, sliderPositionMax);
+	    }
+	    if (PApplet.abs(newSliderPosition - sliderPosition) > 1) {
+		    sliderPosition = sliderPosition + (newSliderPosition - sliderPosition);
+	    }
     }
 
-    /** @inheritdoc */
+    @Override
     public void draw() {
-        context.noStroke();
-        context.fill(200);
-        context.rect(0, 0, barWidth, barHeight);
-        if (mouseover || locked) {
-            context.fill(0);
-        } else {
-            context.fill(220);
-        }
-        context.rect(sliderPosition, 0, barHeight, barHeight);
+	    screen.noStroke();
+	    screen.fill(200);
+	    screen.rect(0, 0, barWidth, barHeight);
+	    screen.fill(mouseover || locked ? 0 : 220);
+	    screen.rect(sliderPosition, 0, barHeight, barHeight);
     }
 
     /** Get the current position between 0.2 and 2. */
@@ -79,7 +74,7 @@ public final class ScrollBar extends Drawable {
     }
 
     private boolean isMouseOver() {
-        return p.mouseX > xPosition && p.mouseX < xPosition+barWidth
-                && p.mouseY > yPosition && p.mouseY < yPosition+barHeight;
+        return p.mouseX > xPosition && p.mouseX < xPosition + barWidth
+                && p.mouseY > yPosition && p.mouseY < yPosition + barHeight;
     }
 }
