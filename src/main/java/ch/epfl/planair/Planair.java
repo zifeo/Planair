@@ -11,7 +11,7 @@ public class Planair extends PApplet {
 
 	private static Mode status = null;
 	private static Planair self = null;
-	private final Map<Class, Mode> logic;
+	private final Map<Class<? extends Mode>, Mode> logic;
 	private final Timer clock;
 
 	public static void main(String args[]) {
