@@ -1,6 +1,6 @@
 package ch.epfl.planair.visual;
 
-import ch.epfl.planair.meta.Constants;
+import ch.epfl.planair.meta.Consts;
 import ch.epfl.planair.meta.Utils;
 import processing.core.PApplet;
 import processing.core.PImage;
@@ -40,16 +40,16 @@ public class Pipeline extends PApplet {
 	};
 
 	/* COS and SIN constants, to optimise Hough method */
-	private final static float[] COS = new float[(int) Math.ceil(PI / Constants.PIPELINE_DISCRETIZATION_STEPS_PHI)];
-	private final static float[] SIN = new float[(int) Math.ceil(PI / Constants.PIPELINE_DISCRETIZATION_STEPS_PHI)];
+	private final static float[] COS = new float[(int) Math.ceil(PI / Consts.PIPELINE_DISCRETIZATION_STEPS_PHI)];
+	private final static float[] SIN = new float[(int) Math.ceil(PI / Consts.PIPELINE_DISCRETIZATION_STEPS_PHI)];
 
 	public Pipeline(PApplet parent) {
 		this.parent = parent;
 
 		/* Construct cos and sin constants */
-		for (int i = 0; i < PI / Constants.PIPELINE_DISCRETIZATION_STEPS_PHI; i += 1) {
-			COS[i] = (float) Math.cos(i * Constants.PIPELINE_DISCRETIZATION_STEPS_PHI);
-			SIN[i] = (float) Math.sin(i * Constants.PIPELINE_DISCRETIZATION_STEPS_PHI);
+		for (int i = 0; i < PI / Consts.PIPELINE_DISCRETIZATION_STEPS_PHI; i += 1) {
+			COS[i] = (float) Math.cos(i * Consts.PIPELINE_DISCRETIZATION_STEPS_PHI);
+			SIN[i] = (float) Math.sin(i * Consts.PIPELINE_DISCRETIZATION_STEPS_PHI);
 		}
 	}
 
@@ -193,8 +193,8 @@ public class Pipeline extends PApplet {
 
 	public List<PVector> hough(PImage edgeImg) {
 		// dimensions of the accumulator
-		int phiDim = (int) (Math.PI / Constants.PIPELINE_DISCRETIZATION_STEPS_PHI);
-		int rDim = (int) (((edgeImg.width + edgeImg.height) * 2 + 1) / Constants.PIPELINE_DISCRETIZATION_STEPS_R);
+		int phiDim = (int) (Math.PI / Consts.PIPELINE_DISCRETIZATION_STEPS_PHI);
+		int rDim = (int) (((edgeImg.width + edgeImg.height) * 2 + 1) / Consts.PIPELINE_DISCRETIZATION_STEPS_R);
 
 		// Updated at each pass of the inner-most for-loop (for each value of phi for each align)
 
@@ -212,9 +212,9 @@ public class Pipeline extends PApplet {
 					// align (x,y), convert (r,phi) to coordinates in the
 					// accumulator, and increment accordingly the accumulator.
 
-					for (int accPhi = 0; accPhi < PI / Constants.PIPELINE_DISCRETIZATION_STEPS_PHI; accPhi += 1) {
+					for (int accPhi = 0; accPhi < PI / Consts.PIPELINE_DISCRETIZATION_STEPS_PHI; accPhi += 1) {
 						double radius = x * COS[accPhi] + y * SIN[accPhi];
-						float accR = (float) (radius / Constants.PIPELINE_DISCRETIZATION_STEPS_R) + (rDim - 1) * 0.5f;
+						float accR = (float) (radius / Consts.PIPELINE_DISCRETIZATION_STEPS_R) + (rDim - 1) * 0.5f;
 
 						accumulator[(int) ((accPhi + 1) * (rDim + 2) + accR + 1)] += 1;
 					}
@@ -269,15 +269,15 @@ public class Pipeline extends PApplet {
 		Collections.sort(best, (a, b) -> - Integer.compare(accumulator[a], accumulator[b]));
 		List<PVector> selected = new ArrayList<>();
 
-		for (int i = 0; i < best.size() && i < Constants.PIPELINE_LINES_COUNT; ++i) {
+		for (int i = 0; i < best.size() && i < Consts.PIPELINE_LINES_COUNT; ++i) {
 
 			int idx = best.get(i);
 
 			// first, compute back the (r, phi) polar coordinates:
 			int accPhi = (int) (idx / (rDim + 2)) - 1;
 			float accR = idx - (accPhi + 1) * (rDim + 2) - 1;
-			float r = (accR - (rDim - 1) * 0.5f) * Constants.PIPELINE_DISCRETIZATION_STEPS_R;
-			float phi = accPhi * Constants.PIPELINE_DISCRETIZATION_STEPS_PHI;
+			float r = (accR - (rDim - 1) * 0.5f) * Consts.PIPELINE_DISCRETIZATION_STEPS_R;
+			float phi = accPhi * Consts.PIPELINE_DISCRETIZATION_STEPS_PHI;
 
 			selected.add(new PVector(r, phi));
 		}
@@ -291,7 +291,7 @@ public class Pipeline extends PApplet {
 
 			float r = line.x;
 			float phi = line.y;
-			int accPhi = (int) (phi / Constants.PIPELINE_DISCRETIZATION_STEPS_PHI);
+			int accPhi = (int) (phi / Consts.PIPELINE_DISCRETIZATION_STEPS_PHI);
 
 			// Cartesian equation of a line: y = ax + b
 			// in polar, y = (-cos(phi)/sin(phi))x + (r/sin(phi))

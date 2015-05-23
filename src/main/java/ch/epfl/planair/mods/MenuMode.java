@@ -1,8 +1,8 @@
 package ch.epfl.planair.mods;
 
 import ch.epfl.planair.Planair;
+import ch.epfl.planair.meta.Consts;
 import ch.epfl.planair.scene.ui.Action;
-import ch.epfl.planair.meta.Constants;
 import ch.epfl.planair.scene.ui.Button;
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -24,12 +24,12 @@ public final class MenuMode extends Mode {
 
 	public MenuMode(PApplet parent) {
 		super(parent);
-		this.logoFont = p.createFont(Constants.FONT, 120);
-		this.menuFont= p.createFont(Constants.FONT, 20);
+		this.logoFont = p.createFont(Consts.FONT, 120);
+		this.menuFont= p.createFont(Consts.FONT, 20);
 		this.menu = new ArrayList<>();
-		this.menuX = (p.width - Constants.MENU_WIDTH) / 2;
-		this.menuY = (p.height - Constants.MENU_HEIGHT_CENTER) / 2;
-		this.screen = p.createGraphics(Constants.MENU_WIDTH, p.height / 2, PApplet.P2D);
+		this.menuX = (p.width - Consts.MENU_WIDTH) / 2;
+		this.menuY = (p.height - Consts.MENU_HEIGHT_CENTER) / 2;
+		this.screen = p.createGraphics(Consts.MENU_WIDTH, p.height / 2, PApplet.P2D);
 		constructMenu();
 	}
 
@@ -43,7 +43,7 @@ public final class MenuMode extends Mode {
 	}
 
 	private Button createMenuButton(int count, String text, Action action) {
-		return new Button(screen, 0, count * (Constants.MENU_ITEM_HEIGHT + Constants.MENU_ITEM_MARGIN) + 180, Constants.MENU_WIDTH, Constants.MENU_ITEM_HEIGHT, text, action);
+		return new Button(screen, 0, count * (Consts.MENU_ITEM_HEIGHT + Consts.MENU_ITEM_MARGIN) + 180, Consts.MENU_WIDTH, Consts.MENU_ITEM_HEIGHT, text, action);
 	}
 
 	@Override
@@ -51,11 +51,11 @@ public final class MenuMode extends Mode {
 		p.camera(0, 0, (p.height / 2f) / PApplet.tan(PConstants.PI * 30f / 180f), 0, 0, 0, 0, 1, 0);
 
 		screen.beginDraw();
-		screen.background(Constants.COLORBG);
-		screen.fill(Constants.COLOR1);
+		screen.background(Consts.COLORBG);
+		screen.fill(Consts.COLOR1);
 		screen.textFont(logoFont);
 		screen.textAlign(PConstants.CENTER, PConstants.TOP);
-		screen.text(Constants.LOGO, Constants.MENU_WIDTH / 2, 0);
+		screen.text(Consts.LOGO, Consts.MENU_WIDTH / 2, 0);
 		boolean hovered = false;
 		for (Button b : menu) {
 			hovered |= b.hover();
@@ -64,7 +64,7 @@ public final class MenuMode extends Mode {
 		screen.endDraw();
 
 		p.cursor(hovered ? PConstants.HAND : PConstants.ARROW);
-		p.image(screen, - Constants.MENU_WIDTH / 2, - p.height / 4);
+		p.image(screen, - Consts.MENU_WIDTH / 2, - p.height / 4);
 	}
 
 	@Override public void mousePressed() {

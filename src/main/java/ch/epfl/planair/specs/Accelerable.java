@@ -1,6 +1,6 @@
 package ch.epfl.planair.specs;
 
-import ch.epfl.planair.meta.Constants;
+import ch.epfl.planair.meta.Consts;
 import ch.epfl.planair.meta.Utils;
 import processing.core.PVector;
 import processing.core.PApplet;
@@ -29,9 +29,9 @@ public abstract class Accelerable extends Movable {
 
     private void applyGravity() {
         if (computeGravity) {
-            force.x = Constants.ACCELERABLE_G * (float)Math.sin(environmentRotation.z);
+            force.x = Consts.ACCELERABLE_G * (float)Math.sin(environmentRotation.z);
             // force.y = 0;
-            force.z = - Constants.ACCELERABLE_G * (float)Math.sin(environmentRotation.x);
+            force.z = - Consts.ACCELERABLE_G * (float)Math.sin(environmentRotation.x);
         }
     }
 
@@ -41,7 +41,7 @@ public abstract class Accelerable extends Movable {
         PVector friction = velocity();
         friction.mult(-1);
         friction.normalize();
-        friction.setMag(Constants.ACCELERABLE_NORMAL_FORCE * Constants.ACCELERABLE_MU);
+        friction.setMag(Consts.ACCELERABLE_NORMAL_FORCE * Consts.ACCELERABLE_MU);
 
         PVector newVelocity = velocity();
         newVelocity.add(force);

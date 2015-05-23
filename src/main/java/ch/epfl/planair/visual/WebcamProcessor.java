@@ -35,7 +35,7 @@ public final class WebcamProcessor {
         String[] cameras = Capture.list();
 
         if (cameras.length == 0) {
-            throw new IllegalStateException("No camera");
+            throw new IllegalStateException("No camera available!");
         }
 
         //println("Cameras:");
@@ -53,7 +53,7 @@ public final class WebcamProcessor {
         this.pipeline = new PipelineOnplace(parent);
 		this.twoDThreeD = new TwoDThreeD(cam.width, cam.height);
 
-        Thread update = new Thread(new updater());
+        Thread update = new Thread(new PipelineRunner());
         update.start();
 	}
 
@@ -81,13 +81,13 @@ public final class WebcamProcessor {
 	}
 
 
-    private final class updater implements Runnable {
+    private final class PipelineRunner implements Runnable {
 
         @Override
         public void run() {
-            while (true){
+            while (true) {
 
-                if (cam.available()) {
+                if (cam.available() && cam.isModified()) {
                     cam.read();
                 }
 

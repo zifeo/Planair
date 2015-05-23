@@ -27,6 +27,11 @@ public abstract class Mode {
 	/** Draw mode frame. */
 	public abstract void draw();
 
+	/** Called when entering this mode. */
+	public void entered() {}
+	/** Called when exiting this mode. */
+	public void exited() {}
+
 	/** @see PApplet */
 	public void mousePressed() {}
 	/** @see PApplet */

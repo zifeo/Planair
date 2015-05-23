@@ -1,9 +1,10 @@
 package ch.epfl.planair;
 
-import ch.epfl.planair.meta.Constants;
+import ch.epfl.planair.meta.Consts;
 import ch.epfl.planair.mods.*;
 import processing.core.PApplet;
 import processing.event.MouseEvent;
+import processing.video.Capture;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,13 +28,16 @@ public class Planair extends PApplet {
 
 	private static Mode status = null;
 	private static Planair self = null;
+	private static Capture webcam = null;
 
 	private final Map<Class<? extends Mode>, Mode> semantic;
 
 	/** Switch mode. */
 	public static void become(Class<? extends Mode> mode) {
+		status.exited();
 		status = self.semantic.get(mode);
 		assert status != null;
+		status.entered();
 	}
 
 	/** Start game & Processing. */
@@ -52,8 +56,16 @@ public class Planair extends PApplet {
 	/** Mode & Processing init. */
 	@Override
 	public void setup() {
+		assert status == null;
+		assert webcam == null;
+
 		size(displayWidth, displayHeight, P3D);
-		frameRate(Constants.FRAMERATE);
+		frameRate(Consts.FRAMERATE);
+
+		if (Capture.list().length == 0) {
+			println("No webcam available!");
+			exit();
+		}
 
 		try {
 			List<Mode> modes = new ArrayList<>();
@@ -64,36 +76,41 @@ public class Planair extends PApplet {
 			modes.add(new ObstaclesMode(this, playMode));
 			modes.add(new MenuMode(this));
 			modes.add(new SetupMode(this));
-			/* ADD MODES ABOVE */
 
-			assert status == null;
-			for (Mode m : modes) {
-				semantic.put(m.getClass(), m);
-			}
-			status = this.semantic.get(MenuMode.class);
+			/* DEFAULT MODE LOADED */
+			Class<? extends Mode> defaultMode = MenuMode.class;
+
+			modes.forEach(m -> semantic.put(m.getClass(), m));
+			status = semantic.get(defaultMode);
 			assert status != null;
-
+			webcam = new Capture(this, Consts.CAMERA_WIDTH, Consts.CAMERA_HEIGHT, Consts.CAMERA_FPS);
 		} catch (Exception e) {
 			println(e.getMessage());
-			if (Constants.DEBUG) {
+			if (Consts.DEBUG) {
 				e.printStackTrace();
 			}
+			exit();
 		}
 	}
 
 	/** Draw and updates tick. */
 	@Override
 	public void draw() {
-		background(Constants.COLORBG);
+		background(Consts.COLORBG);
 		lights();
 		status.tick();
 
-		if (Constants.DEBUG) {
+		if (Consts.DEBUG) {
 			camera();
-			fill(Constants.BLACK);
+			fill(Consts.BLACK);
 			textSize(11f);
 			text(String.format("fps: %.1f", frameRate), 4, 13);
 		}
+	}
+
+	/** Access webcam. */
+	public Capture webcam() {
+		return webcam;
 	}
 
 	@Override public boolean sketchFullScreen() {

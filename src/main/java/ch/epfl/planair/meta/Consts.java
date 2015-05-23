@@ -1,6 +1,6 @@
 package ch.epfl.planair.meta;
 
-public interface Constants {
+public interface Consts {
 
 	// geneal
 	String LOGO = "Planair";
@@ -41,6 +41,9 @@ public interface Constants {
 	int FRAMERATE              = 60;
 	int EYE_HEIGHT             = 200;
 	float MOTION_FACTOR        = 1.5f;
+	int CAMERA_WIDTH           = 640;
+	int CAMERA_HEIGHT          = 480;
+	int CAMERA_FPS             = 15;
 
 	// visual.Pipeline
 	float PIPELINE_DISCRETIZATION_STEPS_PHI = 0.01f;

@@ -1,6 +1,6 @@
 package ch.epfl.planair.scene.ui;
 
-import ch.epfl.planair.meta.Constants;
+import ch.epfl.planair.meta.Consts;
 import ch.epfl.planair.meta.Utils;
 import ch.epfl.planair.specs.Drawable;
 import processing.core.PFont;
@@ -32,8 +32,8 @@ public final class Button extends Drawable {
 		this.height = height;
 		this.text = text.toUpperCase();
 		this.font = p.createFont("fonts/SF-Archery-Black/SF_Archery_Black.ttf", 25);
-		this.stroke = Constants.COLOR1;
-		this.fill = Constants.COLORBG;
+		this.stroke = Consts.COLOR1;
+		this.fill = Consts.COLORBG;
 	}
 
 	@Override
@@ -41,7 +41,7 @@ public final class Button extends Drawable {
 		screen.stroke(stroke);
 		screen.fill(fill);
 		screen.rect(x, y, width - 1, height - 1);
-		screen.fill(Constants.COLOR1);
+		screen.fill(Consts.COLOR1);
 		screen.textFont(font);
 		screen.textAlign(p.CENTER, p.CENTER);
 		screen.text(text, x + width / 2, y + height / 2 - 2);
@@ -52,7 +52,7 @@ public final class Button extends Drawable {
 	public void enable() { active = false; }
 
 	public boolean hover() {
-		return Utils.in(0, p.mouseX - (p.width - Constants.MENU_WIDTH) / 2 - x, width) &&
+		return Utils.in(0, p.mouseX - (p.width - Consts.MENU_WIDTH) / 2 - x, width) &&
 				Utils.in(0, p.mouseY - p.height / 4 - y, height);
 	}
 
@@ -63,12 +63,12 @@ public final class Button extends Drawable {
 	}
 
 	public void mouseReleased() {
-		//fill = Constants.COLORBG;
+		//fill = Consts.COLORBG;
 	}
 
 	public void mouseMoved() {
 		if (active) {
-			stroke = hover() ? Constants.RED: Constants.COLOR1;
+			stroke = hover() ? Consts.RED: Consts.COLOR1;
 		}
 	}
 }
