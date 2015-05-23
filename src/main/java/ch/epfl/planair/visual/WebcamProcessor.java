@@ -7,29 +7,28 @@ import processing.core.PVector;
 import processing.video.Capture;
 
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public final class WebcamProcessor {
 
+    static private final int sizeInterp = 3;
     private final Capture cam;
     private final PipelineOnplace pipeline;
     private final TwoDThreeD twoDThreeD;
     private final PApplet parent;
 
-    private final BoundedQueue queue;
+    private final BoundedQueue yQueue;
     private final AtomicInteger rx;
     private final AtomicInteger ry;
     private final AtomicInteger rz;
-
-    private float lastFrameTime;
-    private float lastCalcTime;
-    private float frameTimeLength;
-    private float calculTimeLength;
+    private final AtomicBoolean changed;
 
     private boolean run;
 
     public WebcamProcessor(PApplet parent){
-        this.queue = new BoundedQueue(3);
+        this.yQueue = new BoundedQueue(sizeInterp);
         this.parent = parent;
 
         String[] cameras = Capture.list();
@@ -53,32 +52,75 @@ public final class WebcamProcessor {
         this.pipeline = new PipelineOnplace(parent);
 		this.twoDThreeD = new TwoDThreeD(cam.width, cam.height);
 
+        changed = new AtomicBoolean(false);
+
         Thread update = new Thread(new updater());
         update.start();
 	}
 
 
 	public PVector getRotation(){
-        PVector r = new PVector(Float.intBitsToFloat(rx.get()),
-                        Float.intBitsToFloat(0),
-                        Float.intBitsToFloat(rz.get()));
+        PVector r;
 
-        if (queue.get(0) != r) {
-            queue.enqueue(r);
-            float newTime = parent.millis();
-            calculTimeLength = newTime - lastCalcTime;
-            lastCalcTime = newTime;
+        if (!changed.get()) {
+            r = splineInterpolation(parent.millis());
 
-            return r;
-        }
-        else {
-            float newTime = parent.millis();
-            frameTimeLength = newTime - lastFrameTime;
-            lastFrameTime = newTime;
+        } else {
+
+            r = new PVector(Float.intBitsToFloat(rx.get()),
+                    Float.intBitsToFloat(0),
+                    Float.intBitsToFloat(rz.get()));
+
+            yQueue.enqueue(r, parent.millis());
+            changed.set(false);
         }
 
         return r;
 	}
+
+    private PVector splineInterpolation(float x){
+        PVector a[] = new PVector[sizeInterp];
+        PVector b[] = new PVector[sizeInterp];
+
+        for(int i = 0; i < sizeInterp; ++i){
+            a[i] = new PVector(0,0,0);
+            b[i] = new PVector(0,0,0);
+
+            for(int j = 0; j < sizeInterp; ++j){
+                PVector ai = yQueue.get(j).r;
+                PVector bi = yQueue.get(j).r;
+
+                //parent.println(ai);
+                //parent.println(bi);
+
+                ai.mult(((float) Math.cos(-1 * i * yQueue.get(j).t)));
+                a[i].add(ai);
+
+                bi.mult(((float) Math.sin(-1 * i * yQueue.get(j).t)));
+                b[i].add(bi);
+            }
+            a[i].mult(2 / sizeInterp);
+            b[i].mult(-2 / sizeInterp);
+
+        }
+
+        PVector px = a[0];
+        px.mult(2);
+
+        for(int i = 0; i < sizeInterp/2; ++i){
+            a[i].mult((float)Math.cos(i * x));
+            b[i].mult((float)Math.sin(i * x));
+
+            px.add(a[i]);
+            px.add(b[i]);
+        }
+
+        a[sizeInterp / 2].mult((float) Math.cos(sizeInterp/2 * x));
+        px.add(a[sizeInterp / 2]);
+        //px.mult(0.8f);
+
+        return px;
+    }
 
 
     private final class updater implements Runnable {
@@ -114,6 +156,7 @@ public final class WebcamProcessor {
                     ry.set(Float.floatToIntBits(r.z));
                     rz.set(Float.floatToIntBits(-r.y));
 
+                    changed.set(true);
                     //parent.println(r.x + " " + r.y);
                 }
             }
