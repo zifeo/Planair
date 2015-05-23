@@ -65,17 +65,14 @@ public final class MenuMode extends Mode {
 
 		p.cursor(hovered ? PConstants.HAND : PConstants.ARROW);
 		p.image(screen, - Constants.MENU_WIDTH / 2, - p.height / 4);
-
 	}
 
 	@Override public void mousePressed() {
 		menu.forEach(Button::mousePressed);
 	}
-
 	@Override public void mouseReleased() {
 		menu.forEach(Button::mouseReleased);
 	}
-
 	@Override public void mouseMoved() {
 		menu.forEach(Button::mouseMoved);
 	}

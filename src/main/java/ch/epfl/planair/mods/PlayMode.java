@@ -32,12 +32,13 @@ public final class PlayMode extends Mode {
 	private float motionFactor;
 
 
-	public PlayMode(PApplet parent, int width, int heigth) {
-		super(parent);
+	public PlayMode(PApplet p) {
+		super(p);
 		this.motionFactor = Constants.MOTION_FACTOR;
 		this.obstacles = new ArrayList<>();
-		this.sphere = new Sphere(parent, new PVector(0, -Constants.PLATE_THICKNESS/2, 0), Constants.SPHERE_RADIUS);
-		sphere.setXBounds(
+
+		this.sphere = new Sphere(p, new PVector(0, -Constants.PLATE_THICKNESS/2, 0), Constants.SPHERE_RADIUS);
+		this.sphere.setXBounds(
 				-Constants.PLATE_SIZE / 2 + Constants.SPHERE_RADIUS,
 				Constants.PLATE_SIZE / 2 - Constants.SPHERE_RADIUS
 		);
@@ -47,15 +48,15 @@ public final class PlayMode extends Mode {
 		);
 		this.sphere.enableGravity();
 
-		this.plate = new Plate(parent, new PVector(0, 0, 0), Constants.PLATE_SIZE, Constants.PLATE_THICKNESS);
+		this.plate = new Plate(p, new PVector(0, 0, 0), Constants.PLATE_SIZE, Constants.PLATE_THICKNESS);
 
-		this.scoreboard = new Scoreboard(parent, width, Constants.SCOREBOARD_HEIGHT, sphere);
+		this.scoreboard = new Scoreboard(p, p.width, Constants.SCOREBOARD_HEIGHT, sphere);
 		this.scoreboard.addForProjection(plate);
 		this.scoreboard.addForProjection(sphere);
 
-		this.background = new Background(parent);
+		this.background = new Background(p);
 
-		this.cam = new WebcamProcessor(parent);
+		this.cam = new WebcamProcessor(p);
 	}
 
 	public <T extends Drawable & Projectable> void addObstacles(T o) {

@@ -1,6 +1,6 @@
 package ch.epfl.planair.visual;
 
-import ch.epfl.planair.BoundedQueue;
+import ch.epfl.planair.meta.BoundedQueue;
 import processing.core.PApplet;
 import processing.core.PImage;
 import processing.core.PVector;
