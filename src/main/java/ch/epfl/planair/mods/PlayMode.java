@@ -14,6 +14,7 @@ import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PVector;
 import processing.event.MouseEvent;
+import processing.video.Capture;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,7 @@ public final class PlayMode extends Mode {
 	private float motionFactor;
 
 
-	public PlayMode(PApplet p) {
+	public PlayMode(PApplet p, Capture webcam) {
 		super(p);
 		this.motionFactor = Consts.MOTION_FACTOR;
 		this.obstacles = new ArrayList<>();
@@ -56,12 +57,12 @@ public final class PlayMode extends Mode {
 
 		this.background = new Background(p);
 
-		this.cam = new WebcamProcessor(p);
+		this.cam = new WebcamProcessor(p, webcam);
 	}
 
 	@Override
 	public void update() {
-		environmentRotation.set(cam.getRotation());
+		environmentRotation.set(cam.rotation());
 		sphere.setEnvironmentRotation(environmentRotation);
 		sphere.update();
 		sphere.checkCollisions(obstacles);
@@ -97,6 +98,16 @@ public final class PlayMode extends Mode {
 		sphere.draw();
 		obstacles.forEach(Drawable::draw);
 		p.popMatrix();
+	}
+
+	@Override
+	public void entered() {
+
+	}
+
+	@Override
+	public void exited() {
+
 	}
 
 	@Override

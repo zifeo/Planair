@@ -28,9 +28,9 @@ public class Planair extends PApplet {
 
 	private static Mode status = null;
 	private static Planair self = null;
-	private static Capture webcam = null;
 
 	private final Map<Class<? extends Mode>, Mode> semantic;
+	private Capture webcam;
 
 	/** Switch mode. */
 	public static void become(Class<? extends Mode> mode) {
@@ -51,6 +51,7 @@ public class Planair extends PApplet {
 		assert self == null;
 		self = this;
 		this.semantic = new HashMap<>();
+		this.webcam = new Capture(this, Consts.CAMERA_WIDTH, Consts.CAMERA_HEIGHT, Consts.CAMERA_FPS);
 	}
 
 	/** Mode & Processing init. */
@@ -71,11 +72,11 @@ public class Planair extends PApplet {
 			List<Mode> modes = new ArrayList<>();
 
 			/* ADD MODES BELOW */
-			PlayMode playMode = new PlayMode(this);
+			PlayMode playMode = new PlayMode(this, webcam);
 			modes.add(playMode);
 			modes.add(new ObstaclesMode(this, playMode));
 			modes.add(new MenuMode(this));
-			modes.add(new SetupMode(this));
+			modes.add(new SetupMode(this, webcam));
 
 			/* DEFAULT MODE LOADED */
 			Class<? extends Mode> defaultMode = MenuMode.class;
@@ -83,7 +84,6 @@ public class Planair extends PApplet {
 			modes.forEach(m -> semantic.put(m.getClass(), m));
 			status = semantic.get(defaultMode);
 			assert status != null;
-			webcam = new Capture(this, Consts.CAMERA_WIDTH, Consts.CAMERA_HEIGHT, Consts.CAMERA_FPS);
 		} catch (Exception e) {
 			println(e.getMessage());
 			if (Consts.DEBUG) {
@@ -106,11 +106,6 @@ public class Planair extends PApplet {
 			textSize(11f);
 			text(String.format("fps: %.1f", frameRate), 4, 13);
 		}
-	}
-
-	/** Access webcam. */
-	public Capture webcam() {
-		return webcam;
 	}
 
 	@Override public boolean sketchFullScreen() {

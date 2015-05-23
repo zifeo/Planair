@@ -8,7 +8,7 @@ public interface Consts {
 	int COLOR2  = 0xFF34495E;
 	int COLOR3  = 0xFF7F8C8D;
 	int COLOR4  = 0xFF95A5A6;
-	int COLORBG = 0xCCCCCC;
+	int COLORBG = 0xFFCCCCCC;
 	int RED     = 0xFFFF0000;
 	int WHITE   = 0xFFFFFFFF;
 	int BLACK   = 0xFF000000;

@@ -3,12 +3,13 @@ package ch.epfl.planair.mods;
 import ch.epfl.planair.Planair;
 import ch.epfl.planair.visual.Pipeline;
 import processing.core.PApplet;
+import processing.video.Capture;
 
 public final class SetupMode extends Mode {
 
 	public final Pipeline pipeline;
 
-	public SetupMode(PApplet p) {
+	public SetupMode(PApplet p, Capture webcam) {
 		super(p);
 		this.pipeline = new Pipeline(p);
 	}
