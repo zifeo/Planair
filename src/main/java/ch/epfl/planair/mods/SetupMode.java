@@ -80,7 +80,10 @@ public final class SetupMode extends Mode {
 		if (webcam.available()) {
 
 			webcam.read();
-			PImage image = webcam.get();
+			PImage cam = webcam.get();
+			int width = cam.width;
+			int height = cam.height;
+			int[] image = cam.pixels;
 			drawPlanel();
 
 			p.cursor(nextActionButton.hover() || previousActionButton.hover() || rangeButton.hover() ? PConstants.HAND : PConstants.ARROW);
@@ -91,7 +94,11 @@ public final class SetupMode extends Mode {
 			pipeline.selectHueThreshold(image, config.lower(PipelineConfig.Step.HUE), config.upper(PipelineConfig.Step.HUE), 0);
 
 			if (status.compareTo(PipelineConfig.Step.HUE) > 0) {
-				pipeline.selectBrightnessThreshold(image, config.lower(PipelineConfig.Step.BRIGHTNESS), config.upper(PipelineConfig.Step.BRIGHTNESS), 0);
+				//pipeline.selectBrightnessThreshold(image, config.lower(PipelineConfig.Step.BRIGHTNESS), config.upper(PipelineConfig.Step.BRIGHTNESS), 0);
+				for (int i = 0; i < image.length; ++i) {
+					int im = image[i];
+					image[i] = config.lower(PipelineConfig.Step.BRIGHTNESS) <= p.hue(im) && p.hue(im) <= config.upper(PipelineConfig.Step.BRIGHTNESS) ? im : Consts.BLACK;
+				}
 			}
 
 			if (status.compareTo(PipelineConfig.Step.BRIGHTNESS) > 0) {
@@ -100,14 +107,17 @@ public final class SetupMode extends Mode {
 
 			if (status.compareTo(PipelineConfig.Step.SATURATION) > 0) {
 				pipeline.binaryBrightnessThreshold(image, config.lower(PipelineConfig.Step.SOBEL), 0, 180);
-				pipeline.convolute(image);
-				pipeline.sobel(image, 0.35f);
+				pipeline.convolute(image, width, height);
+				pipeline.sobel(image, width, height, 0.35f);
 			}
-			p.image(image, offsetX, offsetY - 50);
+
+			cam.pixels = image;
+			cam.updatePixels();
+			p.image(cam, offsetX, offsetY - 50);
 
 			if (status.compareTo(PipelineConfig.Step.SATURATION) > 0) {
-				List<PVector> lines = pipeline.hough(image);
-				List<PVector> corners = pipeline.getPlane(image, lines);
+				List<PVector> lines = pipeline.hough(image, width, height);
+				List<PVector> corners = pipeline.getPlane(image, width, height, lines);
 
 				if (!corners.isEmpty()) {
 					p.fill(Consts.RED);

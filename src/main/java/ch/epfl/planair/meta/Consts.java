@@ -21,7 +21,7 @@ public interface Consts {
 	int EYE_HEIGHT             = 200;
 	int CAMERA_WIDTH           = 640;
 	int CAMERA_HEIGHT          = 480;
-	int CAMERA_FPS             = 15;
+	int CAMERA_FPS             = 30;
 
 	// mods.menu
 	int MENU_WIDTH          = 400;

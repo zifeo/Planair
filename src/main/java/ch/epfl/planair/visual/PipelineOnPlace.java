@@ -61,36 +61,36 @@ public class PipelineOnPlace extends PApplet {
 		this.parent = parent;
 	}
 
-	private void threshold(PImage source, IntUnaryOperator op) {
-		for (int i = 0; i < source.width * source.height; ++i) {
-			source.pixels[i] = op.applyAsInt(source.pixels[i]);
+	private void threshold(int[] source, IntUnaryOperator op) {
+		for (int i = 0; i < source.length; ++i) {
+			source[i] = op.applyAsInt(source[i]);
 		}
 	}
 
-	public void binaryBrightnessThreshold(PImage source, int threshold, int minColor, int maxColor) {
-		Utils.require(0, minColor, 255, "invalid grey color");
-		Utils.require(0, maxColor, 255, "invalid grey color");
+	public void binaryBrightnessThreshold(int[] source, int threshold, int minColor, int maxColor) {
+		//Utils.require(0, minColor, 255, "invalid grey color");
+		//Utils.require(0, maxColor, 255, "invalid grey color");
 		threshold(source, v -> parent.brightness(v) > threshold ? color(maxColor) : color(minColor));
 	}
 
-	public void selectHueThreshold(PImage source, int firstThreshold, int secondThreshold, int otherColor) {
-		Utils.require(0, otherColor, 255, "invalid grey color");
+	public void selectHueThreshold(int[] source, int firstThreshold, int secondThreshold, int otherColor) {
+		//Utils.require(0, otherColor, 255, "invalid grey color");
 		threshold(source, v -> firstThreshold <= parent.hue(v) && parent.hue(v) <= secondThreshold ? v : color(otherColor));
 	}
 
-	public void selectSaturationThreshold(PImage source, int firstThreshold, int secondThreshold, int otherColor) {
-		Utils.require(0, otherColor, 255, "invalid grey color");
+	public void selectSaturationThreshold(int[] source, int firstThreshold, int secondThreshold, int otherColor) {
+		//Utils.require(0, otherColor, 255, "invalid grey color");
 		threshold(source, v -> firstThreshold <= parent.saturation(v) && parent.saturation(v) <= secondThreshold ? v : color(otherColor));
 	}
 
-	public void selectBrightnessThreshold(PImage source, int firstThreshold, int secondThreshold, int otherColor) {
-		Utils.require(0, otherColor, 255, "invalid grey color");
+	public void selectBrightnessThreshold(int[] source, int firstThreshold, int secondThreshold, int otherColor) {
+		//Utils.require(0, otherColor, 255, "invalid grey color");
 		threshold(source, v -> firstThreshold <= parent.brightness(v) && parent.brightness(v) <= secondThreshold ? v : color(otherColor));
 	}
 
-	public void convolute(PImage source) {
-		int widthBord = source.width - gaussianKernelMargin;
-		int heightBord = source.height - gaussianKernelMargin;
+	public void convolute(int[] source, int width, int height) {
+		int widthBord = width - gaussianKernelMargin;
+		int heightBord = height - gaussianKernelMargin;
 
 		for (int x = gaussianKernelMargin; x < widthBord; ++x) {
 			for (int y = gaussianKernelMargin; y < heightBord; ++y) {
@@ -101,17 +101,17 @@ public class PipelineOnPlace extends PApplet {
 
 				for (int px = x - gaussianKernelMargin, sx = 0; px <= localWidthBord; ++px, ++sx) {
 					for (int py = y - gaussianKernelMargin, sy = 0; py <= localHeightBord; ++py, ++sy) {
-						sum += parent.brightness(source.pixels[align(source, px, py)]) * gaussianKernel[sx][sy];
+						sum += parent.brightness(source[align(width, px, py)]) * gaussianKernel[sx][sy];
 					}
 				}
 
-				source.pixels[align(source, x, y)] = color(sum / gaussianKernelWeight);
+				source[align(width, x, y)] = color(sum / gaussianKernelWeight);
 			}
 		}
 	}
 
-	public void sobel(PImage source, float threshold) {
-		sobel(source, threshold, 255, 0);
+	public void sobel(int[] source, int width, int height, float threshold) {
+		sobel(source, width, height, threshold, 255, 0);
 	}
 
 	/**
@@ -124,30 +124,29 @@ public class PipelineOnPlace extends PApplet {
 	 * @param maxColor greyscale (0-255)
 	 * @return
 	 */
-	public void sobel(PImage source, float threshold, int minColor, int maxColor) {
-		Utils.require(0, minColor, 255, "invalid grey color");
-		Utils.require(0, maxColor, 255, "invalid grey color");
+	public void sobel(int[] source, int width, int height, float threshold, int minColor, int maxColor) {
+		//Utils.require(0, minColor, 255, "invalid grey color");
+		//Utils.require(0, maxColor, 255, "invalid grey color");
 
 		int margin = sobelKernelH.length / 2;
 		float maxValue = 0;
-		int size = source.width * source.height;
-		float[] buffer = new float[size];
+		float[] buffer = new float[source.length];
 
-		for (int x = margin; x + margin < source.width; ++x) {
-			for (int y = margin; y + margin < source.height; ++y) {
+		for (int x = margin; x + margin < width; ++x) {
+			for (int y = margin; y + margin < height; ++y) {
 
 				float sumH = 0;
 				float sumV = 0;
 				for (int px = x - margin, sx = 0; px <= x + margin; ++px, ++sx) {
 					for (int py = y - margin, sy = 0; py <= y + margin; ++py, ++sy) {
 
-						int sid = align(source, px, py);
-						sumH += parent.brightness(source.pixels[sid]) * sobelKernelH[sx][sy];
-						sumV += parent.brightness(source.pixels[sid]) * sobelKernelV[sx][sy];
+						int sid = align(width, px, py);
+						sumH += parent.brightness(source[sid]) * sobelKernelH[sx][sy];
+						sumV += parent.brightness(source[sid]) * sobelKernelV[sx][sy];
 					}
 				}
 
-				int bid = align(source, x, y);
+				int bid = align(width, x, y);
 				buffer[bid] = sqrt(sumH * sumH + sumV * sumV);
 				if (buffer[bid] > maxValue) {
 					maxValue = buffer[bid];
@@ -155,15 +154,15 @@ public class PipelineOnPlace extends PApplet {
 			}
 		}
 
-		for (int i = margin * source.width; i < size; ++i) {
-			source.pixels[i] = buffer[i] / maxValue > threshold ? color(minColor): color(maxColor);
+		for (int i = margin * width; i < source.length; ++i) {
+			source[i] = buffer[i] / maxValue > threshold ? color(minColor): color(maxColor);
 		}
 	}
 
-	public List<PVector> hough(PImage edgeImg) {
+	public List<PVector> hough(int[] edgeImg, int width, int height) {
 		// dimensions of the accumulator
 		int phiDim = (int) (Math.PI / Consts.PIPELINE_DISCRETIZATION_STEPS_PHI);
-		int rDim = (int) (((edgeImg.width + edgeImg.height) * 2 + 1) / Consts.PIPELINE_DISCRETIZATION_STEPS_R);
+		int rDim = (int) (((width + height) * 2 + 1) / Consts.PIPELINE_DISCRETIZATION_STEPS_R);
 
 		// Updated at each pass of the inner-most for-loop (for each value of phi for each align)
 
@@ -173,10 +172,10 @@ public class PipelineOnPlace extends PApplet {
 		// Fill the accumulator: on edge points (ie, white pixels of the edge
 		// image), store all possible (r, phi) pairs describing lines going
 		// through the point.
-		for (int y = 0; y < edgeImg.height; ++y) {
-			for (int x = 0; x < edgeImg.width; ++x) {
+		for (int y = 0; y < height; ++y) {
+			for (int x = 0; x < width; ++x) {
 				// Are we on an edge?
-				if (parent.brightness(edgeImg.pixels[y * edgeImg.width + x]) != 0) {
+				if (parent.brightness(edgeImg[y * width + x]) != 0) {
 					// ...determine here all the lines (r, phi) passing through
 					// align (x,y), convert (r,phi) to coordinates in the
 					// accumulator, and increment accordingly the accumulator.
@@ -243,7 +242,7 @@ public class PipelineOnPlace extends PApplet {
 			int idx = best.get(i);
 
 			// first, compute back the (r, phi) polar coordinates:
-			int accPhi = (int) (idx / (rDim + 2)) - 1;
+			int accPhi = (idx / (rDim + 2)) - 1;
 			float accR = idx - (accPhi + 1) * (rDim + 2) - 1;
 			float r = (accR - (rDim - 1) * 0.5f) * Consts.PIPELINE_DISCRETIZATION_STEPS_R;
 			float phi = accPhi * Consts.PIPELINE_DISCRETIZATION_STEPS_PHI;
@@ -254,14 +253,14 @@ public class PipelineOnPlace extends PApplet {
 		return selected;
 	}
 
-	private int align(PImage source, int x, int y) {
-		return y * source.width + x;
+	private int align(int width, int x, int y) {
+		return y * width + x;
 	}
 
-	public List<PVector> getPlane(PImage image, List<PVector> lines) {
+	public List<PVector> getPlane(int[] image, int width, int height, List<PVector> lines) {
 
 		QuadGraph quad = new QuadGraph();
-		quad.build(lines, image.width, image.height);
+		quad.build(lines, width, height);
 
 		List<int[]> cycles = quad.findCycles();
 

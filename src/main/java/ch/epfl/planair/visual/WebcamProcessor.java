@@ -201,7 +201,7 @@ public final class WebcamProcessor {
 					webcam.read();
 					PImage image = webcam.get();
 
-					pipeline.selectHueThreshold(image, currentConfig.lower(PipelineConfig.Step.HUE), currentConfig.upper(PipelineConfig.Step.HUE), 0);
+					/*pipeline.selectHueThreshold(image, currentConfig.lower(PipelineConfig.Step.HUE), currentConfig.upper(PipelineConfig.Step.HUE), 0);
 					pipeline.selectBrightnessThreshold(image, currentConfig.lower(PipelineConfig.Step.BRIGHTNESS), currentConfig.upper(PipelineConfig.Step.BRIGHTNESS), 0);
 					pipeline.selectSaturationThreshold(image, currentConfig.lower(PipelineConfig.Step.SATURATION), currentConfig.upper(PipelineConfig.Step.SATURATION), 0);
 					pipeline.binaryBrightnessThreshold(image, currentConfig.lower(PipelineConfig.Step.SOBEL), 0, 180);
@@ -222,6 +222,7 @@ public final class WebcamProcessor {
 						}
 					}
                     //parent.println(r.x + " " + r.y);
+                    */
                 }
 
                 changed.set(true);
