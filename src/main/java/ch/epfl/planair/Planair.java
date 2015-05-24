@@ -30,7 +30,7 @@ public class Planair extends PApplet {
 	private static Planair self;
 
 	private final Map<Class<? extends Mode>, Mode> semantic;
-	private Capture webcam;
+	private final Capture webcam;
 
 	static {
 		status = null;
@@ -55,23 +55,20 @@ public class Planair extends PApplet {
 	public Planair() {
 		assert self == null;
 		self = this;
-		this.semantic = new HashMap<>();
+		if (Capture.list().length == 0) {
+			println("No webcam available!");
+			exit();
+		}
 		this.webcam = new Capture(this, Consts.CAMERA_WIDTH, Consts.CAMERA_HEIGHT, Consts.CAMERA_FPS);
+		this.semantic = new HashMap<>();
 	}
 
 	/** Mode & Processing init. */
 	@Override
 	public void setup() {
 		assert status == null;
-		assert webcam == null;
-
 		size(displayWidth, displayHeight, P3D);
 		frameRate(Consts.FRAMERATE);
-
-		if (Capture.list().length == 0) {
-			println("No webcam available!");
-			exit();
-		}
 
 		try {
 			List<Mode> modes = new ArrayList<>();
