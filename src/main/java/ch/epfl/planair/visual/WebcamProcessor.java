@@ -8,112 +8,114 @@ import processing.core.PVector;
 import processing.video.Capture;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 
 public final class WebcamProcessor {
 
 	private final Capture webcam;
-    private final PApplet p;
+	private final PApplet p;
 
-    private final BoundedQueue queue;
+	private final BoundedQueue queue;
 
-    private final AtomicInteger rx;
-    private final AtomicInteger ry;
-    private final AtomicInteger rz;
-	public static final AtomicReference<PipelineConfig> config;
+	private final AtomicInteger rx;
+	private final AtomicInteger ry;
+	private final AtomicInteger rz;
+	private final PipelineConfig config;
+	private final PipelineOnPlace pipeline;
+	private final TwoDThreeD twoDThreeD;
 
-    private float lastFrameTime;
-    private float lastCalcTime;
-    private float frameTimeLength;
-    private float calculTimeLength;
+	private float lastFrameTime;
+	private float lastCalcTime;
+	private float frameTimeLength;
+	private float calculTimeLength;
 
-	static {
-		config = new AtomicReference<>(new PipelineConfig());
-	}
+	private Thread runner;
 
-    public WebcamProcessor(PApplet p, Capture webcam){
-	    this.p = p;
+	public WebcamProcessor(PApplet p, Capture webcam/*, PipelineConfig config*/) {
+		this.p = p;
 		this.webcam = webcam;
-        this.queue = new BoundedQueue(3);
-        this.rx = new AtomicInteger(0);
-        this.ry = new AtomicInteger(0);
-        this.rz = new AtomicInteger(0);
-	    new Thread(new PipelineRunner()).start();
+		this.queue = new BoundedQueue(3);
+		this.config = new PipelineConfig();
+		this.rx = new AtomicInteger(0);
+		this.ry = new AtomicInteger(0);
+		this.rz = new AtomicInteger(0);
+		this.runner = null;
+		this.pipeline = new PipelineOnPlace();
+		this.twoDThreeD = new TwoDThreeD(webcam.width, webcam.height);
 	}
 
 	public void start() {
+		assert runner == null;
 		webcam.start();
+		runner = new Thread(new PipelineRunner(config));
+		runner.start();
+		p.println("Start");
 	}
 
 	public void stop() {
+		runner.interrupt();
+		runner = null;
 		webcam.stop();
+		p.println("end");
 	}
 
 	public PVector rotation() {
-        PVector r = new PVector(Float.intBitsToFloat(rx.get()),
-                        Float.intBitsToFloat(0),
-                        Float.intBitsToFloat(rz.get()));
+		PVector r = new PVector(Float.intBitsToFloat(rx.get()),
+				Float.intBitsToFloat(0),
+				Float.intBitsToFloat(rz.get()));
 
-        if (queue.get(0) != r) {
-            queue.enqueue(r);
-            float newTime = p.millis();
-            calculTimeLength = newTime - lastCalcTime;
-            lastCalcTime = newTime;
+		if (queue.get(0) != r) {
 
-        } else {
-            float newTime = p.millis();
-            frameTimeLength = newTime - lastFrameTime;
-            lastFrameTime = newTime;
-        }
-
-        return r;
+			queue.enqueue(r);
+			float newTime = p.millis();
+			calculTimeLength = newTime - lastCalcTime;
+			lastCalcTime = newTime;
+		} else {
+			float newTime = p.millis();
+			frameTimeLength = newTime - lastFrameTime;
+			lastFrameTime = newTime;
+		}
+		return r;
 	}
 
-    private final class PipelineRunner implements Runnable {
+	private final class PipelineRunner implements Runnable {
 
-	    private final PipelineOnPlace pipeline;
-	    private final TwoDThreeD twoDThreeD;
+		private final PipelineConfig currentConfig;
 
-	    private PipelineRunner() {
-		    this.pipeline = new PipelineOnPlace(p);
-		    this.twoDThreeD = new TwoDThreeD(webcam.width, webcam.height);
-	    }
+		public PipelineRunner(PipelineConfig config) {
+			this.currentConfig = config;
+		}
 
-	    @Override
-        public void run() {
-            while (true) {
-                if (webcam.available()) {
-	                webcam.read();
-	                PImage image = webcam.get();
-	                //p.image(image, 0, 0);
-	                //result.resize(p.width/3, p.height/4);
+		@Override
+		public void run() {
+			while (!Thread.interrupted()) {
+				if (webcam.available()) {
+					webcam.read();
+					PImage image = webcam.get();
 
-	                pipeline.selectHueThreshold(image, 80, 125, 0);
-	                //result = pipeline.selectHueThreshold(result, 95, 140, 0);
-	                pipeline.selectBrightnessThreshold(image, 30, 240, 0);
-	                pipeline.selectSaturationThreshold(image, 80, 255, 0);
-	                pipeline.binaryBrightnessThreshold(image, 20, 0, 180);
-	                pipeline.convolute(image, PipelineOnPlace.gaussianKernel);
-	                pipeline.sobel(image, 0.35f);
+					pipeline.selectHueThreshold(image, 50, 70, 0);
 
-	                // Partie QUAD a refactorer
-	                List<PVector> lines = pipeline.hough(image);
-	                List<PVector> corners = pipeline.getPlane(image, lines);
+					pipeline.selectBrightnessThreshold(image, currentConfig.lower(PipelineConfig.Step.BRIGHTNESS), currentConfig.upper(PipelineConfig.Step.BRIGHTNESS), 0);
+					pipeline.selectSaturationThreshold(image, currentConfig.lower(PipelineConfig.Step.SATURATION), currentConfig.upper(PipelineConfig.Step.SATURATION), 0);
+					pipeline.binaryBrightnessThreshold(image, currentConfig.lower(PipelineConfig.Step.SOBEL), 0, 180);
+					pipeline.convolute(image, PipelineOnPlace.gaussianKernel);
+					pipeline.sobel(image, 0.35f);
 
-	                if (corners.size() >= 8) {
-		                PVector r = twoDThreeD.get3DRotations(corners.subList(0, 4));
+					List<PVector> lines = pipeline.hough(image);
+					List<PVector> corners = pipeline.getPlane(image, lines);
 
-		                rx.set(Float.floatToIntBits(r.x));
-		                ry.set(Float.floatToIntBits(r.z));
-		                rz.set(Float.floatToIntBits(-r.y));
+					if (corners.size() >= 8) {
+						PVector r = twoDThreeD.get3DRotations(corners.subList(0, 4));
 
-		                //p.println(r.x + " " + r.y);
-	                }
-                }
-            }
-        }
-    }
+						rx.set(Float.floatToIntBits(r.x));
+						ry.set(Float.floatToIntBits(r.z));
+						rz.set(Float.floatToIntBits(-r.y));
+
+					}
+					p.println("d");
+				}
+			}
+		}
+	}
 
 }
