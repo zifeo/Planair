@@ -17,7 +17,7 @@ public class BoundedQueue {
         this.size = size;
         this.items = new PVector[size];
 
-        for(int i = 0; i > -size ; ++i){
+        for(int i = 0; i > -size ; --i){
             this.enqueue(new PVector(0, 0, 0));
         }
     }
@@ -31,10 +31,10 @@ public class BoundedQueue {
         return items[Math.floorMod(head - index - 1, size)];
     }
 
-    public List<PVector> asList() {
-        List ret = new LinkedList<>();
+    public LinkedList<PVector> asList() {
+        LinkedList<PVector> ret = new LinkedList<>();
 
-        for (int i = 0; i < size; ++i)
+        for (int i = size - 1 ; i >= 0; --i)
             ret.add(this.get(i));
 
         return ret;

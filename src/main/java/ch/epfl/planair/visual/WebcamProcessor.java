@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public final class WebcamProcessor {
 
-    static private final int sizeInterp = 3;
+    static private final int sizeInterp = 2;
     private final Capture cam;
     private final PipelineOnplace pipeline;
     private final TwoDThreeD twoDThreeD;
@@ -31,8 +31,11 @@ public final class WebcamProcessor {
     private int pos = 0;
 
     public WebcamProcessor(PApplet parent){
+        parent.println("1");
         this.yQueue = new BoundedQueue(sizeInterp);
         this.parent = parent;
+
+        parent.println("1");
 
         String[] cameras = Capture.list();
 
@@ -40,13 +43,11 @@ public final class WebcamProcessor {
             throw new IllegalStateException("No camera");
         }
 
-        //println("Cameras:");
-        for (int i = 0; i < cameras.length; i++) {
-            //println(cameras[i]);
-        }
         this.cam = new Capture(parent, 640, 480, 15);
         // cam = new Capture(this, cameras[4]);
         this.cam.start();
+
+        parent.println("2");
 
         this.rx = new AtomicInteger(0);
         this.ry = new AtomicInteger(0);
@@ -68,7 +69,6 @@ public final class WebcamProcessor {
         if (!changed.get()) {
             discStep++;
             r = splineInterpolation();
-            parent.println("interpolation : " + r);
             //yQueue.enqueue(r);
         } else {
 
@@ -79,7 +79,6 @@ public final class WebcamProcessor {
             yQueue.enqueue(r);
             changed.set(false);
             discStep = 0;
-            parent.println("cam rotation : " + r);
         }
 
         //parent.println(r);
@@ -143,7 +142,7 @@ public final class WebcamProcessor {
 
         PVector px = new PVector(0,0,0);
 
-        List<PVector> list = yQueue.asList();
+        LinkedList<PVector> list = yQueue.asList();
 
         px.add(list.get(0));
 
