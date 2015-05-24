@@ -2,6 +2,7 @@ package ch.epfl.planair.visual;
 
 import ch.epfl.planair.meta.BoundedQueue;
 import ch.epfl.planair.meta.PipelineConfig;
+import ch.epfl.planair.meta.Utils;
 import processing.core.PApplet;
 import processing.core.PImage;
 import processing.core.PVector;
@@ -142,7 +143,7 @@ public final class WebcamProcessor {
         //px.add(a[sizeInterp / 2]);
         //px.mult(0.8f);*/
 
-        PVector px = new PVector(0,0,0);
+        PVector px = Utils.nullVector();
 
         LinkedList<PVector> list = yQueue.asList();
 
@@ -153,7 +154,7 @@ public final class WebcamProcessor {
             for (int j = 0; j < i; j++) {
                 d.mult(sizeInterp - 1 + discStep*1/8.0f - j);
             }
-
+			d.mult(0.8f);
             px.add(d);
         }
 
@@ -164,7 +165,7 @@ public final class WebcamProcessor {
 
     private PVector delta(List<PVector> list){
         if (list.size() == 1) {
-            PVector ret = new PVector(0,0,0);
+            PVector ret = Utils.nullVector();
             ret.add(list.get(0));
 
             return ret;
@@ -213,10 +214,12 @@ public final class WebcamProcessor {
 					if (!corners.isEmpty()) {
 						PVector r = twoDThreeD.get3DRotations(corners.subList(0, 4));
 
-						rx.set(Float.floatToIntBits(r.x));
-						ry.set(Float.floatToIntBits(r.z));
-						rz.set(Float.floatToIntBits(-r.y));
+						if (PVector.sub(r, new PVector(Float.intBitsToFloat(rx.get()), Float.intBitsToFloat(rz.get()), -Float.intBitsToFloat(ry.get()))).mag() < 1) {
 
+							rx.set(Float.floatToIntBits(r.x));
+							ry.set(Float.floatToIntBits(r.z));
+							rz.set(Float.floatToIntBits(-r.y));
+						}
 					}
                     //parent.println(r.x + " " + r.y);
                 }
