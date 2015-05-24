@@ -11,20 +11,20 @@ import processing.core.PVector;
 
 public final class ObstaclesMode extends Mode {
 
-	private final Tree obstacles;
+	private final Tree obstacleHolder;
 	private final PlayMode playMode;
 
 	public ObstaclesMode(PApplet parent, PlayMode playMode) {
 		super(parent);
 
-		this.obstacles = new Tree(parent, new PVector(0, -Consts.PLATE_THICKNESS/2, 0));
-		obstacles.setXBounds(
-				-Consts.PLATE_SIZE / 2 + Consts.CYLINDER_RADIUS,
-				Consts.PLATE_SIZE / 2 - Consts.CYLINDER_RADIUS
+		this.obstacleHolder = new Tree(parent, new PVector(0, -Consts.PLATE_THICKNESS/2, 0));
+		obstacleHolder.setXBounds(
+				-Consts.PLATE_SIZE / 2 + Consts.HOLDER_RADIUS,
+				Consts.PLATE_SIZE / 2 - Consts.HOLDER_RADIUS
 		);
-		this.obstacles.setZBounds(
-				-Consts.PLATE_SIZE / 2 + Consts.CYLINDER_RADIUS,
-				Consts.PLATE_SIZE / 2 - Consts.CYLINDER_RADIUS
+		this.obstacleHolder.setZBounds(
+				-Consts.PLATE_SIZE / 2 + Consts.HOLDER_RADIUS,
+				Consts.PLATE_SIZE / 2 - Consts.HOLDER_RADIUS
 		);
 
 		this.playMode = playMode;
@@ -35,21 +35,21 @@ public final class ObstaclesMode extends Mode {
 		playMode.drawMetaPlate(Utils.nullVector());
 		p.camera(0, -(p.height / 2f) / PApplet.tan(PConstants.PI * 30f / 180f), 0, 0, 0, 0, 0, 0, 1);
 
-		obstacles.setLocation(new PVector(p.mouseX - p.width / 2, -Consts.PLATE_THICKNESS / 2, p.mouseY - p.height / 2));
-		obstacles.draw();
+		obstacleHolder.setLocation(new PVector(p.mouseX - p.width / 2, -Consts.PLATE_THICKNESS / 2, p.mouseY - p.height / 2));
+		obstacleHolder.draw();
 	}
 
 	@Override
 	public void mousePressed() {
 		Sphere sphere = playMode.sphere();
-		PVector wantedLocation = obstacles.location();
+		PVector wantedLocation = obstacleHolder.location();
 		PVector sphereLocation = sphere.location();
 		float angle = PVector.angleBetween(wantedLocation, sphereLocation);
 		float distance = PVector.dist(wantedLocation, sphereLocation);
-		float borders = obstacles.get2DDistanceFrom(angle) + sphere.get2DDistanceFrom(angle + PConstants.PI);
+		float borders = obstacleHolder.get2DDistanceFrom(angle) + sphere.get2DDistanceFrom(angle + PConstants.PI);
 
 		if (distance > borders) {
-			playMode.addObstacles(new Tree(obstacles));
+			playMode.addObstacles(new Tree(obstacleHolder));
 		}
 	}
 

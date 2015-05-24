@@ -25,7 +25,6 @@ public final class PipelineConfig {
 	public int lower(Step s) {
 		return (int) (lowerConf[s.ordinal()] * 255.999);
 	}
-
 	public int upper(Step s) {
 		return (int) (upperConf[s.ordinal()] * 255.999);
 	}
@@ -33,7 +32,6 @@ public final class PipelineConfig {
 	public float lowerUnit(Step s) {
 		return lowerConf[s.ordinal()];
 	}
-
 	public float upperUnit(Step s) {
 		return upperConf[s.ordinal()];
 	}
@@ -41,7 +39,6 @@ public final class PipelineConfig {
 	public void lower(Step s, float v) {
 		lowerConf[s.ordinal()] = v;
 	}
-
 	public void upper(Step s, float v) {
 		upperConf[s.ordinal()] = v;
 	}

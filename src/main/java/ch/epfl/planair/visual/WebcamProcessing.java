@@ -30,6 +30,7 @@ public final class WebcamProcessing extends PApplet {
 				println(cameras[i]);
 			}
 			cam = new Capture(this, 640, 480, 15);
+			println(cam.width, cam.height);
 			// cam = new Capture(this, cameras[4]);
 			cam.start();
 		}
