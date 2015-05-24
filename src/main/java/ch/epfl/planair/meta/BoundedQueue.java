@@ -1,8 +1,9 @@
 package ch.epfl.planair.meta;
 
-
 import processing.core.PVector;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 public class BoundedQueue {
 
@@ -14,6 +15,10 @@ public class BoundedQueue {
         this.head = 0;
         this.size = size;
         this.items = new PVector[size];
+
+        for(int i = 0; i > -size ; --i){
+            this.enqueue(new PVector(0, 0, 0));
+        }
     }
 
     public void enqueue(PVector newNumber) {
@@ -22,7 +27,17 @@ public class BoundedQueue {
     }
 
     public PVector get(int index) {
-        return items[Math.floorMod(head - index, items.length)];
+        return items[Math.floorMod(head - index - 1, size)];
+    }
+
+    public LinkedList<PVector> asList() {
+        LinkedList<PVector> ret = new LinkedList<>();
+
+        for (int i = size - 1; i >= 0; --i) {
+	        ret.add(this.get(i));
+        }
+
+        return ret;
     }
 
     @Override
@@ -30,3 +45,5 @@ public class BoundedQueue {
         return Arrays.toString(items);
     }
 }
+
+
