@@ -6,11 +6,10 @@ import ch.epfl.planair.meta.PipelineConfig;
 import ch.epfl.planair.scene.ui.ActionButton;
 import ch.epfl.planair.scene.ui.Range;
 import ch.epfl.planair.visual.PipelineOnPlace;
-import processing.core.PApplet;
-import processing.core.PConstants;
-import processing.core.PGraphics;
-import processing.core.PImage;
+import processing.core.*;
 import processing.video.Capture;
+
+import java.util.List;
 
 public final class SetupMode extends Mode {
 
@@ -104,18 +103,19 @@ public final class SetupMode extends Mode {
 				pipeline.convolute(image, PipelineOnPlace.gaussianKernel);
 				pipeline.sobel(image, 0.35f);
 			}
-
-			//p.println(config.lower(status)+" - "+config.upper(status));
 			p.image(image, offsetX, offsetY - 50);
 
-			/*List<PVector> lines = pipeline.hough(image);
-			List<PVector> corners = pipeline.getPlane(image, lines);
+			if (status.compareTo(PipelineConfig.Step.SATURATION) > 0) {
+				List<PVector> lines = pipeline.hough(image);
+				List<PVector> corners = pipeline.getPlane(image, lines);
 
-			if (corners.size() >= 8) {
-				for (PVector corner : corners.subList(0, 4)) {
-					p.ellipse(corner.x, corner.y, 10, 10); // CORNER
+				if (!corners.isEmpty()) {
+					p.fill(Consts.RED);
+					for (PVector corner : corners.subList(0, 4)) {
+						p.ellipse(offsetX + corner.x, offsetY - 50 + corner.y, 10, 10);
+					}
 				}
-			}*/
+			}
 
 		}
 	}

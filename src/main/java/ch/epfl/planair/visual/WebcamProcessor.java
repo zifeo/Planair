@@ -49,14 +49,12 @@ public final class WebcamProcessor {
 		webcam.start();
 		runner = new Thread(new PipelineRunner(config.snapshot()));
 		runner.start();
-		p.println("Start");
 	}
 
 	public void stop() {
 		runner.interrupt();
 		runner = null;
 		webcam.stop();
-		p.println("end");
 	}
 
 	public PVector rotation() {
@@ -93,8 +91,7 @@ public final class WebcamProcessor {
 					webcam.read();
 					PImage image = webcam.get();
 
-					pipeline.selectHueThreshold(image, 50, 70, 0);
-
+					pipeline.selectHueThreshold(image, currentConfig.lower(PipelineConfig.Step.HUE), currentConfig.upper(PipelineConfig.Step.HUE), 0);
 					pipeline.selectBrightnessThreshold(image, currentConfig.lower(PipelineConfig.Step.BRIGHTNESS), currentConfig.upper(PipelineConfig.Step.BRIGHTNESS), 0);
 					pipeline.selectSaturationThreshold(image, currentConfig.lower(PipelineConfig.Step.SATURATION), currentConfig.upper(PipelineConfig.Step.SATURATION), 0);
 					pipeline.binaryBrightnessThreshold(image, currentConfig.lower(PipelineConfig.Step.SOBEL), 0, 180);
