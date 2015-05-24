@@ -9,6 +9,7 @@ import ch.epfl.planair.visual.PipelineOnPlace;
 import processing.core.*;
 import processing.video.Capture;
 
+import java.awt.image.BufferedImage;
 import java.util.List;
 
 public final class SetupMode extends Mode {
@@ -107,12 +108,17 @@ public final class SetupMode extends Mode {
 
 			if (status.compareTo(PipelineConfig.Step.SATURATION) > 0) {
 				pipeline.binaryBrightnessThreshold(image, config.lower(PipelineConfig.Step.SOBEL), 0, 180);
-				pipeline.convolute(image, width, height);
-				pipeline.sobel(image, width, height, 0.35f);
 			}
-
 			cam.pixels = image;
 			cam.updatePixels();
+
+			if (status.compareTo(PipelineConfig.Step.SATURATION) > 0) {
+				BufferedImage b = pipeline.convolute(cam, width, height);
+				image = pipeline.sobel(b, width, height, 90);
+				cam.pixels = image;
+				cam.updatePixels();
+			}
+
 			p.image(cam, offsetX, offsetY - 50);
 
 			if (status.compareTo(PipelineConfig.Step.SATURATION) > 0) {

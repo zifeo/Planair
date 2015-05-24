@@ -1,11 +1,13 @@
 package ch.epfl.planair.visual;
 
 import ch.epfl.planair.meta.Consts;
-import ch.epfl.planair.meta.Utils;
 import processing.core.PApplet;
 import processing.core.PImage;
 import processing.core.PVector;
 
+import java.awt.image.BufferedImage;
+import java.awt.image.ConvolveOp;
+import java.awt.image.Kernel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -16,26 +18,11 @@ public class PipelineOnPlace extends PApplet {
 
 	private final PApplet parent;
 
-	public final static float[][] gaussianKernel = {
-			{  9, 12,  9 },
-			{ 12, 15, 12 },
-			{  9, 12,  9 }
-	};
+	private final static ConvolveOp gaussX;
+	private final static ConvolveOp gaussY;
+	private final static ConvolveOp sobelX;
+	private final static ConvolveOp sobelY;
 
-	private final static float[][] sobelKernelH = {
-			{ 0,  1, 0 },
-			{ 0,  0, 0 },
-			{ 0, -1, 0 }
-	};
-	private final static float[][] sobelKernelV = {
-			{ 0, 0,  0 },
-			{ 1, 0, -1 },
-			{ 0, 0,  0 }
-	};
-	private static int gaussianKernelWeight;
-	private static int gaussianKernelMargin;
-
-	/* COS and SIN constants, to optimise Hough method */
 	private final static float[] COS;
 	private final static float[] SIN;
 
@@ -48,13 +35,10 @@ public class PipelineOnPlace extends PApplet {
 			SIN[i] = (float) Math.sin(i * Consts.PIPELINE_DISCRETIZATION_STEPS_PHI);
 		}
 
-		gaussianKernelWeight = 0;
-		for (float[] x: gaussianKernel) {
-			for (float f: x) {
-				gaussianKernelWeight += abs(f);
-			}
-		}
-		gaussianKernelMargin = gaussianKernel.length / 2;
+		gaussX = new ConvolveOp(new Kernel(3, 1, new float[]{12/39f, 15/39f, 12/39f}));
+		gaussY = new ConvolveOp(new Kernel(1, 3, new float[]{12/39f, 15/39f, 12/39f}));
+		sobelX = new ConvolveOp(new Kernel(3, 1, new float[]{1, 0, -1}));
+		sobelY = new ConvolveOp(new Kernel(1, 3, new float[]{1, 0, -1}));
 	}
 
 	public PipelineOnPlace(PApplet parent) {
@@ -88,75 +72,43 @@ public class PipelineOnPlace extends PApplet {
 		threshold(source, v -> firstThreshold <= parent.brightness(v) && parent.brightness(v) <= secondThreshold ? v : color(otherColor));
 	}
 
-	public void convolute(int[] source, int width, int height) {
-		int widthBord = width - gaussianKernelMargin;
-		int heightBord = height - gaussianKernelMargin;
-
-		for (int x = gaussianKernelMargin; x < widthBord; ++x) {
-			for (int y = gaussianKernelMargin; y < heightBord; ++y) {
-
-				float sum = 0;
-				int localWidthBord = x + gaussianKernelMargin;
-				int localHeightBord = y + gaussianKernelMargin;
-
-				for (int px = x - gaussianKernelMargin, sx = 0; px <= localWidthBord; ++px, ++sx) {
-					for (int py = y - gaussianKernelMargin, sy = 0; py <= localHeightBord; ++py, ++sy) {
-						sum += parent.brightness(source[align(width, px, py)]) * gaussianKernel[sx][sy];
-					}
-				}
-
-				source[align(width, x, y)] = color(sum / gaussianKernelWeight);
-			}
-		}
+	public BufferedImage convolute(PImage source, int width, int height) {
+		return gaussX.filter(gaussY.filter((BufferedImage) source.getNative(), null), null);
 	}
 
-	public void sobel(int[] source, int width, int height, float threshold) {
-		sobel(source, width, height, threshold, 255, 0);
+	public int[] sobel(BufferedImage source, int width, int height, int threshold) {
+		return sobel(source, width, height, threshold, 255, 0);
 	}
 
-	/**
-	 *
-	 * NB: default createImage background is black
-	 *
-	 * @param source
-	 * @param threshold (0-1)
-	 * @param minColor greyscale (0-255)
-	 * @param maxColor greyscale (0-255)
-	 * @return
-	 */
-	public void sobel(int[] source, int width, int height, float threshold, int minColor, int maxColor) {
-		//Utils.require(0, minColor, 255, "invalid grey color");
-		//Utils.require(0, maxColor, 255, "invalid grey color");
+	public int bri(int rgb) {
+		int red   = (rgb >> 16) & 0xFF;
+		int green = (rgb >>  8) & 0xFF;
+		int blue  = rgb & 0xFF;
 
-		int margin = sobelKernelH.length / 2;
-		float maxValue = 0;
-		float[] buffer = new float[source.length];
+		return (int) (red * 0.2126f + green * 0.7152f + blue * 0.0722f);
+	}
 
-		for (int x = margin; x + margin < width; ++x) {
-			for (int y = margin; y + margin < height; ++y) {
+	public int[] sobel(BufferedImage b, int width2, int height2, int threshold, int minColor, int maxColor) {
 
-				float sumH = 0;
-				float sumV = 0;
-				for (int px = x - margin, sx = 0; px <= x + margin; ++px, ++sx) {
-					for (int py = y - margin, sy = 0; py <= y + margin; ++py, ++sy) {
+		//BufferedImage bx = sobelX.filter(b, null);
+		//b = sobelY.filter(b, null);
 
-						int sid = align(width, px, py);
-						sumH += parent.brightness(source[sid]) * sobelKernelH[sx][sy];
-						sumV += parent.brightness(source[sid]) * sobelKernelV[sx][sy];
-					}
-				}
+		int width = b.getWidth();
+		int height = b.getHeight();
+		int[] data = new int[width * height];
 
-				int bid = align(width, x, y);
-				buffer[bid] = sqrt(sumH * sumH + sumV * sumV);
-				if (buffer[bid] > maxValue) {
-					maxValue = buffer[bid];
-				}
+		for (int x = 0, i = 0; x < width; ++x) {
+			for (int y = 0; y < height; ++y, ++i) {
+
+				/*int sum = (int) Math.hypot(bri(bx.getRGB(x, y)), bri(b.getRGB(x, y)));
+				data[i] = sum > threshold ? Consts.WHITE: Consts.BLACK;*/
+
+				data[i] = b.getRGB(x, y);
+
 			}
 		}
 
-		for (int i = margin * width; i < source.length; ++i) {
-			source[i] = buffer[i] / maxValue > threshold ? color(minColor): color(maxColor);
-		}
+		return data;
 	}
 
 	public List<PVector> hough(int[] edgeImg, int width, int height) {
