@@ -2,6 +2,7 @@ package ch.epfl.planair.mods;
 
 import ch.epfl.planair.Planair;
 import ch.epfl.planair.meta.Consts;
+import ch.epfl.planair.meta.PipelineConfig;
 import ch.epfl.planair.meta.Utils;
 import ch.epfl.planair.scene.Background;
 import ch.epfl.planair.scene.Airplane;
@@ -35,7 +36,7 @@ public final class PlayMode extends Mode {
 	private PVector environmentRotation = Utils.nullVector();
 	private float motionFactor;
 
-	public PlayMode(PApplet p, Capture webcam) {
+	public PlayMode(PApplet p, Capture webcam, PipelineConfig config) {
 		super(p);
 		this.motionFactor = Consts.MOTION_FACTOR;
 		this.obstacles = new ArrayList<>();
@@ -60,7 +61,7 @@ public final class PlayMode extends Mode {
 		this.background = new Background(p);
 		this.airplane = new Airplane(p);
 
-		this.daemon = new WebcamProcessor(p, webcam);
+		this.daemon = new WebcamProcessor(p, webcam, config);
 	}
 
 	@Override

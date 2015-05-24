@@ -6,7 +6,6 @@ import ch.epfl.planair.meta.PipelineConfig;
 import ch.epfl.planair.scene.ui.ActionButton;
 import ch.epfl.planair.scene.ui.Range;
 import ch.epfl.planair.visual.PipelineOnPlace;
-import ch.epfl.planair.visual.TwoDThreeD;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PGraphics;
@@ -16,7 +15,6 @@ import processing.video.Capture;
 public final class SetupMode extends Mode {
 
 	private final PipelineOnPlace pipeline;
-	private final TwoDThreeD twoDThreeD;
 	private final Capture webcam;
 	private final ActionButton nextActionButton;
 	private final ActionButton previousActionButton;
@@ -28,10 +26,9 @@ public final class SetupMode extends Mode {
 	private PipelineConfig.Step status;
 	private PipelineConfig config;
 
-	public SetupMode(PApplet p, Capture webcam) {
+	public SetupMode(PApplet p, Capture webcam, PipelineConfig config) {
 		super(p);
 		this.pipeline = new PipelineOnPlace(p);
-		this.twoDThreeD = new TwoDThreeD(webcam.width, webcam.height);
 		this.webcam = webcam;
 		this.status =  PipelineConfig.Step.HUE;
 		this.offsetX = (p.width - webcam.width) / 2;
@@ -59,7 +56,7 @@ public final class SetupMode extends Mode {
 				"Next",
 				this::next
 		);
-		this.config = new PipelineConfig();
+		this.config = config;
 		this.rangeButton = new Range(
 				this.panel,
 				0,

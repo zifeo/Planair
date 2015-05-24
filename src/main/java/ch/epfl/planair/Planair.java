@@ -1,6 +1,7 @@
 package ch.epfl.planair;
 
 import ch.epfl.planair.meta.Consts;
+import ch.epfl.planair.meta.PipelineConfig;
 import ch.epfl.planair.mods.*;
 import processing.core.PApplet;
 import processing.event.MouseEvent;
@@ -74,11 +75,12 @@ public class Planair extends PApplet {
 			List<Mode> modes = new ArrayList<>();
 
 			/* ADD MODES BELOW */
-			PlayMode playMode = new PlayMode(this, webcam);
+			PipelineConfig config = new PipelineConfig();
+			PlayMode playMode = new PlayMode(this, webcam, config);
 			modes.add(playMode);
 			modes.add(new ObstaclesMode(this, playMode));
 			modes.add(new MenuMode(this));
-			modes.add(new SetupMode(this, webcam));
+			modes.add(new SetupMode(this, webcam, config));
 
 			/* DEFAULT MODE LOADED */
 			Class<? extends Mode> defaultMode = MenuMode.class;

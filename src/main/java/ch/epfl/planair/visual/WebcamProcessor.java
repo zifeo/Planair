@@ -31,11 +31,11 @@ public final class WebcamProcessor {
 
 	private Thread runner;
 
-	public WebcamProcessor(PApplet p, Capture webcam/*, PipelineConfig config*/) {
+	public WebcamProcessor(PApplet p, Capture webcam, PipelineConfig config) {
 		this.p = p;
 		this.webcam = webcam;
 		this.queue = new BoundedQueue(3);
-		this.config = new PipelineConfig();
+		this.config = config;
 		this.rx = new AtomicInteger(0);
 		this.ry = new AtomicInteger(0);
 		this.rz = new AtomicInteger(0);
@@ -47,7 +47,7 @@ public final class WebcamProcessor {
 	public void start() {
 		assert runner == null;
 		webcam.start();
-		runner = new Thread(new PipelineRunner(config));
+		runner = new Thread(new PipelineRunner(config.snapshot()));
 		runner.start();
 		p.println("Start");
 	}
@@ -104,7 +104,7 @@ public final class WebcamProcessor {
 					List<PVector> lines = pipeline.hough(image);
 					List<PVector> corners = pipeline.getPlane(image, lines);
 
-					if (corners.size() >= 8) {
+					if (!corners.isEmpty()) {
 						PVector r = twoDThreeD.get3DRotations(corners.subList(0, 4));
 
 						rx.set(Float.floatToIntBits(r.x));
@@ -112,7 +112,6 @@ public final class WebcamProcessor {
 						rz.set(Float.floatToIntBits(-r.y));
 
 					}
-					p.println("d");
 				}
 			}
 		}
