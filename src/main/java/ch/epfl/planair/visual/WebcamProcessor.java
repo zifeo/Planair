@@ -40,7 +40,7 @@ public final class WebcamProcessor {
 		this.ry = new AtomicInteger(0);
 		this.rz = new AtomicInteger(0);
 		this.runner = null;
-		this.pipeline = new PipelineOnPlace();
+		this.pipeline = new PipelineOnPlace(p);
 		this.twoDThreeD = new TwoDThreeD(webcam.width, webcam.height);
 	}
 

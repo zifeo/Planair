@@ -7,13 +7,11 @@ import ch.epfl.planair.scene.ui.ActionButton;
 import ch.epfl.planair.scene.ui.Range;
 import ch.epfl.planair.visual.PipelineOnPlace;
 import ch.epfl.planair.visual.TwoDThreeD;
-import ch.epfl.planair.visual.WebcamProcessor;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PGraphics;
 import processing.core.PImage;
 import processing.video.Capture;
-
 
 public final class SetupMode extends Mode {
 
@@ -61,6 +59,7 @@ public final class SetupMode extends Mode {
 				"Next",
 				this::next
 		);
+		this.config = new PipelineConfig();
 		this.rangeButton = new Range(
 				this.panel,
 				0,
@@ -69,10 +68,9 @@ public final class SetupMode extends Mode {
 				webcam.height / 2 - 40,
 				webcam.width,
 				Consts.SCROLL_HEIGHT,
-				0.2,
-				0.8
+				this.config.lowerUnit(PipelineConfig.Step.HUE),
+				this.config.upperUnit(PipelineConfig.Step.HUE)
 		);
-		this.config = WebcamProcessor.config.get();
 	}
 
 	@Override
@@ -110,21 +108,16 @@ public final class SetupMode extends Mode {
 				pipeline.sobel(image, 0.35f);
 			}
 
+			//p.println(config.lower(status)+" - "+config.upper(status));
 			p.image(image, offsetX, offsetY - 50);
 
+			/*List<PVector> lines = pipeline.hough(image);
+			List<PVector> corners = pipeline.getPlane(image, lines);
 
-				// Partie QUAD a refactorer
-			//List<PVector> lines = pipeline.hough(image);
-			//List<PVector> corners = pipeline.getPlane(image, lines);
-
-			/*if (corners.size() >= 8) {
-				PVector r = twoDThreeD.get3DRotations(corners.subList(0, 4));
-
-				rx.set(Float.floatToIntBits(r.x));
-				ry.set(Float.floatToIntBits(r.z));
-				rz.set(Float.floatToIntBits(-r.y));
-
-				//p.println(r.x + " " + r.y);
+			if (corners.size() >= 8) {
+				for (PVector corner : corners.subList(0, 4)) {
+					p.ellipse(corner.x, corner.y, 10, 10); // CORNER
+				}
 			}*/
 
 		}
@@ -140,6 +133,7 @@ public final class SetupMode extends Mode {
 	}
 
 	private void previous() {
+		update();
 		int previous = status.ordinal() - 1;
 		if (previous < 0) {
 			Planair.become(MenuMode.class);
@@ -149,6 +143,7 @@ public final class SetupMode extends Mode {
 	}
 
 	private void next() {
+		update();
 		int next = status.ordinal() + 1;
 		if (next >= PipelineConfig.Step.values().length) {
 			Planair.become(MenuMode.class);
@@ -159,6 +154,7 @@ public final class SetupMode extends Mode {
 
 	private void toStep(int index) {
 		PipelineConfig.Step[] steps = PipelineConfig.Step.values();
+		assert index < steps.length;
 		status = steps[index];
 		rangeButton.min(config.lowerUnit(status));
 		rangeButton.max(config.upperUnit(status));

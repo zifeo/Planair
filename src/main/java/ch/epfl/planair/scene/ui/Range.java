@@ -24,21 +24,16 @@ public class Range extends Button {
 	 * @param width
 	 * @param height
 	 */
-	public Range(PGraphics screen, int x, int y, int sx, int sy, int width, int height, double c1, double c2) {
+	public Range(PGraphics screen, int x, int y, int sx, int sy, int width, int height, float c1, float c2) {
 		super(screen, x, y, sx, sy, width, height);
 		Utils.require(0, c1, 1, "invalid position for cursor 1");
 		Utils.require(0, c2, 1, "invalid position for cursor 2");
 		this.focus = null;
-		this.cursor1 = new Cursor((int) (c1 * width));
-		this.cursor2 = new Cursor((int) (c2 * width));
+		this.cursor1 = new Cursor(c1);
+		this.cursor2 = new Cursor(c2);
 		this.weight = 10;
 		this.stroke = Consts.COLOR1;
 		this.fill = Consts.COLORBG;
-	}
-
-	@Override
-	public void update() {
-
 	}
 
 	@Override
@@ -51,22 +46,20 @@ public class Range extends Button {
 		screen.rect(x + cursor2.pos - weight, y, 2 * weight - 1, height - 1);
 	}
 
-	public void min(double c1) {
-		Utils.require(0, c1, 1, "invalid position for cursor 1");
-		cursor1.pos = (int) (c1 * width);
+	public void min(float c1) {
+		cursor1.set(c1);
 	}
 
-	public void max(double c2) {
-		Utils.require(0, c2, 1, "invalid position for cursor 1");
-		cursor1.pos = (int) (c2 * width);
+	public void max(float c2) {
+		cursor2.set(c2);
 	}
 
 	public float min() {
-		return PApplet.min(cursor1.pos, cursor2.pos) * 1f / width;
+		return (PApplet.min(cursor1.pos, cursor2.pos) - weight) / (width - 2f * weight);
 	}
 
 	public float max() {
-		return PApplet.max(cursor1.pos, cursor2.pos) * 1f / width;
+		return (PApplet.max(cursor1.pos, cursor2.pos) - weight) / (width - 2f * weight);
 	}
 
 	@Override
@@ -94,8 +87,12 @@ public class Range extends Button {
 
 	private final class Cursor {
 		private int pos;
-		public Cursor(int pos) {
-			this.pos = pos;
+		public Cursor(float v) {
+			set(v);
+		}
+		public void set(float v) {
+			Utils.require(0, v, 1, "invalid position for cursor:"+v);
+			pos = (int) Utils.trim(v * (width - 2 * weight) + weight, weight, width - weight);
 		}
 	}
 
