@@ -18,14 +18,14 @@ public final class Plate extends Drawable implements Projectable {
     }
 
     public void draw() {
-        parent.pushMatrix();
-        parent.noStroke();
-        parent.fill(153, 153, 102);
+        p.pushMatrix();
+        p.noStroke();
+        p.fill(153, 153, 102);
         PVector location = location();
-        parent.translate(location.x, location.y, location.z);
-        parent.box(size, thickness, size);
+        p.translate(location.x, location.y, location.z);
+        p.box(size, thickness, size);
         drawAxes();
-        parent.popMatrix();
+        p.popMatrix();
     }
 
     public void projectOn(PGraphics graphic) {

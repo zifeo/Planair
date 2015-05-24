@@ -21,7 +21,7 @@ public final class Cylinder extends Movable implements Projectable {
     }
 
     public Cylinder(Cylinder that) {
-        super(that.parent, that.location());
+        super(that.p, that.location());
         this.shape = that.shape;
         this.radius = that.radius;
         this.cylinderHeight = that.cylinderHeight;
@@ -31,12 +31,12 @@ public final class Cylinder extends Movable implements Projectable {
     }
 
     public void draw() {
-        parent.pushMatrix();
+        p.pushMatrix();
         PVector location = location();
-        parent.translate(location.x, location.y, location.z);
-        parent.shape(shape);
+        p.translate(location.x, location.y, location.z);
+        p.shape(shape);
         drawAxes();
-        parent.popMatrix();
+        p.popMatrix();
     }
 
     public float get2DDistanceFrom(float angle) {
@@ -60,10 +60,10 @@ public final class Cylinder extends Movable implements Projectable {
     }
 
     private PShape createCylinder(float radius, float cylinderHeight, int cylinderResolution) {
-        PShape cylinder = parent.createShape(PApplet.GROUP);
-        PShape floor = parent.createShape();
-        PShape tube = parent.createShape();
-        PShape ceiling = parent.createShape();
+        PShape cylinder = p.createShape(PApplet.GROUP);
+        PShape floor = p.createShape();
+        PShape tube = p.createShape();
+        PShape ceiling = p.createShape();
 
         float angle;
         float[] x = new float[cylinderResolution + 1];

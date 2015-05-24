@@ -6,7 +6,6 @@ import processing.core.PImage;
 import processing.core.PVector;
 import processing.video.Capture;
 
-import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,6 +30,7 @@ public final class WebcamProcessing extends PApplet {
 				println(cameras[i]);
 			}
 			cam = new Capture(this, 640, 480, 15);
+			println(cam.width, cam.height);
 			// cam = new Capture(this, cameras[4]);
 			cam.start();
 		}
@@ -64,7 +64,7 @@ public final class WebcamProcessing extends PApplet {
 		List<PVector> corners = pipeline.getPlane(result, lines);
 
 		if(corners.size() > 3) {
-			fill(Color.ORANGE.getRGB());
+			fill(color(150, 80, 0));
 			quad(corners.get(0).x, corners.get(0).y,
 					corners.get(1).x, corners.get(1).y,
 					corners.get(2).x, corners.get(2).y,
@@ -75,14 +75,9 @@ public final class WebcamProcessing extends PApplet {
 			System.out.println("rx = " + (int)Math.toDegrees(r.x) + ", ry = " + (int)Math.toDegrees(r.y) + ", rz = " + (int)Math.toDegrees(r.z) + "°");
 		}
 
-
 		// Fin QUAD
 		pipeline.debugPlotLine(result, lines);
 		//image(result, 0, 0);
 	}
-
-
-
-
 
 }
