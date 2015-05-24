@@ -44,6 +44,7 @@ public final class Sphere extends Scorable implements Projectable {
         graphic.ellipse(xScaled - radiusScaled, yScaled - radiusScaled, 2 * radiusScaled, 2 * radiusScaled);
     }
 
+    @Override
     public float get2DDistanceFrom(float angle) {
         return radius;
     }

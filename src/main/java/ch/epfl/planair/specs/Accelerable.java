@@ -5,6 +5,11 @@ import ch.epfl.planair.meta.Utils;
 import processing.core.PVector;
 import processing.core.PApplet;
 
+/**
+ * An object that can be affected by a force and thus be subject
+ * to acceleration. Here the force is always the gravity force,
+ * depending on the rotation of the environment.
+ */
 public abstract class Accelerable extends Movable {
 
     private PVector force = Utils.nullVector();
@@ -15,14 +20,24 @@ public abstract class Accelerable extends Movable {
         super(parent, location);
     }
 
+    /**
+     * Enables the effect of gravity on the object
+     */
     public void enableGravity() {
         computeGravity = true;
     }
 
+    /**
+     * Disables the effect of gravity on the object
+     */
     public void disableGravity() {
         computeGravity = false;
     }
 
+    /**
+     * Sets the internal environmentRotation to a new rotation vector
+     * @param rotation the new rotation vector
+     */
     public void setEnvironmentRotation(PVector rotation) {
         this.environmentRotation.set(rotation);
     }
@@ -35,6 +50,7 @@ public abstract class Accelerable extends Movable {
         }
     }
 
+    @Override
     public void update() {
 
         applyGravity();

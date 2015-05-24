@@ -5,6 +5,9 @@ import ch.epfl.planair.meta.Utils;
 import processing.core.PApplet;
 import processing.core.PVector;
 
+/**
+ * An object that can be displayed (drawn) on the screen.
+ */
 public abstract class Drawable {
 
     protected PApplet parent;
@@ -19,22 +22,47 @@ public abstract class Drawable {
         this.location.set(location);
     }
 
+    /**
+     * Returns the location of the object
+     * @return the location vector
+     */
     public PVector location() {
         return location.get();
     }
 
+    /**
+     * Sets the current location to a new location
+     * @param location the new location
+     */
     public void setLocation(PVector location) {
         this.location.set(location);
     }
 
-    public void update() {}
+    /**
+     * Updates the location and parameters of the object
+     * over time. Does not necessarily need to do anything.
+     */
+    public void update() {
 
+    }
+
+    /**
+     * Displays the object on the screen
+     */
     public abstract void draw();
 
+    /**
+     *
+     * @param angle
+     * @return
+     */
     public float get2DDistanceFrom(float angle) {
         return 0;
     }
 
+    /**
+     * Draws the x, y and z axes when DEBUG is true
+     */
     protected void drawAxes() {
         if (Constants.DEBUG) {
             parent.textSize(15);

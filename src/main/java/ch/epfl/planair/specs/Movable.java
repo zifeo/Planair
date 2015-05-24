@@ -6,6 +6,11 @@ import processing.core.PVector;
 
 import java.util.List;
 
+/**
+ * An object that can be moved, thus having a velocity.
+ * Also, it's possible to specify boundaries that the object
+ * can't cross.
+ */
 public abstract class Movable extends Drawable {
 
     private PVector velocity = Utils.nullVector();
@@ -16,32 +21,56 @@ public abstract class Movable extends Drawable {
         super(parent, location);
     }
 
+    /**
+     * @return the velocity of the object
+     */
     public PVector velocity() {
         return velocity.get();
     }
 
+    /**
+     * Sets the velocity of the object
+     * @param velocity the velocity to set
+     */
     public void setVelocity(PVector velocity) {
         this.velocity.set(velocity);
     }
 
+    @Override
     public void setLocation(PVector location) {
         checkBounds(location);
     }
 
+    @Override
     public void update() {
         checkBounds(PVector.add(location(), velocity));
     }
 
+    /**
+     * Sets the boundaries in the x-axis
+     * @param min the min boundary
+     * @param max the max boundary
+     */
     public void setXBounds(float min, float max) {
         this.minBounds.x = min;
         this.maxBounds.x = max;
     }
 
+    /**
+     * Sets the boundaries in the y-axis
+     * @param min the min boundary
+     * @param max the max boundary
+     */
     public void setYBounds(float min, float max) {
         this.minBounds.y = min;
         this.maxBounds.y = max;
     }
 
+    /**
+     * Sets the boundaries in the z-axis
+     * @param min the min boundary
+     * @param max the max boundary
+     */
     public void setZBounds(float min, float max) {
         this.minBounds.z = min;
         this.maxBounds.z = max;
@@ -71,10 +100,19 @@ public abstract class Movable extends Drawable {
         return maxBounds.z;
     }
 
+    /**
+     * Checks if the objects collides with some obstacles and
+     * bounce against them if necessary.
+     * @param obstacles the list of obstacles
+     * @return the count of the obstacles that were bounced
+     * against
+     */
     public int checkCollisions(List<Drawable> obstacles) {
         int count = 0;
         PVector location = location();
         PVector correction = new PVector(0, 0, 0);
+
+        // Check collision for each obstacle
         for (Drawable obstacle: obstacles) {
 
             PVector obstacleLocation = obstacle.location();
@@ -82,10 +120,14 @@ public abstract class Movable extends Drawable {
             PVector delta = PVector.sub(location, obstacleLocation);
             float borders = get2DDistanceFrom(angle) + obstacle.get2DDistanceFrom(angle + (float)Math.PI);
 
+            // If there is a collision with that obstacle
             if (delta.mag() < borders) {
                 PVector normal = PVector.sub(location, obstacleLocation);
                 normal.normalize();
                 normal.mult(2 * PVector.dot(velocity, normal));
+
+                /* Simulate an elastic collision by substracting the normal vector
+                of the positions to the velocity */
                 velocity.sub(normal);
 
                 delta.normalize();
@@ -94,15 +136,25 @@ public abstract class Movable extends Drawable {
                 ++count;
             }
         }
+
+        // If there was a collision
         if (count > 0) {
             correction.x /= count;
             correction.y = location.y;
             correction.z /= count;
+
+            /* Put the object back at the position where it does not
+              cross the other object anymore */
             setLocation(correction);
         }
         return count;
     }
 
+    /**
+     * If the object if going out of bounds, make it bounce against it.
+     * @param location the location of the object
+     * @return the number of bounds that were bounced on
+     */
     protected int checkBounds(PVector location) {
         int count = 0;
         if (location.x < minBounds.x) {
