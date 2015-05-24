@@ -205,7 +205,7 @@ public final class WebcamProcessor {
 					pipeline.selectBrightnessThreshold(image, currentConfig.lower(PipelineConfig.Step.BRIGHTNESS), currentConfig.upper(PipelineConfig.Step.BRIGHTNESS), 0);
 					pipeline.selectSaturationThreshold(image, currentConfig.lower(PipelineConfig.Step.SATURATION), currentConfig.upper(PipelineConfig.Step.SATURATION), 0);
 					pipeline.binaryBrightnessThreshold(image, currentConfig.lower(PipelineConfig.Step.SOBEL), 0, 180);
-					pipeline.convolute(image, PipelineOnPlace.gaussianKernel);
+					pipeline.convolute(image);
 					pipeline.sobel(image, 0.35f);
 
 					List<PVector> lines = pipeline.hough(image);

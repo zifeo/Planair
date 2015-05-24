@@ -16,12 +16,6 @@ public class PipelineOnPlace extends PApplet {
 
 	private final PApplet parent;
 
-	public final static float[][] surroundKernel = {
-			{ 0, 1, 0 },
-			{ 1, 0, 1 },
-			{ 0, 1, 0 }
-	};
-
 	public final static float[][] gaussianKernel = {
 			{  9, 12,  9 },
 			{ 12, 15, 12 },
@@ -38,19 +32,33 @@ public class PipelineOnPlace extends PApplet {
 			{ 1, 0, -1 },
 			{ 0, 0,  0 }
 	};
+	private static int gaussianKernelWeight;
+	private static int gaussianKernelMargin;
 
 	/* COS and SIN constants, to optimise Hough method */
-	private final static float[] COS = new float[(int) Math.ceil(PI / Consts.PIPELINE_DISCRETIZATION_STEPS_PHI)];
-	private final static float[] SIN = new float[(int) Math.ceil(PI / Consts.PIPELINE_DISCRETIZATION_STEPS_PHI)];
+	private final static float[] COS;
+	private final static float[] SIN;
 
-	public PipelineOnPlace(PApplet parent) {
-		this.parent = parent;
+	static {
+		COS = new float[(int) Math.ceil(PI / Consts.PIPELINE_DISCRETIZATION_STEPS_PHI)];
+		SIN = new float[(int) Math.ceil(PI / Consts.PIPELINE_DISCRETIZATION_STEPS_PHI)];
 
-		/* Construct cos and sin constants */
 		for (int i = 0; i < PI / Consts.PIPELINE_DISCRETIZATION_STEPS_PHI; i += 1) {
 			COS[i] = (float) Math.cos(i * Consts.PIPELINE_DISCRETIZATION_STEPS_PHI);
 			SIN[i] = (float) Math.sin(i * Consts.PIPELINE_DISCRETIZATION_STEPS_PHI);
 		}
+
+		gaussianKernelWeight = 0;
+		for (float[] x: gaussianKernel) {
+			for (float f: x) {
+				gaussianKernelWeight += abs(f);
+			}
+		}
+		gaussianKernelMargin = gaussianKernel.length / 2;
+	}
+
+	public PipelineOnPlace(PApplet parent) {
+		this.parent = parent;
 	}
 
 	private void threshold(PImage source, IntUnaryOperator op) {
@@ -59,54 +67,10 @@ public class PipelineOnPlace extends PApplet {
 		}
 	}
 
-	private int[] thresholdBinary(PImage source, IntUnaryOperator op) {
-		int[] pixels = new int[source.width * source.height];
-		for (int i = 0; i < source.width * source.height; ++i) {
-			pixels[i] = op.applyAsInt(source.pixels[i]);
-		}
-		return pixels;
-	}
-
-	/**
-	 * A binary threshold based on brightness.
-	 * If input reaches the limit, max color is set, otherwise min color.
-	 *
-	 * @param threshold brighness limit (0-255)
-	 * @param minColor greyscale (0-255)
-	 * @param maxColor greyscale (0-255)
-	 * @throws IllegalArgumentException when min or max color are invalid
-	 * @return
-	 */
-	public int[] binaryBrightnessThresholdTab(PImage source, int threshold, int minColor, int maxColor) {
-		Utils.require(0, minColor, 255, "invalid grey color");
-		Utils.require(0, maxColor, 255, "invalid grey color");
-		return thresholdBinary(source, v -> parent.brightness(v) > threshold ? color(maxColor) : color(minColor));
-	}
-
 	public void binaryBrightnessThreshold(PImage source, int threshold, int minColor, int maxColor) {
 		Utils.require(0, minColor, 255, "invalid grey color");
 		Utils.require(0, maxColor, 255, "invalid grey color");
 		threshold(source, v -> parent.brightness(v) > threshold ? color(maxColor) : color(minColor));
-	}
-
-	public void inverseBinaryBrightnessThreshold(PImage source, int threshold, int minColor, int maxColor) {
-		binaryBrightnessThreshold(source, threshold, maxColor, minColor);
-	}
-
-	public void truncateBrightnessThreshold(PImage source, int threshold) {
-		Utils.require(0, threshold, 255, "invalid grey color");
-		threshold(source, v -> parent.brightness(v) > threshold ? color(threshold) : color(brightness(v)));
-	}
-
-	public void toZeroBrightnessThreshold(PImage source, int threshold, int minColor) {
-		Utils.require(0, threshold, 255, "invalid grey color");
-		Utils.require(0, minColor, 255, "invalid grey color");
-		threshold(source, v -> parent.brightness(v) > threshold ? color(brightness(v)): color(minColor));
-	}
-
-	public void inverseToZeroBrightnessThreshold(PImage source, int threshold) {
-		Utils.require(0, threshold, 255, "invalid grey color");
-		threshold(source, v -> parent.brightness(v) > threshold ? color(brightness(v)): color(threshold));
 	}
 
 	public void selectHueThreshold(PImage source, int firstThreshold, int secondThreshold, int otherColor) {
@@ -124,29 +88,27 @@ public class PipelineOnPlace extends PApplet {
 		threshold(source, v -> firstThreshold <= parent.brightness(v) && parent.brightness(v) <= secondThreshold ? v : color(otherColor));
 	}
 
-	public void convolute(PImage source, float[][] kernel) {
-		float weight = 0;
-		for (float[] x: kernel) {
-			for (float f: x) {
-				weight += abs(f);
-			}
-		}
-		int margin = kernel.length / 2;
+	public void convolute(PImage source) {
+		int widthBord = source.width - gaussianKernelMargin;
+		int heightBord = source.height - gaussianKernelMargin;
 
-		for (int x = margin; x + margin < source.width; ++x) {
-			for (int y = margin; y + margin < source.height; ++y) {
+		for (int x = gaussianKernelMargin; x < widthBord; ++x) {
+			for (int y = gaussianKernelMargin; y < heightBord; ++y) {
 
 				float sum = 0;
-				for (int px = x - margin, sx = 0; px <= x + margin; ++px, ++sx) {
-					for (int py = y - margin, sy = 0; py <= y + margin; ++py, ++sy) {
-						sum += parent.brightness(source.pixels[align(source, px, py)]) * kernel[sx][sy];
+				int localWidthBord = x + gaussianKernelMargin;
+				int localHeightBord = y + gaussianKernelMargin;
+
+				for (int px = x - gaussianKernelMargin, sx = 0; px <= localWidthBord; ++px, ++sx) {
+					for (int py = y - gaussianKernelMargin, sy = 0; py <= localHeightBord; ++py, ++sy) {
+						sum += parent.brightness(source.pixels[align(source, px, py)]) * gaussianKernel[sx][sy];
 					}
 				}
-				source.pixels[align(source, x, y)] = color(sum / weight);
+
+				source.pixels[align(source, x, y)] = color(sum / gaussianKernelWeight);
 			}
 		}
 	}
-
 
 	public void sobel(PImage source, float threshold) {
 		sobel(source, threshold, 255, 0);
@@ -290,45 +252,6 @@ public class PipelineOnPlace extends PApplet {
 		}
 
 		return selected;
-	}
-
-	public void debugPlotLine(PImage edgeImg, List<PVector> lines) {
-
-		for (PVector line: lines) {
-
-			float r = line.x;
-			float phi = line.y;
-			int accPhi = (int) (phi / Consts.PIPELINE_DISCRETIZATION_STEPS_PHI);
-
-			// Cartesian equation of a line: y = ax + b
-			// in polar, y = (-cos(phi)/sin(phi))x + (r/sin(phi))
-			// => y = 0 : x = r / cos(phi)
-			// => x = 0 : y = r / sin(phi)
-			// compute the intersection of this line with the 4 borders of
-			// the image
-			int x0 = 0;
-			int y0 = (int) (r / SIN[accPhi]);
-			int x1 = (int) (r / COS[accPhi]);
-			int y1 = 0;
-			int x2 = edgeImg.width;
-			int y2 = (int) (-COS[accPhi] / SIN[accPhi] * x2 + r / SIN[accPhi]);
-			int y3 = edgeImg.width;
-			int x3 = (int) (-(y3 - r / SIN[accPhi]) * (SIN[accPhi] / COS[accPhi]));
-
-			// Finally, plot the lines
-			parent.stroke(204, 102, 0);
-			if (y0 > 0) {
-				if (x1 > 0) parent.line(x0, y0, x1, y1);
-				else if (y2 > 0) parent.line(x0, y0, x2, y2);
-				else parent.line(x0, y0, x3, y3);
-			} else {
-				if (x1 > 0) {
-					if (y2 > 0) parent.line(x1, y1, x2, y2);
-					else parent.line(x1, y1, x3, y3);
-				} else parent.line(x2, y2, x3, y3);
-			}
-		}
-
 	}
 
 	private int align(PImage source, int x, int y) {

@@ -100,7 +100,7 @@ public final class SetupMode extends Mode {
 
 			if (status.compareTo(PipelineConfig.Step.SATURATION) > 0) {
 				pipeline.binaryBrightnessThreshold(image, config.lower(PipelineConfig.Step.SOBEL), 0, 180);
-				pipeline.convolute(image, PipelineOnPlace.gaussianKernel);
+				pipeline.convolute(image);
 				pipeline.sobel(image, 0.35f);
 			}
 			p.image(image, offsetX, offsetY - 50);
