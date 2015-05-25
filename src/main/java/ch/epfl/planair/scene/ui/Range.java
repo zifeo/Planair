@@ -65,11 +65,11 @@ public class Range extends Button {
 	@Override
 	public boolean hover() {
 		if (super.hover()) {
-			if (Utils.in(cursor1.pos - 2 * weight, relatifX(parent.pmouseX), cursor1.pos + 2 * weight) && focus != cursor2) {
+			if (Utils.in(cursor1.pos - 2 * weight, relatifX(p.pmouseX), cursor1.pos + 2 * weight) && focus != cursor2) {
 				focus = cursor1;
 				return true;
 			}
-			if (Utils.in(cursor2.pos - 2 * weight, relatifX(parent.pmouseX), cursor2.pos + 2 * weight) && focus != cursor1) {
+			if (Utils.in(cursor2.pos - 2 * weight, relatifX(p.pmouseX), cursor2.pos + 2 * weight) && focus != cursor1) {
 				focus = cursor2;
 				return true;
 			}

@@ -1,7 +1,7 @@
 package cs211.imageprocessing;
 
 /**
- * Modified version of our Constants class for assignment 3.
+ * Modified version of our Consts class for assignment 3.
  */
 public interface Constants {
 

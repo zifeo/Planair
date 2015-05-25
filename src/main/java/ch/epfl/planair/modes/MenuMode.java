@@ -1,10 +1,11 @@
 package ch.epfl.planair.modes;
 
 import ch.epfl.planair.Planair;
+import ch.epfl.planair.meta.Consts;
 import ch.epfl.planair.scene.ui.Action;
-import ch.epfl.planair.meta.Constants;
-import ch.epfl.planair.scene.ui.Button;
+import ch.epfl.planair.scene.ui.ActionButton;
 import processing.core.PApplet;
+import processing.core.PConstants;
 import processing.core.PFont;
 import processing.core.PGraphics;
 
@@ -18,7 +19,7 @@ public final class MenuMode extends Mode {
 
 	private final PFont logoFont;
 	private final PFont menuFont;
-	private final List<Button> menu;
+	private final List<ActionButton> menu;
 	private final PGraphics screen;
 
 	private final int menuX;
@@ -26,67 +27,76 @@ public final class MenuMode extends Mode {
 
 	public MenuMode(PApplet parent) {
 		super(parent);
-		this.logoFont = p.createFont(Constants.FONT, 80);
-		this.menuFont= p.createFont(Constants.FONT, 20);
+		this.logoFont = p.createFont(Consts.FONT, 120);
+		this.menuFont= p.createFont(Consts.FONT, 20);
 		this.menu = new ArrayList<>();
-		this.menuX = (p.width - Constants.MENU_WIDTH) / 2;
-		this.menuY = (p.height - Constants.MENU_HEIGHT_CENTER) / 2;
-		this.screen = p.createGraphics(Constants.MENU_WIDTH, p.height / 2, PApplet.P2D);
+		this.menuX = (p.width - Consts.MENU_WIDTH) / 2;
+		this.menuY = (p.height - Consts.MENU_HEIGHT_CENTER) / 2;
+		this.screen = p.createGraphics(Consts.MENU_WIDTH, Consts.MENU_HEIGHT, PApplet.P2D);
 		constructMenu();
 	}
 
 	private void constructMenu() {
 		int count = 0;
 		menu.add(createMenuButton(count++, "Play!", () -> Planair.become(PlayMode.class)));
-		menu.add(createMenuButton(count++, "Setup", () -> Planair.become(SetupMode.class)));
-		menu.add(createMenuButton(count++, "Exit", () -> p.exit()));
+		menu.add(createMenuButton(count++, "Battle!", () -> PApplet.println("battle")));
+		menu.add(createMenuButton(count++, "Cam Setup", () -> Planair.become(SetupMode.class)));
+		menu.add(createMenuButton(count++, "Exit", p::exit));
 	}
 
-	private Button createMenuButton(int count, String text, Action action) {
-		return new Button(screen, 0, count * (Constants.MENU_ITEM_HEIGHT + Constants.MENU_ITEM_MARGIN) + 150, Constants.MENU_WIDTH, Constants.MENU_ITEM_HEIGHT, text, action);
+	private ActionButton createMenuButton(int count, String text, Action action) {
+		return new ActionButton(
+				screen,
+				0,
+				count * (Consts.MENU_ITEM_HEIGHT + Consts.MENU_ITEM_MARGIN) + 180,
+				- Consts.MENU_WIDTH / 2,
+				- Consts.MENU_HEIGHT / 2,
+				Consts.MENU_WIDTH,
+				Consts.MENU_ITEM_HEIGHT,
+				text,
+				action
+		);
 	}
 
 	@Override
 	public void draw() {
-		p.camera(0, 0, (p.height / 2.0f) / p.tan(p.PI * 30.0f / 180.0f), 0, 0, 0, 0, 1, 0);
+		p.camera(0, 0, (p.height / 2f) / PApplet.tan(PConstants.PI * 30f / 180f), 0, 0, 0, 0, 1, 0);
 
+		drawScreen();
+
+		p.noLights();
+		p.image(screen, - Consts.MENU_WIDTH / 2, - Consts.MENU_HEIGHT / 2);
+		p.lights();
+	}
+
+	private void drawScreen() {
 		screen.beginDraw();
-		screen.background(Constants.COLORBG);
-		screen.fill(Constants.COLOR1);
+		screen.background(Consts.COLORBG);
+		screen.fill(Consts.COLOR1);
 		screen.textFont(logoFont);
-		screen.textAlign(p.CENTER, p.TOP);
-		screen.text(Constants.LOGO, Constants.MENU_WIDTH / 2, 0);
-
+		screen.textAlign(PConstants.CENTER, PConstants.TOP);
+		screen.text(Consts.LOGO, Consts.MENU_WIDTH / 2, 0);
 		boolean hovered = false;
-		for (Button b : menu) {
+		for (ActionButton b : menu) {
 			hovered |= b.hover();
 			b.draw();
 		}
-		p.cursor(hovered ? p.HAND: p.ARROW);
 		screen.endDraw();
+		p.cursor(hovered ? PConstants.HAND : PConstants.ARROW);
+	}
 
-		p.translate(- p.width/2, - p.height/2);
-
-		p.image(screen, (p.width - Constants.MENU_WIDTH) / 2, p.height / 4);
-
+	@Override public void entered() {
+		menu.forEach(ActionButton::mouseMoved);
 	}
 
 	@Override public void mousePressed() {
-		for (Button b : menu) {
-			b.mousePressed();
-		}
+		menu.forEach(ActionButton::mousePressed);
 	}
-
 	@Override public void mouseReleased() {
-		for (Button b : menu) {
-			b.mouseReleased();
-		}
+		menu.forEach(ActionButton::mouseReleased);
 	}
-
 	@Override public void mouseMoved() {
-		for (Button b : menu) {
-			b.mouseMoved();
-		}
+		menu.forEach(ActionButton::mouseMoved);
 	}
 
 }

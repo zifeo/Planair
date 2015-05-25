@@ -41,7 +41,7 @@ public abstract class Button extends Drawable {
 		this.sy = sy;
 		this.width = width;
 		this.height = height;
-		this.font = parent.createFont("fonts/SF-Archery-Black/SF_Archery_Black.ttf", 25);
+		this.font = p.createFont("fonts/SF-Archery-Black/SF_Archery_Black.ttf", 25);
 	}
 
 	@Override
@@ -65,16 +65,16 @@ public abstract class Button extends Drawable {
 	}
 
 	public int relatifX() {
-		return relatifX(parent.mouseX);
+		return relatifX(p.mouseX);
 	}
 	public int relatifX(int mx) {
-		return mx - parent.width / 2 - sx - x;
+		return mx - p.width / 2 - sx - x;
 	}
 	public int relatifY() {
-		return relatifY(parent.mouseY);
+		return relatifY(p.mouseY);
 	}
 	public int relatifY(int mx) {
-		return mx - parent.height / 2 - sy - y;
+		return mx - p.height / 2 - sy - y;
 	}
 
 }

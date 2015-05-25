@@ -33,7 +33,7 @@ public class ActionButton extends Button {
 		this.callback = callback;
 		this.text = text;
 		this.text = text.toUpperCase();
-		this.font = parent.createFont("fonts/SF-Archery-Black/SF_Archery_Black.ttf", 25);
+		this.font = p.createFont("fonts/SF-Archery-Black/SF_Archery_Black.ttf", 25);
 		this.stroke = Consts.COLOR1;
 		this.fill = Consts.COLORBG;
 	}

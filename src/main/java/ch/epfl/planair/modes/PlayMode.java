@@ -1,7 +1,8 @@
 package ch.epfl.planair.modes;
 
 import ch.epfl.planair.Planair;
-import ch.epfl.planair.meta.Constants;
+import ch.epfl.planair.meta.Consts;
+import ch.epfl.planair.meta.PipelineConfig;
 import ch.epfl.planair.meta.Utils;
 import ch.epfl.planair.scene.Background;
 import ch.epfl.planair.scene.Airplane;
@@ -12,8 +13,10 @@ import ch.epfl.planair.scene.scores.Scoreboard;
 import ch.epfl.planair.specs.Drawable;
 import ch.epfl.planair.visual.WebcamProcessor;
 import processing.core.PApplet;
+import processing.core.PConstants;
 import processing.core.PVector;
 import processing.event.MouseEvent;
+import processing.video.Capture;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,61 +28,50 @@ import java.util.List;
  */
 public final class PlayMode extends Mode {
 
-	private final Sphere sphere;
-	private final Plate plate;
+	private final WebcamProcessor daemon;
 
+	private final Sphere sphere;
 	private final List<Drawable> obstacles;
+	private final Plate plate;
 	private final Scoreboard scoreboard;
 	private final Background background;
-	private final Airplane airplane;
-	private float motionFactor = 1.5f;
 
-	private final int width;
-	private final int height;
+	private final Airplane airplane;
 
 	private PVector environmentRotation = Utils.nullVector();
+	private float motionFactor;
 
-	private final WebcamProcessor cam;
-
-	public PlayMode(PApplet parent, int width, int heigth) {
-		super(parent);
-		this.width = width;
-		this.height = heigth;
+	public PlayMode(PApplet p, Capture webcam, PipelineConfig config) {
+		super(p);
+		this.motionFactor = Consts.MOTION_FACTOR;
 		this.obstacles = new ArrayList<>();
-		this.sphere = new Sphere(parent, new PVector(0, -Constants.PLATE_THICKNESS/2, 0), Constants.SPHERE_RADIUS);
-		sphere.setXBounds(
-				-Constants.PLATE_SIZE / 2 + Constants.SPHERE_RADIUS,
-				Constants.PLATE_SIZE / 2 - Constants.SPHERE_RADIUS
+
+		this.sphere = new Sphere(p, new PVector(0, -Consts.PLATE_THICKNESS/2, 0), Consts.SPHERE_RADIUS);
+		this.sphere.setXBounds(
+				-Consts.PLATE_SIZE / 2 + Consts.SPHERE_RADIUS,
+				Consts.PLATE_SIZE / 2 - Consts.SPHERE_RADIUS
 		);
 		this.sphere.setZBounds(
-				-Constants.PLATE_SIZE / 2 + Constants.SPHERE_RADIUS,
-				Constants.PLATE_SIZE / 2 - Constants.SPHERE_RADIUS
+				-Consts.PLATE_SIZE / 2 + Consts.SPHERE_RADIUS,
+				Consts.PLATE_SIZE / 2 - Consts.SPHERE_RADIUS
 		);
 		this.sphere.enableGravity();
 
-		this.plate = new Plate(parent, new PVector(0, 0, 0), Constants.PLATE_SIZE, Constants.PLATE_THICKNESS);
+		this.plate = new Plate(p, new PVector(0, 0, 0), Consts.PLATE_SIZE, Consts.PLATE_THICKNESS);
 
-		this.scoreboard = new Scoreboard(parent, width, Constants.SCOREBOARD_HEIGHT, sphere);
+		this.scoreboard = new Scoreboard(p, p.width, Consts.SCOREBOARD_HEIGHT, sphere);
 		this.scoreboard.addForProjection(plate);
 		this.scoreboard.addForProjection(sphere);
 
-		this.background = new Background(parent);
-		this.airplane = new Airplane(parent);
+		this.background = new Background(p);
+		this.airplane = new Airplane(p);
 
-		this.cam = new WebcamProcessor(parent);
-	}
-
-	public <T extends Drawable & Projectable> void addObstacles(T o) {
-		obstacles.add(o);
-		scoreboard.addForProjection(o);
+		this.daemon = new WebcamProcessor(p, webcam, config);
 	}
 
 	@Override
 	public void update() {
-		PVector r = cam.getRotation();
-		environmentRotation.x = r.x;
-		environmentRotation.y = r.z;
-		environmentRotation.z = - r.z;
+		environmentRotation.set(daemon.rotation());
 		sphere.setEnvironmentRotation(environmentRotation);
 		sphere.update();
 		sphere.checkCollisions(obstacles);
@@ -88,36 +80,44 @@ public final class PlayMode extends Mode {
 		airplane.update();
 	}
 
-	protected void rotateEnvironment() {
-		p.rotateX(environmentRotation.x);
-		p.rotateY(environmentRotation.y);
-		p.rotateZ(environmentRotation.z);
+	@Override
+	public void draw() {
+		p.camera(0, - Consts.EYE_HEIGHT, (p.height / 2f) / PApplet.tan(PConstants.PI * 30f / 180f), 0, 0, 0, 0, 1, 0);
+		background.draw();
+		airplane.draw();
+		drawMetaPlate(environmentRotation);
+		p.camera();
+		scoreboard.draw();
+	}
+
+	public <T extends Drawable & Projectable> void addObstacles(T o) {
+		obstacles.add(o);
+		scoreboard.addForProjection(o);
 	}
 
 	protected Sphere sphere() {
 		return sphere;
 	}
 
-	protected void drawMetaPlate() {
+	protected void drawMetaPlate(PVector envRot) {
 		p.pushMatrix();
-		rotateEnvironment();
-		sphere.draw();
+		p.rotateX(envRot.x);
+		p.rotateY(envRot.y);
+		p.rotateZ(envRot.z);
 		plate.draw();
-
-		for (Drawable cylinder : obstacles) {
-			cylinder.draw();
-		}
+		sphere.draw();
+		obstacles.forEach(Drawable::draw);
 		p.popMatrix();
 	}
 
 	@Override
-	public void draw() {
-		p.noCursor();
-		p.camera(0, -Constants.EYE_HEIGHT, (height / 2.0f) / p.tan(p.PI * 30.0f / 180.0f), 0, 0, 0, 0, 1, 0);
-		background.draw();
-		airplane.draw();
-		drawMetaPlate();
-		scoreboard.draw();
+	public void entered() {
+		daemon.start();
+	}
+
+	@Override
+	public void exited() {
+		daemon.stop();
 	}
 
 	@Override
@@ -128,9 +128,18 @@ public final class PlayMode extends Mode {
 
 	@Override
 	public void mouseDragged() {
-		if (p.mouseY < height - Constants.SCOREBOARD_HEIGHT) {
-			environmentRotation.x = Utils.trim(environmentRotation.x - motionFactor * (p.mouseY - p.pmouseY) / 100.0f, Constants.PI_3);
-			environmentRotation.z = Utils.trim(environmentRotation.z + motionFactor * (p.mouseX - p.pmouseX) / 100.0f, Constants.PI_3);
+		if (p.mouseY < p.height - Consts.SCOREBOARD_HEIGHT) {
+			environmentRotation.x = Utils.trim(environmentRotation.x - motionFactor * (p.mouseY - p.pmouseY) / 100.0f, PConstants.THIRD_PI);
+			environmentRotation.z = Utils.trim(environmentRotation.z + motionFactor * (p.mouseX - p.pmouseX) / 100.0f, PConstants.THIRD_PI);
+		}
+	}
+
+	@Override
+	public void mouseMoved() {
+		if (p.mouseY - p.height + Consts.SCOREBOARD_HEIGHT > 0) {
+			p.cursor();
+		} else {
+			p.noCursor();
 		}
 	}
 

@@ -19,14 +19,14 @@ public final class Sphere extends Scorable implements Projectable {
     }
 
     public void draw() {
-        parent.pushMatrix();
-        parent.stroke(0);
-        parent.fill(127);
+        p.pushMatrix();
+        p.stroke(0);
+        p.fill(127);
         PVector location = location();
-        parent.translate(location.x, location.y - radius, location.z);
-        parent.sphere(radius);
+        p.translate(location.x, location.y - radius, location.z);
+        p.sphere(radius);
         drawAxes();
-        parent.popMatrix();
+        p.popMatrix();
     }
 
     public void projectOn(PGraphics graphic) {
