@@ -77,7 +77,6 @@ public final class PlayMode extends Mode {
 
 	@Override
 	public void draw() {
-		p.noCursor();
 		p.camera(0, - Consts.EYE_HEIGHT, (p.height / 2f) / PApplet.tan(PConstants.PI * 30f / 180f), 0, 0, 0, 0, 1, 0);
 		background.draw();
 		airplane.draw();
@@ -127,6 +126,15 @@ public final class PlayMode extends Mode {
 		if (p.mouseY < p.height - Consts.SCOREBOARD_HEIGHT) {
 			environmentRotation.x = Utils.trim(environmentRotation.x - motionFactor * (p.mouseY - p.pmouseY) / 100.0f, PConstants.THIRD_PI);
 			environmentRotation.z = Utils.trim(environmentRotation.z + motionFactor * (p.mouseX - p.pmouseX) / 100.0f, PConstants.THIRD_PI);
+		}
+	}
+
+	@Override
+	public void mouseMoved() {
+		if (p.mouseY - p.height + Consts.SCOREBOARD_HEIGHT > 0) {
+			p.cursor();
+		} else {
+			p.noCursor();
 		}
 	}
 

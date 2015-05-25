@@ -32,10 +32,9 @@ public final class ObstaclesMode extends Mode {
 
 	@Override
 	public void draw() {
-		playMode.drawMetaPlate(Utils.nullVector());
+		//p.camera(0, - Consts.EYE_HEIGHT, (p.height / 2f) / PApplet.tan(PConstants.PI * 30f / 180f), 0, 0, 0, 0, 1, 0);
 		p.camera(0, -(p.height / 2f) / PApplet.tan(PConstants.PI * 30f / 180f), 0, 0, 0, 0, 0, 0, 1);
-
-		obstacleHolder.setLocation(new PVector(p.mouseX - p.width / 2, -Consts.PLATE_THICKNESS / 2, p.mouseY - p.height / 2));
+		playMode.drawMetaPlate(Utils.nullVector());
 		obstacleHolder.draw();
 	}
 
@@ -51,6 +50,11 @@ public final class ObstaclesMode extends Mode {
 		if (distance > borders) {
 			playMode.addObstacles(new Tree(obstacleHolder));
 		}
+	}
+
+	@Override
+	public void mouseMoved() {
+		obstacleHolder.setLocation(new PVector(p.mouseX - p.width / 2, -Consts.PLATE_THICKNESS / 2, p.mouseY - p.height / 2));
 	}
 
 	@Override

@@ -2,16 +2,13 @@ package ch.epfl.planair.scene;
 
 import ch.epfl.planair.specs.Movable;
 import ch.epfl.planair.scene.scores.Projectable;
-import processing.core.PShape;
-import processing.core.PVector;
-import processing.core.PApplet;
-import processing.core.PGraphics;
+import processing.core.*;
 
 public final class Tree extends Movable implements Projectable {
 
     private PShape shape;
     private final float scale = 5;
-    private final float radius = 6;
+    private final float radius = 10;
 
     public Tree(PApplet parent, PVector location) {
         super(parent, location);
@@ -57,7 +54,7 @@ public final class Tree extends Movable implements Projectable {
     private PShape createTree() {
         PShape tree = p.loadShape("3D/treeLight.obj");
         tree.scale(scale);
-        tree.rotate(p.PI);
+        tree.rotate(PConstants.PI);
         return tree;
     }
 }
