@@ -86,10 +86,10 @@ public class PipelineOnPlace extends PApplet {
 		}
 	}
 
-	public List<PVector> hough(int[] edgeImg, int width, int height) {
+	public List<PVector> hough(PImage edgeImg) {
 		// dimensions of the accumulator
 		int phiDim = (int) (Math.PI / Consts.PIPELINE_DISCRETIZATION_STEPS_PHI);
-		int rDim = (int) (((width + height) * 2 + 1) / Consts.PIPELINE_DISCRETIZATION_STEPS_R);
+		int rDim = (int) (((edgeImg.width + edgeImg.height) * 2 + 1) / Consts.PIPELINE_DISCRETIZATION_STEPS_R);
 
 		// Updated at each pass of the inner-most for-loop (for each value of phi for each align)
 
@@ -99,10 +99,10 @@ public class PipelineOnPlace extends PApplet {
 		// Fill the accumulator: on edge points (ie, white pixels of the edge
 		// image), store all possible (r, phi) pairs describing lines going
 		// through the point.
-		for (int y = 0; y < height; ++y) {
-			for (int x = 0; x < width; ++x) {
+		for (int y = 0; y < edgeImg.height; ++y) {
+			for (int x = 0; x < edgeImg.width; ++x) {
 				// Are we on an edge?
-				if (parent.brightness(edgeImg[y * width + x]) != 0) {
+				if (parent.brightness(edgeImg.pixels[y * edgeImg.width + x]) != 0) {
 					// ...determine here all the lines (r, phi) passing through
 					// align (x,y), convert (r,phi) to coordinates in the
 					// accumulator, and increment accordingly the accumulator.
@@ -180,14 +180,14 @@ public class PipelineOnPlace extends PApplet {
 		return selected;
 	}
 
-	private int align(int width, int x, int y) {
-		return y * width + x;
+	private int align(PImage source, int x, int y) {
+		return y * source.width + x;
 	}
 
-	public List<PVector> getPlane(int[] image, int width, int height, List<PVector> lines) {
+	public List<PVector> getPlane(PImage image, List<PVector> lines) {
 
 		QuadGraph quad = new QuadGraph();
-		quad.build(lines, width, height);
+		quad.build(lines, image.width, image.height);
 
 		List<int[]> cycles = quad.findCycles();
 

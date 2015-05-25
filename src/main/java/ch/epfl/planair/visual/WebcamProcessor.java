@@ -20,7 +20,7 @@ public final class WebcamProcessor {
 	private final PApplet p;
 
 	private final AtomicInteger rx;
-	//private final AtomicInteger ry;
+	private final AtomicInteger ry;
 	private final AtomicInteger rz;
 	private final PipelineConfig config;
 	private final PipelineOnPlace pipeline;
@@ -49,7 +49,7 @@ public final class WebcamProcessor {
 		this.webcam = webcam;
 		this.config = config;
 		this.rx = new AtomicInteger(0);
-		//this.ry = new AtomicInteger(0);
+		this.ry = new AtomicInteger(0);
 		this.rz = new AtomicInteger(0);
 		this.runner = null;
 		this.pipeline = new PipelineOnPlace(p);
@@ -232,10 +232,10 @@ public final class WebcamProcessor {
 					if (!corners.isEmpty()) {
 						PVector r = twoDThreeD.get3DRotations(corners.subList(0, 4));
 
-						if (PVector.sub(r, new PVector(Float.intBitsToFloat(rx.get()), Float.intBitsToFloat(rz.get()), r.z)).mag() < 1) {
+						if (PVector.sub(r, new PVector(Float.intBitsToFloat(rx.get()), Float.intBitsToFloat(rz.get()), -Float.intBitsToFloat(ry.get()))).mag() < 1) {
 
 							rx.set(Float.floatToIntBits(r.x));
-							//ry.set(Float.floatToIntBits(r.z));
+							ry.set(Float.floatToIntBits(r.z));
 							rz.set(Float.floatToIntBits(-r.y));
 						}
 					}
