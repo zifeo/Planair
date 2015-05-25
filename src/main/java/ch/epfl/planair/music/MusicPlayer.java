@@ -1,31 +1,32 @@
 package ch.epfl.planair.music;
 
-import ddf.minim.*;
+import ddf.minim.AudioPlayer;
+import ddf.minim.AudioSample;
+import ddf.minim.Minim;
 import processing.core.PApplet;
 
 /**
  * Handles music & sounds
  */
-public class MusicPlayer {
-	private Minim minim;
+public final class MusicPlayer {
+	private final Minim minim;
 
 	// Musics
-	private AudioPlayer backgroundMusic;
+	private final AudioPlayer backgroundMusic;
 
 	// Sounds
-	private AudioSample rampage;
-	private AudioSample firstBlood;
-	private AudioSample headshot;
-	private AudioSample doubleKill;
+	private final AudioSample rampage;
+	private final AudioSample firstBlood;
+	private final AudioSample headshot;
+	private final AudioSample doubleKill;
 
 	public MusicPlayer(PApplet applet) {
 		this.minim = new Minim(applet);
-
-		backgroundMusic = minim.loadFile("music/Dont_Go_Way_Nobody.mp3");
-		rampage = minim.loadSample("sound/rampage.mp3");
-		firstBlood = minim.loadSample("sound/first_blood.mp3");
-		headshot = minim.loadSample("sound/headshot.mp3");
-		doubleKill = minim.loadSample("sound/double_kill.mp3");
+		this.backgroundMusic = minim.loadFile("music/Dont_Go_Way_Nobody.mp3");
+		this.rampage = minim.loadSample("sound/rampage.mp3");
+		this.firstBlood = minim.loadSample("sound/first_blood.mp3");
+		this.headshot = minim.loadSample("sound/headshot.mp3");
+		this.doubleKill = minim.loadSample("sound/double_kill.mp3");
 	}
 
 	public void playBackgroundMusic() {

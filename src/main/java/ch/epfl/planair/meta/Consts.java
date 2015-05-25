@@ -35,9 +35,10 @@ public interface Consts {
 	int PLATE_THICKNESS        = 10;
 	int SCOREBOARD_HEIGHT      = 100;
 	float MOTION_FACTOR        = 1.5f;
+	int TREE_RADIUS            = 15;
 
 	// mods.obstacles
-	int SPHERE_RADIUS          = 10;
+	int SPHERE_RADIUS          = 5;
 	int HOLDER_RADIUS          = 15;
 
 	// visual.pipeline

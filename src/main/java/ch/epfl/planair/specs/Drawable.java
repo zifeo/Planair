@@ -11,15 +11,16 @@ import processing.core.PVector;
 public abstract class Drawable {
 
     protected PApplet p;
-    private PVector location = Utils.nullVector();
+    private PVector location;
 
     public Drawable(PApplet p){
         this.p = p;
+        this.location = Utils.nullVector();
     }
 
     public Drawable(PApplet p, PVector location) {
         this.p = p;
-        this.location.set(location);
+        this.location = new PVector(location.x, location.y, location.z);
     }
 
     /**
@@ -42,9 +43,7 @@ public abstract class Drawable {
      * Updates the location and parameters of the object
      * over time. Does not necessarily need to do anything.
      */
-    public void update() {
-
-    }
+    public void update() {}
 
     /**
      * Displays the object on the screen

@@ -1,8 +1,6 @@
 package ch.epfl.planair.scene;
 
 import ch.epfl.planair.modes.PlayMode;
-import ch.epfl.planair.specs.Movable;
-import ch.epfl.planair.scene.scores.Projectable;
 import ch.epfl.planair.specs.Obstacle;
 import processing.core.PApplet;
 import processing.core.PGraphics;
@@ -11,7 +9,7 @@ import processing.core.PShape;
 
 public final class Cylinder extends Obstacle {
 
-    private PShape shape;
+    private final PShape shape;
     private final float radius;
     private final float cylinderHeight;
 
@@ -32,7 +30,8 @@ public final class Cylinder extends Obstacle {
         this.setZBounds(that.zMinBound(), that.zMaxBound());
     }
 
-    public void draw() {
+	@Override
+	public void draw() {
         p.pushMatrix();
         PVector location = location();
         p.translate(location.x, location.y, location.z);
@@ -41,10 +40,12 @@ public final class Cylinder extends Obstacle {
         p.popMatrix();
     }
 
+    @Override
     public float get2DDistanceFrom(float angle) {
         return radius;
     }
 
+	@Override
     public void projectOn(PGraphics graphic) {
 
         graphic.fill(220);

@@ -18,20 +18,13 @@ import java.util.List;
 public final class MenuMode extends Mode {
 
 	private final PFont logoFont;
-	private final PFont menuFont;
 	private final List<ActionButton> menu;
 	private final PGraphics screen;
-
-	private final int menuX;
-	private final int menuY;
 
 	public MenuMode(PApplet parent) {
 		super(parent);
 		this.logoFont = p.createFont(Consts.FONT, 120);
-		this.menuFont= p.createFont(Consts.FONT, 20);
 		this.menu = new ArrayList<>();
-		this.menuX = (p.width - Consts.MENU_WIDTH) / 2;
-		this.menuY = (p.height - Consts.MENU_HEIGHT_CENTER) / 2;
 		this.screen = p.createGraphics(Consts.MENU_WIDTH, Consts.MENU_HEIGHT, PApplet.P2D);
 		constructMenu();
 	}
@@ -39,7 +32,7 @@ public final class MenuMode extends Mode {
 	private void constructMenu() {
 		int count = 0;
 		menu.add(createMenuButton(count++, "Play!", () -> Planair.become(PlayMode.class)));
-		menu.add(createMenuButton(count++, "Battle!", () -> PApplet.println("battle")));
+		menu.add(createMenuButton(count++, "Battle!", () -> Planair.music().triggerRampage()));
 		menu.add(createMenuButton(count++, "Cam Setup", () -> Planair.become(SetupMode.class)));
 		menu.add(createMenuButton(count++, "Exit", p::exit));
 	}
@@ -61,9 +54,7 @@ public final class MenuMode extends Mode {
 	@Override
 	public void draw() {
 		p.camera(0, 0, (p.height / 2f) / PApplet.tan(PConstants.PI * 30f / 180f), 0, 0, 0, 0, 1, 0);
-
 		drawScreen();
-
 		p.noLights();
 		p.image(screen, - Consts.MENU_WIDTH / 2, - Consts.MENU_HEIGHT / 2);
 		p.lights();

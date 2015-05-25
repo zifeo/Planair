@@ -5,19 +5,14 @@ import processing.core.PApplet;
 import processing.core.PImage;
 import processing.core.PVector;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.ConvolveOp;
-import java.awt.image.Kernel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.IntUnaryOperator;
 
-public class PipelineOnPlace extends PApplet {
+public final class PipelineOnPlace extends PApplet {
 
 	private final PApplet parent;
-
 
 	public final static float[][] gaussianKernel = {
 			{  9, 12,  9 },

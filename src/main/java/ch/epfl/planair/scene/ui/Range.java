@@ -5,7 +5,7 @@ import ch.epfl.planair.meta.Utils;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 
-public class Range extends Button {
+public final class Range extends Button {
 
 	private Cursor focus;
 	private final Cursor cursor1;
@@ -74,7 +74,6 @@ public class Range extends Button {
 				return true;
 			}
 		}
-
 		focus = null;
 		return false;
 	}

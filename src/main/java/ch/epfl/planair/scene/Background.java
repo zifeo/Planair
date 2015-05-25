@@ -3,16 +3,16 @@ package ch.epfl.planair.scene;
 import processing.core.PApplet;
 import processing.core.PShape;
 
-public class Background {
+public final class Background {
 
-    protected PApplet parent;
+    private PApplet parent;
 
     private final float scale = 180;
-    private PShape shape;
+    private final PShape shape;
 
     public Background(PApplet parent) {
         this.parent = parent;
-        shape = createBackgroundShape();
+        this.shape = createBackgroundShape();
     }
 
     public void draw() {
@@ -23,7 +23,7 @@ public class Background {
     }
 
     private PShape createBackgroundShape() {
-        PShape shape = parent.loadShape("background_scene.obj");
+        PShape shape = parent.loadShape("3D/background_scene.obj");
         shape.scale(scale);
         shape.rotate(PApplet.PI);
         shape.rotateY(-PApplet.PI / 4.0f);

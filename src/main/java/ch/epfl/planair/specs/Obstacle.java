@@ -5,7 +5,8 @@ import ch.epfl.planair.scene.scores.Projectable;
 import processing.core.PApplet;
 import processing.core.PVector;
 
-public abstract class Obstacle extends Movable implements Projectable{
+public abstract class Obstacle extends Movable implements Projectable {
+
     private final PlayMode playMode;
 
     public Obstacle(PApplet parent, PVector location, PlayMode playMode) {
@@ -20,4 +21,5 @@ public abstract class Obstacle extends Movable implements Projectable{
     public void remove(){
         this.playMode.removeObstacle(this);
     }
+
 }

@@ -30,9 +30,7 @@ public class Planair extends PApplet {
 
 	private static Mode status;
 	private static Planair self;
-
-	private MusicPlayer musicPlayer;
-
+	private static MusicPlayer player;
 
 	private final Map<Class<? extends Mode>, Mode> semantic;
 	private final Capture webcam;
@@ -40,6 +38,7 @@ public class Planair extends PApplet {
 	static {
 		status = null;
 		self = null;
+		player = null;
 	}
 
 	/** Switch mode. */
@@ -48,6 +47,12 @@ public class Planair extends PApplet {
 		status = self.semantic.get(mode);
 		assert status != null;
 		status.entered();
+	}
+
+	/** Music player */
+	public static MusicPlayer music() {
+		assert player != null;
+		return player;
 	}
 
 	/** Start game & Processing. */
@@ -72,6 +77,7 @@ public class Planair extends PApplet {
 	@Override
 	public void setup() {
 		assert status == null;
+		assert player == null;
 		size(displayWidth, displayHeight, P3D);
 		frameRate(Consts.FRAMERATE);
 
@@ -95,6 +101,9 @@ public class Planair extends PApplet {
 			modes.forEach(m -> semantic.put(m.getClass(), m));
 			status = semantic.get(defaultMode);
 			assert status != null;
+
+			player = new MusicPlayer(this);
+			player.playBackgroundMusic();
 		} catch (Exception e) {
 			println(e.getMessage());
 			if (Consts.DEBUG) {
@@ -102,9 +111,6 @@ public class Planair extends PApplet {
 			}
 			exit();
 		}
-
-		musicPlayer = new MusicPlayer(this);
-		musicPlayer.playBackgroundMusic();
 	}
 
 	/** Draw and updates tick. */
