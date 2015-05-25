@@ -1,71 +1,114 @@
 package ch.epfl.planair;
 
-import ch.epfl.planair.meta.Constants;
+import ch.epfl.planair.meta.Consts;
+import ch.epfl.planair.meta.PipelineConfig;
 import ch.epfl.planair.modes.*;
 import processing.core.PApplet;
 import processing.event.MouseEvent;
+import processing.video.Capture;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+/**
+ * Planair main class.
+ * Game loading, mode dependence setup, events forwarding and ticks.
+ *
+ * Visual computing class 2015
+ * Contact: firstname.surname@epfl.ch
+ *
+ * @author Nicolas Casademont
+ * @author Timothée Lottaz
+ * @author Teo Stocco
+ *
+ * @version 1.0
+ */
 public class Planair extends PApplet {
 
-	private static Mode status = null;
-	private static Planair self = null;
-	private final Map<Class, Mode> logic;
-	private final Timer clock;
+	private static Mode status;
+	private static Planair self;
 
+	private final Map<Class<? extends Mode>, Mode> semantic;
+	private final Capture webcam;
+
+	static {
+		status = null;
+		self = null;
+	}
+
+	/** Switch mode. */
+	public static void become(Class<? extends Mode> mode) {
+		status.exited();
+		status = self.semantic.get(mode);
+		assert status != null;
+		status.entered();
+	}
+
+	/** Start game & Processing. */
 	public static void main(String args[]) {
 		String[] appletArgs = new String[] { "ch.epfl.planair.Planair" };
-		PApplet.main(args != null ? concat(appletArgs, args) : appletArgs);
+		PApplet.main(args != null ? concat(appletArgs, args): appletArgs);
 	}
 
-	public static void become(Class<? extends Mode> mode) {
-		status = self.logic.get(mode);
-		assert status != null;
-	}
-
+	/** Basic init. */
 	public Planair() {
 		assert self == null;
 		self = this;
-		this.logic = new HashMap<>();
-		this.clock = new Timer();
-		/*this.clock.scheduleAtFixedRate(new TimerTask() {
-			public void run() {  if (status != null) status.update(); }
-		}, 0, 1000 / Constants.FRAMERATE);*/
+		if (Capture.list().length == 0) {
+			println("No webcam available!");
+			exit();
+		}
+		this.webcam = new Capture(this, Consts.CAMERA_WIDTH, Consts.CAMERA_HEIGHT, Consts.CAMERA_FPS);
+		this.semantic = new HashMap<>();
 	}
 
+	/** Mode & Processing init. */
 	@Override
 	public void setup() {
-		size(displayWidth, displayHeight, P3D);
-		frameRate(Constants.FRAMERATE);
-
-		List<Mode> modes = new ArrayList<>();
-		PlayMode playMode = new PlayMode(this, width, height);
-		modes.add(playMode);
-		modes.add(new ObstaclesMode(this, playMode));
-		modes.add(new MenuMode(this));
-		modes.add(new SetupMode(this));
-
 		assert status == null;
-		for (Mode m : modes) {
-			logic.put(m.getClass(), m);
+		size(displayWidth, displayHeight, P3D);
+		frameRate(Consts.FRAMERATE);
+
+		try {
+			List<Mode> modes = new ArrayList<>();
+
+			/* ADD MODES BELOW */
+			PipelineConfig config = new PipelineConfig();
+			PlayMode playMode = new PlayMode(this, webcam, config);
+			modes.add(playMode);
+			modes.add(new ObstaclesMode(this, playMode));
+			modes.add(new MenuMode(this));
+			modes.add(new SetupMode(this, webcam, config));
+
+			/* DEFAULT MODE LOADED */
+			Class<? extends Mode> defaultMode = MenuMode.class;
+
+			modes.forEach(m -> semantic.put(m.getClass(), m));
+			status = semantic.get(defaultMode);
+			assert status != null;
+		} catch (Exception e) {
+			println(e.getMessage());
+			if (Consts.DEBUG) {
+				e.printStackTrace();
+			}
+			exit();
 		}
-		status = this.logic.get(MenuMode.class);
-		assert status != null;
 	}
 
+	/** Draw and updates tick. */
 	@Override
 	public void draw() {
-		background(Constants.COLORBG);
+		background(Consts.COLORBG);
 		lights();
+		status.tick();
 
-		status.update();
-		status.draw();
-
-		if (Constants.DEBUG) {
-			fill(Constants.BLACK);
+		if (Consts.DEBUG) {
+			camera();
+			fill(Consts.BLACK);
 			textSize(11f);
-			text(String.format("fps: %.1f", frameRate), 2, 13);
+			text(String.format("fps: %.1f", frameRate), 4, 13);
 		}
 	}
 

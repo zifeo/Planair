@@ -2,16 +2,13 @@ package ch.epfl.planair.scene;
 
 import ch.epfl.planair.specs.Movable;
 import ch.epfl.planair.scene.scores.Projectable;
-import processing.core.PShape;
-import processing.core.PVector;
-import processing.core.PApplet;
-import processing.core.PGraphics;
+import processing.core.*;
 
 public final class Tree extends Movable implements Projectable {
 
     private PShape shape;
     private final float scale = 5;
-    private final float radius = 6;
+    private final float radius = 10;
 
     public Tree(PApplet parent, PVector location) {
         super(parent, location);
@@ -19,19 +16,19 @@ public final class Tree extends Movable implements Projectable {
     }
 
     public Tree(Tree that) {
-        this(that.parent, that.location());
+        this(that.p, that.location());
         this.setXBounds(that.xMinBound(), that.xMaxBound());
         this.setYBounds(that.yMinBound(), that.yMaxBound());
         this.setZBounds(that.zMinBound(), that.zMaxBound());
     }
 
     public void draw() {
-        parent.pushMatrix();
+        p.pushMatrix();
         PVector location = location();
-        parent.translate(location.x, location.y, location.z);
-        parent.shape(shape);
+        p.translate(location.x, location.y, location.z);
+        p.shape(shape);
         drawAxes();
-        parent.popMatrix();
+        p.popMatrix();
     }
 
     public float get2DDistanceFrom(float angle) {
@@ -55,9 +52,9 @@ public final class Tree extends Movable implements Projectable {
     }
 
     private PShape createTree() {
-        PShape tree = parent.loadShape("3D/treeLight.obj");
+        PShape tree = p.loadShape("3D/treeLight.obj");
         tree.scale(scale);
-        tree.rotate(parent.PI);
+        tree.rotate(PConstants.PI);
         return tree;
     }
 }
