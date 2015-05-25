@@ -2,6 +2,7 @@ package ch.epfl.planair;
 
 import ch.epfl.planair.meta.Constants;
 import ch.epfl.planair.modes.*;
+import ch.epfl.planair.music.MusicPlayer;
 import processing.core.PApplet;
 import processing.event.MouseEvent;
 
@@ -13,6 +14,9 @@ public class Planair extends PApplet {
 	private static Planair self = null;
 	private final Map<Class, Mode> logic;
 	private final Timer clock;
+
+	private MusicPlayer musicPlayer;
+
 
 	public static void main(String args[]) {
 		String[] appletArgs = new String[] { "ch.epfl.planair.Planair" };
@@ -52,6 +56,9 @@ public class Planair extends PApplet {
 		}
 		status = this.logic.get(MenuMode.class);
 		assert status != null;
+
+		musicPlayer = new MusicPlayer(this);
+		musicPlayer.playBackgroundMusic();
 	}
 
 	@Override
