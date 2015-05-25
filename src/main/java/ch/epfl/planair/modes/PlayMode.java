@@ -41,7 +41,7 @@ public final class PlayMode extends Mode {
 	private PVector environmentRotation = Utils.nullVector();
 	private float motionFactor;
 	private int countObstacles;
-	private int doubleObstaclesTime;
+	private int doubleKillTimeLeft;
 
 	public PlayMode(PApplet p, Capture webcam, PipelineConfig config) {
 		super(p);
@@ -66,7 +66,7 @@ public final class PlayMode extends Mode {
 		this.airplane = new Airplane(p);
 		this.daemon = new WebcamProcessor(p, webcam, config);
 		this.countObstacles = 0;
-		this.doubleObstaclesTime = 0;
+		this.doubleKillTimeLeft = 0;
 	}
 
 	@Override
@@ -78,7 +78,7 @@ public final class PlayMode extends Mode {
 		plate.update();
 		scoreboard.update();
 		airplane.update();
-		doubleObstaclesTime = doubleObstaclesTime <= 0 ? 0: doubleObstaclesTime - 1;
+		doubleKillTimeLeft = doubleKillTimeLeft <= 0 ? 0: doubleKillTimeLeft - 1;
 	}
 
 	@Override
@@ -104,15 +104,17 @@ public final class PlayMode extends Mode {
 
 	private void soundsEvent() {
 		countObstacles += 1;
-		if (doubleObstaclesTime > 0) {
+
+		if (countObstacles % 5 == 0) {
+			Planair.music().triggerRampage();
+		} else if (doubleKillTimeLeft > 0){
 			Planair.music().triggerDoubleKill();
-			doubleObstaclesTime = 0;
+			doubleKillTimeLeft = 0;
+		} else if (countObstacles == 1) {
+			Planair.music().triggerFirstBlood();
 		} else {
-			switch (countObstacles) {
-				case 1: Planair.music().triggerFirstBlood(); break;
-				case 5: Planair.music().triggerRampage(); break;
-			}
-			doubleObstaclesTime += 180;
+			// Adds 180 frames (~ 3 secs) before which a double kill can be triggered
+			doubleKillTimeLeft = 180;
 		}
 	}
 
@@ -135,7 +137,7 @@ public final class PlayMode extends Mode {
 	public void entered() {
 		mouseMoved();
 		countObstacles = 0;
-		doubleObstaclesTime = 0;
+		doubleKillTimeLeft = 0;
 		daemon.start();
 	}
 
