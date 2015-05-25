@@ -1,6 +1,6 @@
 # Blender v2.74 (sub 0) OBJ File: 'airplane.blend'
 # www.blender.org
-mtllib airplane.mtl
+mtllib 3D/airplane.mtl
 o Cube.001
 v 3.008439 0.174266 -6.412246
 v 2.962482 -0.354252 -6.412246

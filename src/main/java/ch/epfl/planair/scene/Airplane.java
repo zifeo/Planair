@@ -40,7 +40,7 @@ public final class Airplane {
     }
 
     private PShape createBackgroundShape() {
-        PShape shape = parent.loadShape("airplane.obj");
+        PShape shape = parent.loadShape("3D/airplane.obj");
         shape.scale(scale);
         shape.rotate(PApplet.PI);
         shape.rotateY(PApplet.HALF_PI);

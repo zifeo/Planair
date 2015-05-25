@@ -23,7 +23,7 @@ public final class Background {
     }
 
     private PShape createBackgroundShape() {
-        PShape shape = parent.loadShape("background_scene.obj");
+        PShape shape = parent.loadShape("3D/background_scene.obj");
         shape.scale(scale);
         shape.rotate(PApplet.PI);
         shape.rotateY(-PApplet.PI / 4.0f);

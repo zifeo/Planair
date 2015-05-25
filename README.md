@@ -8,7 +8,7 @@ The aim is to construct a 3D-based game with reality immersion and interaction.
 1. Clone the project
 2. Open it with your favorite IDE
 3. Add the folder `libraries` to your build path
-4. Run `src/main/java/ch.epfl.planair/Planair`and have fun
+4. Run `src/main/java/ch.epfl.planair/Planair` and have fun
 
 ## Help and issues
 

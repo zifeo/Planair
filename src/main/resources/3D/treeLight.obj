@@ -1,6 +1,6 @@
 # Blender v2.73 (sub 0) OBJ File: 'treeLight.blend'
 # www.blender.org
-mtllib ./treeLight.mtl
+mtllib 3D/treeLight.mtl
 o Tronc_Cube.001
 v 1.572682 -0.084896 1.847968
 v 0.649712 0.126779 2.193914
