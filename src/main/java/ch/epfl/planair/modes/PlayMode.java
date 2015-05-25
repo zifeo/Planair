@@ -97,14 +97,13 @@ public final class PlayMode extends Mode {
 	}
 
 	public void removeObstacle(Obstacle o) {
-		countObstacles += 1;
 		soundsEvent();
-		doubleObstaclesTime += 180;
 		obstacles.remove(o);
 		scoreboard.removeProjection(o);
 	}
 
 	private void soundsEvent() {
+		countObstacles += 1;
 		if (doubleObstaclesTime > 0) {
 			Planair.music().triggerDoubleKill();
 			doubleObstaclesTime = 0;
@@ -113,6 +112,7 @@ public final class PlayMode extends Mode {
 				case 1: Planair.music().triggerFirstBlood(); break;
 				case 5: Planair.music().triggerRampage(); break;
 			}
+			doubleObstaclesTime += 180;
 		}
 	}
 
