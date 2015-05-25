@@ -1,9 +1,7 @@
 package ch.epfl.planair.scene;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import ch.epfl.planair.specs.Drawable;
 import ch.epfl.planair.scene.scores.Projectable;
 import ch.epfl.planair.specs.Obstacle;
 import ch.epfl.planair.specs.Scorable;
@@ -20,6 +18,7 @@ public final class Sphere extends Scorable implements Projectable {
         this.radius = radius;
     }
 
+    @Override
     public void draw() {
         p.pushMatrix();
         p.stroke(0);
@@ -31,18 +30,16 @@ public final class Sphere extends Scorable implements Projectable {
         p.popMatrix();
     }
 
-    public void projectOn(PGraphics graphic) {
+	@Override
+	public void projectOn(PGraphics graphic) {
         graphic.fill(150, 0, 0);
         graphic.noStroke();
-
         PVector location = location();
         float widthOrigin = xMaxBound() - xMinBound() + 2 * radius;
         float heightOrigin = zMaxBound() - zMinBound() + 2 * radius;
-
         float radiusScaled = radius / widthOrigin * graphic.width;
         float xScaled = (location.x - xMinBound() + 2 * radius) / widthOrigin * graphic.width;
         float yScaled = (location.z - zMinBound() + 2 * radius) / heightOrigin * graphic.height;
-
         graphic.ellipse(xScaled - radiusScaled, yScaled - radiusScaled, 2 * radiusScaled, 2 * radiusScaled);
     }
 

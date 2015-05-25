@@ -9,7 +9,6 @@ import ch.epfl.planair.visual.PipelineOnPlace;
 import processing.core.*;
 import processing.video.Capture;
 
-import java.awt.image.BufferedImage;
 import java.util.List;
 
 /**
@@ -29,7 +28,7 @@ public final class SetupMode extends Mode {
 	private final int size;
 
 	private PipelineConfig.Step status;
-	private PipelineConfig config;
+	private final PipelineConfig config;
 
 	public SetupMode(PApplet p, Capture webcam, PipelineConfig config) {
 		super(p);

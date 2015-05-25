@@ -2,14 +2,13 @@ package ch.epfl.planair.scene;
 
 import processing.core.PApplet;
 import processing.core.PShape;
-import processing.core.PVector;
 
-public class Airplane {
+public final class Airplane {
 
-    protected PApplet parent;
+    private final PApplet parent;
 
     private final float scale = 30;
-    private PShape shape;
+    private final PShape shape;
 
     private final float flightHeight = 400;
     private final float flightRadius = 2000f;
@@ -22,7 +21,7 @@ public class Airplane {
 
     public Airplane(PApplet parent) {
         this.parent = parent;
-        shape = createBackgroundShape();
+        this.shape = createBackgroundShape();
     }
 
     public void draw() {
@@ -37,7 +36,6 @@ public class Airplane {
             flightAngle -= PApplet.TWO_PI;
         }
         flightAngle += deltaAngle;
-
         shape.rotateY((float) -deltaAngle);
     }
 

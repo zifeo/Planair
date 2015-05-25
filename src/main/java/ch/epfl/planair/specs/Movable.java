@@ -14,12 +14,15 @@ import java.util.List;
  */
 public abstract class Movable extends Drawable {
 
-    private PVector velocity = Utils.nullVector();
-    private PVector maxBounds = Utils.maxVector();
-    private PVector minBounds = Utils.minVector();
+    private PVector velocity;
+    private PVector maxBounds;
+    private PVector minBounds;
 
     public Movable(PApplet parent, PVector location) {
         super(parent, location);
+        this.velocity = Utils.nullVector();
+        this.maxBounds = Utils.maxVector();
+        this.minBounds = Utils.minVector();
     }
 
     /**
@@ -80,11 +83,9 @@ public abstract class Movable extends Drawable {
     public float xMinBound() {
         return minBounds.x;
     }
-
     public float yMinBound() {
         return minBounds.y;
     }
-
     public float zMinBound() {
         return minBounds.z;
     }
@@ -92,11 +93,9 @@ public abstract class Movable extends Drawable {
     public float xMaxBound() {
         return maxBounds.x;
     }
-
     public float yMaxBound() {
         return maxBounds.y;
     }
-
     public float zMaxBound() {
         return maxBounds.z;
     }
@@ -111,7 +110,7 @@ public abstract class Movable extends Drawable {
     public int checkCollisions(List<Obstacle> obstacles) {
         int count = 0;
         PVector location = location();
-        PVector correction = new PVector(0, 0, 0);
+        PVector correction = Utils.nullVector();
         List<Obstacle> removingList = new LinkedList<>();
 
         // Check collision for each obstacle
@@ -140,14 +139,13 @@ public abstract class Movable extends Drawable {
             }
         }
 
-        removingList.forEach(Obstacle::remove);
-
         // If there was a collision
         if (count > 0) {
             correction.x /= count;
             correction.y = location.y;
             correction.z /= count;
 
+	        removingList.forEach(Obstacle::remove);
             /* Put the object back at the position where it does not
               cross the other object anymore */
             setLocation(correction);

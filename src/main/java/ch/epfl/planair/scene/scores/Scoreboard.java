@@ -49,10 +49,8 @@ public final class Scoreboard extends Drawable implements Scorer {
      */
     public Scoreboard(PApplet p, int overlayWidth, int overlayHeight, Scorable scoreTrack) {
         super(p, new PVector(0, p.height - overlayHeight, 0));
-
         this.dt = 2 * (int) p.frameRate;
         this.moduleSize = overlayHeight - 2 * Consts.SCOREBOARD_PADDING;
-
         this.overlay = p.createGraphics(overlayWidth, overlayHeight, PApplet.P2D);
         this.projection = p.createGraphics(moduleSize, moduleSize, PApplet.P2D);
         this.facts = p.createGraphics(moduleSize, moduleSize, PApplet.P2D);
@@ -62,13 +60,11 @@ public final class Scoreboard extends Drawable implements Scorer {
 		        PApplet.P2D
         );
         this.slider = p.createGraphics(this.barChart.width, Consts.SCROLL_HEIGHT, PApplet.P2D);
-
         this.toProject = new ArrayList<>();
         this.scores = new ArrayList<>();
         this.scores.add(0f);
         this.scoreTrack = scoreTrack;
         this.scoreTrack.addScoreObserver(this);
-
         PVector location = location();
         this.scrollbar = new ScrollBar(this.slider,
                 location.x + 2 * moduleSize + 3 * Consts.SCOREBOARD_PADDING,
@@ -78,16 +74,13 @@ public final class Scoreboard extends Drawable implements Scorer {
 
 	@Override
     public void update() {
-
         if (p.frameCount % 5 == 0) {
             currentVelocity = scoreTrack.velocity().mag();
         }
-
         if (p.frameCount % dt == 0) {
             scores.add(0.0f);
             ++time;
         }
-
         scrollbar.update();
         timeChart = (int) Math.floor(scrollbar.pos() * Consts.SCOREBOARD_TIME_CHART_BASE);
     }
@@ -95,13 +88,11 @@ public final class Scoreboard extends Drawable implements Scorer {
 
 	@Override
     public void draw() {
-
 		drawMiniMap();
 		drawFacts();
 		drawBarChart();
 		drawSlider();
 		drawOverlay();
-
         p.noLights();
         p.image(overlay, 0, p.height - overlay.height);
         p.lights();

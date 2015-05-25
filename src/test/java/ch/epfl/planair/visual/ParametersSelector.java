@@ -1,5 +1,6 @@
 package ch.epfl.planair.visual;
 
+import ch.epfl.planair.scene.HScrollBar;
 import processing.core.PApplet;
 import processing.core.PImage;
 

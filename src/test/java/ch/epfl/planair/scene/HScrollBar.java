@@ -1,4 +1,4 @@
-package ch.epfl.planair.visual;
+package ch.epfl.planair.scene;
 
 import processing.core.PApplet;
 
@@ -7,6 +7,7 @@ import processing.core.PApplet;
  * as an input.
  * @todo Refactor ! and maybe use score.scrollBar instead
  */
+@Deprecated
 public final class HScrollBar {
 
 	private PApplet parent;
@@ -34,7 +35,7 @@ public final class HScrollBar {
 	 * @param h
 	 *            The height of the bar in pixels
 	 */
-	HScrollBar(PApplet p, float x, float y, float w, float h) {
+	public HScrollBar(PApplet p, float x, float y, float w, float h) {
 		parent = p;
 		barWidth = w;
 		barHeight = h;
@@ -49,7 +50,7 @@ public final class HScrollBar {
 	/**
 	 * @brief Updates the state of the scrollbar according to the mouse movement
 	 */
-	void update() {
+	public void update() {
 		mouseOver = isMouseOver();
 		if (parent.mousePressed && mouseOver) {
 			locked = true;
@@ -79,7 +80,7 @@ public final class HScrollBar {
 	 *
 	 * @return val clamped into the interval [minVal, maxVal]
 	 */
-	float constrain(float val, float minVal, float maxVal) {
+	public float constrain(float val, float minVal, float maxVal) {
 		return parent.min(parent.max(val, minVal), maxVal);
 	}
 
@@ -88,7 +89,7 @@ public final class HScrollBar {
 	 *
 	 * @return Whether the mouse is hovering the scrollbar
 	 */
-	boolean isMouseOver() {
+	public boolean isMouseOver() {
 		if (parent.mouseX > xPosition && parent.mouseX < xPosition + barWidth
 				&& parent.mouseY > yPosition && parent.mouseY < yPosition + barHeight) {
 			return true;
@@ -100,7 +101,7 @@ public final class HScrollBar {
 	/**
 	 * @brief Draws the scrollbar in its current state
 	 */
-	void display() {
+	public void display() {
 		parent.noStroke();
 		parent.fill(204);
 		parent.rect(xPosition, yPosition, barWidth, barHeight);
@@ -118,7 +119,7 @@ public final class HScrollBar {
 	 * @return The slider position in the interval [0,1] corresponding to
 	 *         [leftmost position, rightmost position]
 	 */
-	float getPos() {
+	public float getPos() {
 		return (sliderPosition - xPosition) / (barWidth - barHeight);
 	}
 }

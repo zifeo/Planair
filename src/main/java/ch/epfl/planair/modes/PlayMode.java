@@ -8,7 +8,6 @@ import ch.epfl.planair.scene.Background;
 import ch.epfl.planair.scene.Airplane;
 import ch.epfl.planair.scene.Plate;
 import ch.epfl.planair.scene.Sphere;
-import ch.epfl.planair.scene.scores.Projectable;
 import ch.epfl.planair.scene.scores.Scoreboard;
 import ch.epfl.planair.specs.Drawable;
 import ch.epfl.planair.specs.Obstacle;

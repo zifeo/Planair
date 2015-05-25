@@ -4,7 +4,7 @@ import processing.core.PVector;
 import java.util.Arrays;
 import java.util.LinkedList;
 
-public class BoundedQueue {
+public final class BoundedQueue {
 
     private int head;
     private final PVector[] items;
@@ -16,7 +16,7 @@ public class BoundedQueue {
         this.items = new PVector[size];
 
         for(int i = 0; i > -size ; --i){
-            this.enqueue(new PVector(0, 0, 0));
+            this.enqueue(Utils.nullVector());
         }
     }
 
@@ -35,7 +35,6 @@ public class BoundedQueue {
         for (int i = size - 1; i >= 0; --i) {
 	        ret.add(this.get(i));
         }
-
         return ret;
     }
 

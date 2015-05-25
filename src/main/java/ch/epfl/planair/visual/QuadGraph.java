@@ -11,7 +11,7 @@ import processing.core.PVector;
  * the Hough algorithm.
  *
  */
-final public class QuadGraph {
+public final class QuadGraph {
 
 	private List<int[]> cycles = new ArrayList<>();
 	private int[][] graph;

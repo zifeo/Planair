@@ -61,9 +61,7 @@ public final class MenuMode extends Mode {
 	@Override
 	public void draw() {
 		p.camera(0, 0, (p.height / 2f) / PApplet.tan(PConstants.PI * 30f / 180f), 0, 0, 0, 0, 1, 0);
-
 		drawScreen();
-
 		p.noLights();
 		p.image(screen, - Consts.MENU_WIDTH / 2, - Consts.MENU_HEIGHT / 2);
 		p.lights();

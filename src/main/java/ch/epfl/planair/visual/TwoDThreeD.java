@@ -4,27 +4,28 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import papaya.Mat;
+import papaya.SVD;
 import processing.core.PVector;
-import papaya.*;
 
-public class TwoDThreeD {
+public final class TwoDThreeD {
 	
 	// Default focal length, well-suited for most webcams
-	static float f = 700;
+	private static float f = 700;
 	
 	// Intrinsic camera matrix
-	static float [][] K = {{f,0,0},
+	private static float [][] K = {{f,0,0},
 			        	   {0,f,0},
 			        	   {0,0,1}};
 
 	// TODO change that to the smaller Lego bord, since it's what we're using
 	// Real physical coordinates of the Lego board in millimeters
-	static float boardSize = 380.f; // Large Duplo board
+	private static float boardSize = 380.f; // Large Duplo board
 
 	//static float boardSize = 255.f; // Smaller Lego board
 	
 	// The 3D coordinates of the physical board corners, clockwise
-	static float [][] physicalCorners = {
+	private static float [][] physicalCorners = {
 		// Store here the 3D coordinates of the corners of
 		// the real Lego board, in homogenous coordinates
 		// and clockwise.
@@ -64,7 +65,7 @@ public class TwoDThreeD {
         					   (float)E[1][0],
         					   (float)E[2][0]};
 
-        firstColumn = Mat.multiply(firstColumn, 1/Mat.norm2(firstColumn)); // normalize
+        firstColumn = Mat.multiply(firstColumn, 1 / Mat.norm2(firstColumn)); // normalize
         
         float[] secondColumn={(float)E[0][1],
         					  (float)E[1][1],

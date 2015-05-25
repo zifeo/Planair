@@ -12,12 +12,14 @@ import processing.core.PApplet;
  */
 public abstract class Accelerable extends Movable {
 
-    private PVector force = Utils.nullVector();
-    private PVector environmentRotation = Utils.nullVector();
+    private PVector force;
+    private PVector environmentRotation;
     private boolean computeGravity = false;
 
     public Accelerable(PApplet parent, PVector location) {
         super(parent, location);
+        this.force = Utils.nullVector();
+        this.environmentRotation = Utils.nullVector();
     }
 
     /**

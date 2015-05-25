@@ -1,14 +1,11 @@
 package ch.epfl.planair.scene.ui;
 
 import ch.epfl.planair.meta.Consts;
-import ch.epfl.planair.meta.Utils;
-import ch.epfl.planair.specs.Drawable;
 import processing.core.PConstants;
 import processing.core.PFont;
 import processing.core.PGraphics;
-import processing.core.PVector;
 
-public class ActionButton extends Button {
+public final class ActionButton extends Button {
 
 	private final Action callback;
 	protected final PFont font;

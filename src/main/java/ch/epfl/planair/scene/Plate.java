@@ -17,6 +17,7 @@ public final class Plate extends Drawable implements Projectable {
         this.thickness = thickness;
     }
 
+    @Override
     public void draw() {
         p.pushMatrix();
         p.noStroke();
@@ -28,6 +29,7 @@ public final class Plate extends Drawable implements Projectable {
         p.popMatrix();
     }
 
+    @Override
     public void projectOn(PGraphics graphic) {
         graphic.noStroke();
         graphic.fill(100, 50);

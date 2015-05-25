@@ -16,6 +16,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public final class WebcamProcessor {
 
+	private final static int sizeInterp = 2;
+
 	private final Capture webcam;
 	private final PApplet p;
 
@@ -25,24 +27,12 @@ public final class WebcamProcessor {
 	private final PipelineConfig config;
 	private final PipelineOnPlace pipeline;
 	private final TwoDThreeD twoDThreeD;
-
-	private float lastFrameTime;
-	private float lastCalcTime;
-	private float frameTimeLength;
-	private float calculTimeLength;
-
-	private Thread runner;
-
-	private static final int sizeInterp = 2;
-
+	private final int size;
     private final BoundedQueue yQueue;
     private final AtomicBoolean changed;
 
+	private Thread runner;
     private float discStep = 0;
-
-    private boolean run;
-    private int pos = 0;
-	private final int size;
 
 	public WebcamProcessor(PApplet p, Capture webcam, PipelineConfig config) {
 		this.p = p;
