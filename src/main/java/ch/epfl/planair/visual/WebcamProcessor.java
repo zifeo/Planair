@@ -1,6 +1,7 @@
 package ch.epfl.planair.visual;
 
 import ch.epfl.planair.meta.BoundedQueue;
+import ch.epfl.planair.meta.Consts;
 import ch.epfl.planair.meta.PipelineConfig;
 import ch.epfl.planair.meta.Utils;
 import processing.core.PApplet;
@@ -19,7 +20,7 @@ public final class WebcamProcessor {
 	private final PApplet p;
 
 	private final AtomicInteger rx;
-	private final AtomicInteger ry;
+	//private final AtomicInteger ry;
 	private final AtomicInteger rz;
 	private final PipelineConfig config;
 	private final PipelineOnPlace pipeline;
@@ -41,19 +42,21 @@ public final class WebcamProcessor {
 
     private boolean run;
     private int pos = 0;
+	private final int size;
 
 	public WebcamProcessor(PApplet p, Capture webcam, PipelineConfig config) {
 		this.p = p;
 		this.webcam = webcam;
 		this.config = config;
 		this.rx = new AtomicInteger(0);
-		this.ry = new AtomicInteger(0);
+		//this.ry = new AtomicInteger(0);
 		this.rz = new AtomicInteger(0);
 		this.runner = null;
 		this.pipeline = new PipelineOnPlace(p);
 		this.twoDThreeD = new TwoDThreeD(webcam.width, webcam.height);
         this.yQueue = new BoundedQueue(sizeInterp);
         this.changed = new AtomicBoolean(false);
+		this.size = webcam.width * webcam.height;
 	}
 
 	public void start() {
@@ -201,28 +204,42 @@ public final class WebcamProcessor {
 					webcam.read();
 					PImage image = webcam.get();
 
-					/*pipeline.selectHueThreshold(image, currentConfig.lower(PipelineConfig.Step.HUE), currentConfig.upper(PipelineConfig.Step.HUE), 0);
+					for (int i = 0; i < size; ++i) {
+						float h = p.hue(image.pixels[i]);
+						float b = p.brightness(image.pixels[i]);
+						float s = p.saturation(image.pixels[i]);
+						if (currentConfig.lower(PipelineConfig.Step.HUE) < h && h < currentConfig.upper(PipelineConfig.Step.HUE) &&
+								currentConfig.lower(PipelineConfig.Step.BRIGHTNESS) < b && b < currentConfig.upper(PipelineConfig.Step.BRIGHTNESS) &&
+								currentConfig.lower(PipelineConfig.Step.SATURATION) < s && s < currentConfig.upper(PipelineConfig.Step.SATURATION)) {
+							image.pixels[i] = Consts.COLORBG;
+						} else {
+							image.pixels[i] = Consts.BLACK;
+						}
+					}
+					image.updatePixels();
+
+					/*
+					pipeline.selectHueThreshold(image, currentConfig.lower(PipelineConfig.Step.HUE), currentConfig.upper(PipelineConfig.Step.HUE), 0);
 					pipeline.selectBrightnessThreshold(image, currentConfig.lower(PipelineConfig.Step.BRIGHTNESS), currentConfig.upper(PipelineConfig.Step.BRIGHTNESS), 0);
 					pipeline.selectSaturationThreshold(image, currentConfig.lower(PipelineConfig.Step.SATURATION), currentConfig.upper(PipelineConfig.Step.SATURATION), 0);
 					pipeline.binaryBrightnessThreshold(image, currentConfig.lower(PipelineConfig.Step.SOBEL), 0, 180);
-					pipeline.convolute(image);
-					pipeline.sobel(image, 0.35f);
+					*/
 
-					List<PVector> lines = pipeline.hough(image);
-					List<PVector> corners = pipeline.getPlane(image, lines);
+					pipeline.convolute(image, PipelineOnPlace.gaussianKernel);
+					pipeline.sobel(image, currentConfig.lower(PipelineConfig.Step.SOBEL), size);
+					List<PVector> corners = pipeline.getPlane(image, pipeline.hough(image));
 
 					if (!corners.isEmpty()) {
 						PVector r = twoDThreeD.get3DRotations(corners.subList(0, 4));
 
-						if (PVector.sub(r, new PVector(Float.intBitsToFloat(rx.get()), Float.intBitsToFloat(rz.get()), -Float.intBitsToFloat(ry.get()))).mag() < 1) {
+						if (PVector.sub(r, new PVector(Float.intBitsToFloat(rx.get()), Float.intBitsToFloat(rz.get()), r.z)).mag() < 1) {
 
 							rx.set(Float.floatToIntBits(r.x));
-							ry.set(Float.floatToIntBits(r.z));
+							//ry.set(Float.floatToIntBits(r.z));
 							rz.set(Float.floatToIntBits(-r.y));
 						}
 					}
-                    //parent.println(r.x + " " + r.y);
-                    */
+
                 }
 
                 changed.set(true);

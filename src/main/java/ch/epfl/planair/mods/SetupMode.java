@@ -22,6 +22,7 @@ public final class SetupMode extends Mode {
 	private final PGraphics panel;
 	private final int offsetX;
 	private final int offsetY;
+	private final int size;
 
 	private PipelineConfig.Step status;
 	private PipelineConfig config;
@@ -68,6 +69,7 @@ public final class SetupMode extends Mode {
 				this.config.lowerUnit(PipelineConfig.Step.HUE),
 				this.config.upperUnit(PipelineConfig.Step.HUE)
 		);
+		this.size = webcam.width * webcam.height;
 	}
 
 	@Override
@@ -81,10 +83,7 @@ public final class SetupMode extends Mode {
 		if (webcam.available()) {
 
 			webcam.read();
-			PImage cam = webcam.get();
-			int width = cam.width;
-			int height = cam.height;
-			int[] image = cam.pixels;
+			PImage image = webcam.get();
 			drawPlanel();
 
 			p.cursor(nextActionButton.hover() || previousActionButton.hover() || rangeButton.hover() ? PConstants.HAND : PConstants.ARROW);
@@ -92,38 +91,45 @@ public final class SetupMode extends Mode {
 			p.image(panel, offsetX, offsetY + webcam.height - 40);
 			p.lights();
 
-			pipeline.selectHueThreshold(image, config.lower(PipelineConfig.Step.HUE), config.upper(PipelineConfig.Step.HUE), 0);
+			for (int i = 0; i < size; ++i) {
+				float v = p.hue(image.pixels[i]);
+				if (!(config.lower(PipelineConfig.Step.HUE) < v && v < config.upper(PipelineConfig.Step.HUE))) {
+					image.pixels[i] = Consts.BLACK;
+				}
+			}
+			//pipeline.selectHueThreshold(image, config.lower(PipelineConfig.Step.HUE), config.upper(PipelineConfig.Step.HUE), 0);
 
 			if (status.compareTo(PipelineConfig.Step.HUE) > 0) {
-				//pipeline.selectBrightnessThreshold(image, config.lower(PipelineConfig.Step.BRIGHTNESS), config.upper(PipelineConfig.Step.BRIGHTNESS), 0);
-				for (int i = 0; i < image.length; ++i) {
-					int im = image[i];
-					image[i] = config.lower(PipelineConfig.Step.BRIGHTNESS) <= p.hue(im) && p.hue(im) <= config.upper(PipelineConfig.Step.BRIGHTNESS) ? im : Consts.BLACK;
+				for (int i = 0; i < size; ++i) {
+					float v = p.saturation(image.pixels[i]);
+					if (!(config.lower(PipelineConfig.Step.SATURATION) < v && v < config.upper(PipelineConfig.Step.SATURATION))) {
+						image.pixels[i] = Consts.BLACK;
+					}
 				}
+				//pipeline.selectSaturationThreshold(image, config.lower(PipelineConfig.Step.SATURATION), config.upper(PipelineConfig.Step.SATURATION), 0);
 			}
 
 			if (status.compareTo(PipelineConfig.Step.BRIGHTNESS) > 0) {
-				pipeline.selectSaturationThreshold(image, config.lower(PipelineConfig.Step.SATURATION), config.upper(PipelineConfig.Step.SATURATION), 0);
+				for (int i = 0; i < size; ++i) {
+					float v = p.brightness(image.pixels[i]);
+					if (!(config.lower(PipelineConfig.Step.BRIGHTNESS) < v && v < config.upper(PipelineConfig.Step.BRIGHTNESS))) {
+						image.pixels[i] = Consts.BLACK;
+					} else {
+						image.pixels[i] = Consts.WHITE;
+					}
+				}
+				//pipeline.selectBrightnessThreshold(image, config.lower(PipelineConfig.Step.BRIGHTNESS), config.upper(PipelineConfig.Step.BRIGHTNESS), 0);
 			}
 
 			if (status.compareTo(PipelineConfig.Step.SATURATION) > 0) {
-				pipeline.binaryBrightnessThreshold(image, config.lower(PipelineConfig.Step.SOBEL), 0, 180);
+				pipeline.convolute(image, PipelineOnPlace.gaussianKernel);
+				pipeline.sobel(image, config.lower(PipelineConfig.Step.SOBEL), size);
 			}
-			cam.pixels = image;
-			cam.updatePixels();
+			image.updatePixels();
+			p.image(image, offsetX, offsetY - 50);
 
 			if (status.compareTo(PipelineConfig.Step.SATURATION) > 0) {
-				BufferedImage b = pipeline.convolute(cam, width, height);
-				image = pipeline.sobel(b, width, height, 90);
-				cam.pixels = image;
-				cam.updatePixels();
-			}
-
-			p.image(cam, offsetX, offsetY - 50);
-
-			if (status.compareTo(PipelineConfig.Step.SATURATION) > 0) {
-				List<PVector> lines = pipeline.hough(image, width, height);
-				List<PVector> corners = pipeline.getPlane(image, width, height, lines);
+				List<PVector> corners = pipeline.getPlane(image, pipeline.hough(image));
 
 				if (!corners.isEmpty()) {
 					p.fill(Consts.RED);
@@ -135,7 +141,6 @@ public final class SetupMode extends Mode {
 
 		}
 	}
-
 
 	private void drawPlanel() {
 		panel.beginDraw();
