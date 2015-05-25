@@ -1,12 +1,15 @@
 package ch.epfl.planair.scene.scores;
 
 import java.util.ArrayList;
+import java.util.List;
 
-import ch.epfl.planair.meta.Constants;
+import ch.epfl.planair.meta.Consts;
 import ch.epfl.planair.scene.ScrollBar;
 import ch.epfl.planair.specs.Drawable;
 import ch.epfl.planair.specs.Scorable;
-import processing.core.*;
+import processing.core.PApplet;
+import processing.core.PGraphics;
+import processing.core.PVector;
 
 /**
  * A scoreboard divided in three area:
@@ -17,14 +20,15 @@ import processing.core.*;
 public final class Scoreboard extends Drawable implements Scorer {
 
     private final PGraphics overlay;
-    private final ArrayList<Projectable> toProject;
     private final PGraphics projection;
     private final PGraphics facts;
     private final PGraphics barChart;
     private final PGraphics slider;
     private final Scorable scoreTrack;
     private final ScrollBar scrollbar;
-    private final ArrayList<Float> scores;
+    private final List<Projectable> toProject;
+    private final List<Float> scores;
+
     private final int dt;
     private final int moduleSize;
 
@@ -38,26 +42,26 @@ public final class Scoreboard extends Drawable implements Scorer {
     /**
      * Create a scoreboard with given size and score source.
      *
-     * @param parent
+     * @param p
      * @param overlayWidth scoreboard width
      * @param overlayHeight scoreboard height
      * @param scoreTrack score source
      */
-    public Scoreboard(PApplet parent, int overlayWidth, int overlayHeight, Scorable scoreTrack) {
-        super(parent, new PVector(0, parent.height - overlayHeight, 0));
+    public Scoreboard(PApplet p, int overlayWidth, int overlayHeight, Scorable scoreTrack) {
+        super(p, new PVector(0, p.height - overlayHeight, 0));
 
-        this.dt = 2 * (int) parent.frameRate;
-        this.moduleSize = overlayHeight - 2 * Constants.SCOREBOARD_PADDING;
+        this.dt = 2 * (int) p.frameRate;
+        this.moduleSize = overlayHeight - 2 * Consts.SCOREBOARD_PADDING;
 
-        this.overlay = parent.createGraphics(overlayWidth, overlayHeight, PApplet.P2D);
-        this.projection = parent.createGraphics(moduleSize, moduleSize, PApplet.P2D);
-        this.facts = parent.createGraphics(moduleSize, moduleSize, PApplet.P2D);
-        this.barChart = parent.createGraphics(
-		        overlayWidth - 2 * moduleSize - 4 * Constants.SCOREBOARD_PADDING,
-		        moduleSize - Constants.SCOREBOARD_PADDING - Constants.SCOREBOARD_SCROLL_HEIGHT,
+        this.overlay = p.createGraphics(overlayWidth, overlayHeight, PApplet.P2D);
+        this.projection = p.createGraphics(moduleSize, moduleSize, PApplet.P2D);
+        this.facts = p.createGraphics(moduleSize, moduleSize, PApplet.P2D);
+        this.barChart = p.createGraphics(
+		        overlayWidth - 2 * moduleSize - 4 * Consts.SCOREBOARD_PADDING,
+		        moduleSize - Consts.SCOREBOARD_PADDING - Consts.SCROLL_HEIGHT,
 		        PApplet.P2D
         );
-        this.slider = parent.createGraphics(this.barChart.width, Constants.SCOREBOARD_SCROLL_HEIGHT, PApplet.P2D);
+        this.slider = p.createGraphics(this.barChart.width, Consts.SCROLL_HEIGHT, PApplet.P2D);
 
         this.toProject = new ArrayList<>();
         this.scores = new ArrayList<>();
@@ -66,14 +70,53 @@ public final class Scoreboard extends Drawable implements Scorer {
         this.scoreTrack.addScoreObserver(this);
 
         PVector location = location();
-        this.scrollbar = new ScrollBar(parent,
-                location.x + 2 * moduleSize + 3 * Constants.SCOREBOARD_PADDING,
-                location.y + 2 * Constants.SCOREBOARD_PADDING + this.barChart.height,
-                this.slider);
-        this.timeChart = (int) Math.floor(scrollbar.pos() * Constants.SCOREBOARD_TIME_CHART_BASE);
+        this.scrollbar = new ScrollBar(this.slider,
+                location.x + 2 * moduleSize + 3 * Consts.SCOREBOARD_PADDING,
+                location.y + 2 * Consts.SCOREBOARD_PADDING + this.barChart.height);
+        this.timeChart = (int) Math.floor(scrollbar.pos() * Consts.SCOREBOARD_TIME_CHART_BASE);
     }
 
-    /** @inheritdoc */
+	@Override
+    public void update() {
+
+        if (p.frameCount % 5 == 0) {
+            currentVelocity = scoreTrack.velocity().mag();
+        }
+
+        if (p.frameCount % dt == 0) {
+            scores.add(0.0f);
+            ++time;
+        }
+
+        scrollbar.update();
+        timeChart = (int) Math.floor(scrollbar.pos() * Consts.SCOREBOARD_TIME_CHART_BASE);
+    }
+
+
+	@Override
+    public void draw() {
+
+		drawMiniMap();
+		drawFacts();
+		drawBarChart();
+		drawSlider();
+		drawOverlay();
+
+        p.noLights();
+        p.image(overlay, 0, p.height - overlay.height);
+        p.lights();
+    }
+
+    /** Add object on the mini-map. */
+    public void addForProjection(Projectable item) {
+        toProject.add(item);
+    }
+
+    public void removeProjection(Projectable item) {
+        toProject.remove(item);
+    }
+
+    @Override
     public void notifiedScore(int delta) {
         lastScore = delta * scoreTrack.velocity().mag();
         totalScore += lastScore;
@@ -87,50 +130,15 @@ public final class Scoreboard extends Drawable implements Scorer {
         }
     }
 
-    /** @inheritdoc */
-    public void update() {
-
-        if (parent.frameCount % 5 == 0) {
-            currentVelocity = scoreTrack.velocity().mag();
-        }
-
-        if (parent.frameCount % dt == 0) {
-            scores.add(0.0f);
-            ++time;
-        }
-
-        scrollbar.update();
-        timeChart = (int) Math.floor(scrollbar.pos() * Constants.SCOREBOARD_TIME_CHART_BASE);
-
-        drawMiniMap();
-        drawFacts();
-        drawBarChart();
-        drawSlider();
-    }
-
-    /** Add object on the mini-map. */
-    public void addForProjection(Projectable item) {
-        toProject.add(item);
-    }
-
-    /** @inheritdoc */
-    public void draw() {
-        parent.pushMatrix();
-        parent.noLights();
-
-        overlay.beginDraw();
-        overlay.background(220);
-        overlay.image(projection, Constants.SCOREBOARD_PADDING, Constants.SCOREBOARD_PADDING);
-        overlay.image(facts, moduleSize + 2 * Constants.SCOREBOARD_PADDING, Constants.SCOREBOARD_PADDING);
-        overlay.image(barChart, 2 * moduleSize + 3 * Constants.SCOREBOARD_PADDING, Constants.SCOREBOARD_PADDING);
-        overlay.image(slider, 2 * moduleSize + 3 * Constants.SCOREBOARD_PADDING, 2 * Constants.SCOREBOARD_PADDING + barChart.height);
-        overlay.endDraw();
-
-        parent.image(overlay, 0, parent.height - overlay.height);
-
-        parent.lights();
-        parent.popMatrix();
-    }
+	private void drawOverlay() {
+		overlay.beginDraw();
+		overlay.background(220);
+		overlay.image(projection, Consts.SCOREBOARD_PADDING, Consts.SCOREBOARD_PADDING);
+		overlay.image(facts, moduleSize + 2 * Consts.SCOREBOARD_PADDING, Consts.SCOREBOARD_PADDING);
+		overlay.image(barChart, 2 * moduleSize + 3 * Consts.SCOREBOARD_PADDING, Consts.SCOREBOARD_PADDING);
+		overlay.image(slider, 2 * moduleSize + 3 * Consts.SCOREBOARD_PADDING, 2 * Consts.SCOREBOARD_PADDING + barChart.height);
+		overlay.endDraw();
+	}
 
     private void drawMiniMap() {
         projection.beginDraw();
@@ -143,13 +151,13 @@ public final class Scoreboard extends Drawable implements Scorer {
 
     private void drawFacts() {
         facts.beginDraw();
-        facts.textSize(Constants.SCOREBOARD_FONT_SIZE);
-        facts.textLeading(Constants.SCOREBOARD_FONT_HEIGHT);
+        facts.textSize(Consts.SCOREBOARD_FONT_SIZE);
+        facts.textLeading(Consts.SCOREBOARD_FONT_HEIGHT);
         facts.fill(50);
         facts.background(220);
-        facts.text("Total Score\n" + Math.floor(totalScore * 10), 0, Constants.SCOREBOARD_FONT_SIZE);
-        facts.text("Velocity\n" + Math.floor(currentVelocity * 10), 0, moduleSize / 3 + Constants.SCOREBOARD_FONT_SIZE);
-        facts.text("Last Score\n" + Math.floor(lastScore * 10), 0, 2 * moduleSize / 3 + Constants.SCOREBOARD_FONT_SIZE);
+        facts.text("Total Score\n" + Math.floor(totalScore * 10), 0, Consts.SCOREBOARD_FONT_SIZE);
+        facts.text("Velocity\n" + Math.floor(currentVelocity * 10), 0, moduleSize / 3 + Consts.SCOREBOARD_FONT_SIZE);
+        facts.text("Last Score\n" + Math.floor(lastScore * 10), 0, 2 * moduleSize / 3 + Consts.SCOREBOARD_FONT_SIZE);
         facts.endDraw();
     }
 
@@ -161,7 +169,7 @@ public final class Scoreboard extends Drawable implements Scorer {
         scrollbar.draw();
 
         float size = barChart.width / timeChart;
-        float max = (barChart.height - Constants.SCOREBOARD_PADDING) / size;
+        float max = (barChart.height - Consts.SCOREBOARD_PADDING) / size;
         float scorePerBlock = maxScore / max;
         int delay = Math.max(scores.size() - timeChart, 0);
 

@@ -7,7 +7,7 @@ public class Background {
 
     protected PApplet parent;
 
-    private final float scale = 70;
+    private final float scale = 180;
     private PShape shape;
 
     public Background(PApplet parent) {
@@ -17,7 +17,7 @@ public class Background {
 
     public void draw() {
         parent.pushMatrix();
-        parent.translate(50, 100, -200);
+        parent.translate(50, 100, -400);
         parent.shape(shape);
         parent.popMatrix();
     }
