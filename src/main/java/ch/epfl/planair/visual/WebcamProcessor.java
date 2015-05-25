@@ -1,6 +1,7 @@
 package ch.epfl.planair.visual;
 
 import ch.epfl.planair.meta.BoundedQueue;
+import ch.epfl.planair.meta.Consts;
 import ch.epfl.planair.meta.PipelineConfig;
 import ch.epfl.planair.meta.Utils;
 import processing.core.PApplet;
@@ -41,6 +42,7 @@ public final class WebcamProcessor {
 
     private boolean run;
     private int pos = 0;
+	private final int size;
 
 	public WebcamProcessor(PApplet p, Capture webcam, PipelineConfig config) {
 		this.p = p;
@@ -54,6 +56,7 @@ public final class WebcamProcessor {
 		this.twoDThreeD = new TwoDThreeD(webcam.width, webcam.height);
         this.yQueue = new BoundedQueue(sizeInterp);
         this.changed = new AtomicBoolean(false);
+		this.size = webcam.width * webcam.height;
 	}
 
 	public void start() {
@@ -201,15 +204,30 @@ public final class WebcamProcessor {
 					webcam.read();
 					PImage image = webcam.get();
 
+					for (int i = 0; i < size; ++i) {
+						float h = p.hue(image.pixels[i]);
+						float b = p.brightness(image.pixels[i]);
+						float s = p.saturation(image.pixels[i]);
+						if (!(config.lower(PipelineConfig.Step.HUE) < h && h < config.upper(PipelineConfig.Step.HUE) &&
+								config.lower(PipelineConfig.Step.BRIGHTNESS) < b && b < config.upper(PipelineConfig.Step.BRIGHTNESS) &&
+								config.lower(PipelineConfig.Step.SATURATION) < s && s < config.upper(PipelineConfig.Step.SATURATION))) {
+							image.pixels[i] = Consts.BLACK;
+						} else {
+							image.pixels[i] = Consts.COLORBG;
+						}
+					}
+					image.updatePixels();
+
+					/*
 					pipeline.selectHueThreshold(image, currentConfig.lower(PipelineConfig.Step.HUE), currentConfig.upper(PipelineConfig.Step.HUE), 0);
 					pipeline.selectBrightnessThreshold(image, currentConfig.lower(PipelineConfig.Step.BRIGHTNESS), currentConfig.upper(PipelineConfig.Step.BRIGHTNESS), 0);
 					pipeline.selectSaturationThreshold(image, currentConfig.lower(PipelineConfig.Step.SATURATION), currentConfig.upper(PipelineConfig.Step.SATURATION), 0);
 					pipeline.binaryBrightnessThreshold(image, currentConfig.lower(PipelineConfig.Step.SOBEL), 0, 180);
-					pipeline.convolute(image, PipelineOnPlace.gaussianKernel);
-					pipeline.sobel(image, 0.35f);
+					*/
 
-					List<PVector> lines = pipeline.hough(image);
-					List<PVector> corners = pipeline.getPlane(image, lines);
+					pipeline.convolute(image, PipelineOnPlace.gaussianKernel);
+					pipeline.sobel(image, config.lower(PipelineConfig.Step.SOBEL), size);
+					List<PVector> corners = pipeline.getPlane(image, pipeline.hough(image));
 
 					if (!corners.isEmpty()) {
 						PVector r = twoDThreeD.get3DRotations(corners.subList(0, 4));

@@ -16,12 +16,6 @@ public class PipelineOnPlace extends PApplet {
 
 	private final PApplet parent;
 
-	public final static float[][] surroundKernel = {
-			{ 0, 1, 0 },
-			{ 1, 0, 1 },
-			{ 0, 1, 0 }
-	};
-
 	public final static float[][] gaussianKernel = {
 			{  9, 12,  9 },
 			{ 12, 15, 12 },
@@ -39,162 +33,65 @@ public class PipelineOnPlace extends PApplet {
 			{ 0, 0,  0 }
 	};
 
+	private static int gaussianKernelWeight;
+	private static int gaussianKernelMargin;
+
 	/* COS and SIN constants, to optimise Hough method */
-	private final static float[] COS = new float[(int) Math.ceil(PI / Consts.PIPELINE_DISCRETIZATION_STEPS_PHI)];
-	private final static float[] SIN = new float[(int) Math.ceil(PI / Consts.PIPELINE_DISCRETIZATION_STEPS_PHI)];
+	private final static float[] COS;
+	private final static float[] SIN;
 
-	public PipelineOnPlace(PApplet parent) {
-		this.parent = parent;
+	static {
+		COS = new float[(int) Math.ceil(PI / Consts.PIPELINE_DISCRETIZATION_STEPS_PHI)];
+		SIN = new float[(int) Math.ceil(PI / Consts.PIPELINE_DISCRETIZATION_STEPS_PHI)];
 
-		/* Construct cos and sin constants */
 		for (int i = 0; i < PI / Consts.PIPELINE_DISCRETIZATION_STEPS_PHI; i += 1) {
 			COS[i] = (float) Math.cos(i * Consts.PIPELINE_DISCRETIZATION_STEPS_PHI);
 			SIN[i] = (float) Math.sin(i * Consts.PIPELINE_DISCRETIZATION_STEPS_PHI);
 		}
-	}
 
-	private void threshold(PImage source, IntUnaryOperator op) {
-		for (int i = 0; i < source.width * source.height; ++i) {
-			source.pixels[i] = op.applyAsInt(source.pixels[i]);
+		gaussianKernelWeight = 0;
+		for (float[] x: gaussianKernel) {
+			for (float f: x) {
+				gaussianKernelWeight += abs(f);
+			}
 		}
+		gaussianKernelMargin = gaussianKernel.length / 2;
 	}
 
-	private int[] thresholdBinary(PImage source, IntUnaryOperator op) {
-		int[] pixels = new int[source.width * source.height];
-		for (int i = 0; i < source.width * source.height; ++i) {
-			pixels[i] = op.applyAsInt(source.pixels[i]);
-		}
-		return pixels;
-	}
-
-	/**
-	 * A binary threshold based on brightness.
-	 * If input reaches the limit, max color is set, otherwise min color.
-	 *
-	 * @param threshold brighness limit (0-255)
-	 * @param minColor greyscale (0-255)
-	 * @param maxColor greyscale (0-255)
-	 * @throws IllegalArgumentException when min or max color are invalid
-	 * @return
-	 */
-	public int[] binaryBrightnessThresholdTab(PImage source, int threshold, int minColor, int maxColor) {
-		Utils.require(0, minColor, 255, "invalid grey color");
-		Utils.require(0, maxColor, 255, "invalid grey color");
-		return thresholdBinary(source, v -> parent.brightness(v) > threshold ? color(maxColor) : color(minColor));
-	}
-
-	public void binaryBrightnessThreshold(PImage source, int threshold, int minColor, int maxColor) {
-		Utils.require(0, minColor, 255, "invalid grey color");
-		Utils.require(0, maxColor, 255, "invalid grey color");
-		threshold(source, v -> parent.brightness(v) > threshold ? color(maxColor) : color(minColor));
-	}
-
-	public void inverseBinaryBrightnessThreshold(PImage source, int threshold, int minColor, int maxColor) {
-		binaryBrightnessThreshold(source, threshold, maxColor, minColor);
-	}
-
-	public void truncateBrightnessThreshold(PImage source, int threshold) {
-		Utils.require(0, threshold, 255, "invalid grey color");
-		threshold(source, v -> parent.brightness(v) > threshold ? color(threshold) : color(brightness(v)));
-	}
-
-	public void toZeroBrightnessThreshold(PImage source, int threshold, int minColor) {
-		Utils.require(0, threshold, 255, "invalid grey color");
-		Utils.require(0, minColor, 255, "invalid grey color");
-		threshold(source, v -> parent.brightness(v) > threshold ? color(brightness(v)): color(minColor));
-	}
-
-	public void inverseToZeroBrightnessThreshold(PImage source, int threshold) {
-		Utils.require(0, threshold, 255, "invalid grey color");
-		threshold(source, v -> parent.brightness(v) > threshold ? color(brightness(v)): color(threshold));
-	}
-
-	public void selectHueThreshold(PImage source, int firstThreshold, int secondThreshold, int otherColor) {
-		Utils.require(0, otherColor, 255, "invalid grey color");
-		threshold(source, v -> firstThreshold <= parent.hue(v) && parent.hue(v) <= secondThreshold ? v : color(otherColor));
-	}
-
-	public void selectSaturationThreshold(PImage source, int firstThreshold, int secondThreshold, int otherColor) {
-		Utils.require(0, otherColor, 255, "invalid grey color");
-		threshold(source, v -> firstThreshold <= parent.saturation(v) && parent.saturation(v) <= secondThreshold ? v : color(otherColor));
-	}
-
-	public void selectBrightnessThreshold(PImage source, int firstThreshold, int secondThreshold, int otherColor) {
-		Utils.require(0, otherColor, 255, "invalid grey color");
-		threshold(source, v -> firstThreshold <= parent.brightness(v) && parent.brightness(v) <= secondThreshold ? v : color(otherColor));
+	public PipelineOnPlace(PApplet parent) {
+		this.parent = parent;
 	}
 
 	public void convolute(PImage source, float[][] kernel) {
-		float weight = 0;
-		for (float[] x: kernel) {
-			for (float f: x) {
-				weight += abs(f);
-			}
-		}
-		int margin = kernel.length / 2;
-
-		for (int x = margin; x + margin < source.width; ++x) {
-			for (int y = margin; y + margin < source.height; ++y) {
-
+		for (int x = gaussianKernelMargin; x + gaussianKernelMargin < source.width; ++x) {
+			for (int y = gaussianKernelMargin; y + gaussianKernelMargin < source.height; ++y) {
 				float sum = 0;
-				for (int px = x - margin, sx = 0; px <= x + margin; ++px, ++sx) {
-					for (int py = y - margin, sy = 0; py <= y + margin; ++py, ++sy) {
+				for (int px = x - gaussianKernelMargin, sx = 0; px <= x + gaussianKernelMargin; ++px, ++sx) {
+					for (int py = y - gaussianKernelMargin, sy = 0; py <= y + gaussianKernelMargin; ++py, ++sy) {
 						sum += parent.brightness(source.pixels[align(source, px, py)]) * kernel[sx][sy];
 					}
 				}
-				source.pixels[align(source, x, y)] = color(sum / weight);
+				source.pixels[align(source, x, y)] = color(sum / gaussianKernelWeight);
 			}
 		}
 	}
 
 
-	public void sobel(PImage source, float threshold) {
-		sobel(source, threshold, 255, 0);
-	}
+	public void sobel(PImage source, int threshold, int size) {
+		int[] snapshot = new int[size];
+		System.arraycopy(source.pixels, 0, snapshot, 0, size);
+		for (int x = 1; x  < source.width - 1; ++x) {
+			for (int y = 1; y < source.height - 1; ++y) {
 
-	/**
-	 *
-	 * NB: default createImage background is black
-	 *
-	 * @param source
-	 * @param threshold (0-1)
-	 * @param minColor greyscale (0-255)
-	 * @param maxColor greyscale (0-255)
-	 * @return
-	 */
-	public void sobel(PImage source, float threshold, int minColor, int maxColor) {
-		Utils.require(0, minColor, 255, "invalid grey color");
-		Utils.require(0, maxColor, 255, "invalid grey color");
+				int id = y * source.width + x;
 
-		int margin = sobelKernelH.length / 2;
-		float maxValue = 0;
-		int size = source.width * source.height;
-		float[] buffer = new float[size];
+				float sumH = parent.brightness(snapshot[id - 1]) - parent.brightness(snapshot[id + 1]);
+				float sumV = parent.brightness(snapshot[id - source.width]) - parent.brightness(snapshot[id + source.width]);
 
-		for (int x = margin; x + margin < source.width; ++x) {
-			for (int y = margin; y + margin < source.height; ++y) {
-
-				float sumH = 0;
-				float sumV = 0;
-				for (int px = x - margin, sx = 0; px <= x + margin; ++px, ++sx) {
-					for (int py = y - margin, sy = 0; py <= y + margin; ++py, ++sy) {
-
-						int sid = align(source, px, py);
-						sumH += parent.brightness(source.pixels[sid]) * sobelKernelH[sx][sy];
-						sumV += parent.brightness(source.pixels[sid]) * sobelKernelV[sx][sy];
-					}
-				}
-
-				int bid = align(source, x, y);
-				buffer[bid] = sqrt(sumH * sumH + sumV * sumV);
-				if (buffer[bid] > maxValue) {
-					maxValue = buffer[bid];
+				if (sqrt(sumH * sumH + sumV * sumV) < threshold) {
+					source.pixels[id] = Consts.BLACK;
 				}
 			}
-		}
-
-		for (int i = margin * source.width; i < size; ++i) {
-			source.pixels[i] = buffer[i] / maxValue > threshold ? color(minColor): color(maxColor);
 		}
 	}
 
