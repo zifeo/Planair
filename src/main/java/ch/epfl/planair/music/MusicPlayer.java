@@ -29,7 +29,7 @@ public class MusicPlayer {
 	}
 
 	public void playBackgroundMusic() {
-		backgroundMusic.play();
+		backgroundMusic.loop();
 	}
 
 	public void triggerRampage() {
