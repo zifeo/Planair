@@ -135,6 +135,7 @@ public final class PlayMode extends Mode {
 	public void entered() {
 		mouseMoved();
 		countObstacles = 0;
+		doubleObstaclesTime = 0;
 		daemon.start();
 	}
 
