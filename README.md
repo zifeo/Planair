@@ -1,7 +1,7 @@
 # Planair
 
 This is an augmented reality project part of the EPFL's Visual Computing 2015 course.
-Aim is to construct a 3D modelled game with reality immersion and interaction.
+The aim is to construct a 3D-based game with reality immersion and interaction.
 
 ## How to give a try
 
