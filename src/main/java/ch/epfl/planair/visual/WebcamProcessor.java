@@ -32,7 +32,8 @@ public final class WebcamProcessor {
     private final AtomicBoolean changed;
 
 	private Thread runner;
-    private float discStep = 0;
+    private int discStep = 0;
+	private int lastDiscStep = 6;
 
 	public WebcamProcessor(PApplet p, Capture webcam, PipelineConfig config) {
 		this.p = p;
@@ -77,6 +78,12 @@ public final class WebcamProcessor {
 
 			yQueue.enqueue(r);
 			changed.set(false);
+
+			if (discStep > 5)
+				lastDiscStep = discStep;
+			else
+				lastDiscStep = 5;
+
 			discStep = 0;
 		}
 		return r;
@@ -145,7 +152,7 @@ public final class WebcamProcessor {
         for(int i = 1; i < sizeInterp; i++){
             PVector d = delta(list.subList(0, i+1));
             for (int j = 0; j < i; j++) {
-                d.mult(sizeInterp - 1 + discStep*1/8.0f - j);
+                d.mult(sizeInterp - 1 + discStep*1.0f/lastDiscStep - j);
             }
 			d.mult(0.8f);
             px.add(d);
