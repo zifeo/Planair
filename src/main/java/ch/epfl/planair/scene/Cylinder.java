@@ -1,27 +1,29 @@
 package ch.epfl.planair.scene;
 
+import ch.epfl.planair.modes.PlayMode;
 import ch.epfl.planair.specs.Movable;
 import ch.epfl.planair.scene.scores.Projectable;
+import ch.epfl.planair.specs.Obstacle;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.core.PVector;
 import processing.core.PShape;
 
-public final class Cylinder extends Movable implements Projectable {
+public final class Cylinder extends Obstacle {
 
     private PShape shape;
     private final float radius;
     private final float cylinderHeight;
 
-    public Cylinder(PApplet parent, PVector location, float radius, float cylinderHeight, int cylinderResolution) {
-        super(parent, location);
+    public Cylinder(PApplet parent, PVector location, float radius, float cylinderHeight, int cylinderResolution, PlayMode playMode) {
+        super(parent, location, playMode);
         this.shape = createCylinder(radius, cylinderHeight, cylinderResolution);
         this.radius = radius;
         this.cylinderHeight = cylinderHeight;
     }
 
     public Cylinder(Cylinder that) {
-        super(that.p, that.location());
+        super(that);
         this.shape = that.shape;
         this.radius = that.radius;
         this.cylinderHeight = that.cylinderHeight;

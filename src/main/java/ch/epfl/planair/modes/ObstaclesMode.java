@@ -21,7 +21,7 @@ public final class ObstaclesMode extends Mode {
 	public ObstaclesMode(PApplet parent, PlayMode playMode) {
 		super(parent);
 
-		this.obstacleHolder = new Tree(parent, new PVector(0, -Consts.PLATE_THICKNESS/2, 0));
+		this.obstacleHolder = new Tree(parent, new PVector(0, -Consts.PLATE_THICKNESS/2, 0), playMode);
 		obstacleHolder.setXBounds(
 				-Consts.PLATE_SIZE / 2 + Consts.HOLDER_RADIUS,
 				Consts.PLATE_SIZE / 2 - Consts.HOLDER_RADIUS

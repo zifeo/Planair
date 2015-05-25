@@ -1,6 +1,7 @@
 package ch.epfl.planair.scene.scores;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import ch.epfl.planair.meta.Consts;
 import ch.epfl.planair.scene.ScrollBar;
@@ -25,8 +26,8 @@ public final class Scoreboard extends Drawable implements Scorer {
     private final PGraphics slider;
     private final Scorable scoreTrack;
     private final ScrollBar scrollbar;
-    private final ArrayList<Projectable> toProject;
-    private final ArrayList<Float> scores;
+    private final List<Projectable> toProject;
+    private final List<Float> scores;
 
     private final int dt;
     private final int moduleSize;
@@ -111,7 +112,11 @@ public final class Scoreboard extends Drawable implements Scorer {
         toProject.add(item);
     }
 
-	@Override
+    public void removeProjection(Projectable item) {
+        toProject.remove(item);
+    }
+
+    @Override
     public void notifiedScore(int delta) {
         lastScore = delta * scoreTrack.velocity().mag();
         totalScore += lastScore;

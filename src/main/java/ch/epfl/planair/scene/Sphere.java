@@ -1,9 +1,11 @@
 package ch.epfl.planair.scene;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import ch.epfl.planair.specs.Drawable;
 import ch.epfl.planair.scene.scores.Projectable;
+import ch.epfl.planair.specs.Obstacle;
 import ch.epfl.planair.specs.Scorable;
 import processing.core.PApplet;
 import processing.core.PVector;
@@ -49,7 +51,8 @@ public final class Sphere extends Scorable implements Projectable {
         return radius;
     }
 
-    public int checkCollisions(ArrayList<Drawable> obstacles) {
+    @Override
+    public int checkCollisions(List<Obstacle> obstacles) {
         int count = super.checkCollisions(obstacles);
         if (count != 0) {
             notifyScore(count);
@@ -57,6 +60,7 @@ public final class Sphere extends Scorable implements Projectable {
         return count;
     }
 
+    @Override
     protected int checkBounds(PVector location) {
         int count = super.checkBounds(location);
         if (count != 0) {

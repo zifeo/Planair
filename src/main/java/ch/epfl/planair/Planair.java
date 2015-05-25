@@ -71,6 +71,9 @@ public class Planair extends PApplet {
 		size(displayWidth, displayHeight, P3D);
 		frameRate(Consts.FRAMERATE);
 
+		// Fix for webcam (Nico)
+		webcam.start();
+
 		try {
 			List<Mode> modes = new ArrayList<>();
 

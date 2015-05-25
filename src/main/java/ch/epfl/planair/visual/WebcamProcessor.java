@@ -61,7 +61,7 @@ public final class WebcamProcessor {
 
 	public void start() {
 		assert runner == null;
-		webcam.start();
+		//webcam.start();
 		runner = new Thread(new PipelineRunner(config.snapshot()));
 		runner.start();
 	}
@@ -69,7 +69,7 @@ public final class WebcamProcessor {
 	public void stop() {
 		runner.interrupt();
 		runner = null;
-		webcam.stop();
+		//webcam.stop();
 	}
 
 	public PVector rotation() {
@@ -232,7 +232,7 @@ public final class WebcamProcessor {
 					if (!corners.isEmpty()) {
 						PVector r = twoDThreeD.get3DRotations(corners.subList(0, 4));
 
-						if (PVector.sub(r, new PVector(Float.intBitsToFloat(rx.get()), Float.intBitsToFloat(rz.get()), -Float.intBitsToFloat(ry.get()))).mag() < 1) {
+						if (PVector.sub(r, new PVector(Float.intBitsToFloat(rx.get()), Float.intBitsToFloat(rz.get()), -Float.intBitsToFloat(ry.get()))).mag() < 1.5) {
 
 							rx.set(Float.floatToIntBits(r.x));
 							ry.set(Float.floatToIntBits(r.z));

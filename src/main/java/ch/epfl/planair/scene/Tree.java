@@ -1,22 +1,25 @@
 package ch.epfl.planair.scene;
 
+import ch.epfl.planair.modes.PlayMode;
 import ch.epfl.planair.specs.Movable;
 import ch.epfl.planair.scene.scores.Projectable;
+import ch.epfl.planair.specs.Obstacle;
 import processing.core.*;
 
-public final class Tree extends Movable implements Projectable {
+public final class Tree extends Obstacle {
 
     private PShape shape;
     private final float scale = 5;
     private final float radius = 10;
 
-    public Tree(PApplet parent, PVector location) {
-        super(parent, location);
+    public Tree(PApplet parent, PVector location, PlayMode playMode) {
+        super(parent, location, playMode);
         this.shape = createTree();
     }
 
     public Tree(Tree that) {
-        this(that.p, that.location());
+        super(that);
+        this.shape = that.shape;
         this.setXBounds(that.xMinBound(), that.xMaxBound());
         this.setYBounds(that.yMinBound(), that.yMaxBound());
         this.setZBounds(that.zMinBound(), that.zMaxBound());

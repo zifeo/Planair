@@ -186,7 +186,7 @@ public final class SetupMode extends Mode {
 
 	@Override
 	public void entered() {
-		webcam.start();
+		//webcam.start();
 		toStep(0);
 		previousActionButton.text("Back");
 		nextActionButton.text("Next");
@@ -196,7 +196,7 @@ public final class SetupMode extends Mode {
 
 	@Override
 	public void exited() {
-		webcam.stop();
+		//webcam.stop();
 	}
 
 	@Override public void mousePressed() {

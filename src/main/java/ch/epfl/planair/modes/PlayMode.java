@@ -11,6 +11,7 @@ import ch.epfl.planair.scene.Sphere;
 import ch.epfl.planair.scene.scores.Projectable;
 import ch.epfl.planair.scene.scores.Scoreboard;
 import ch.epfl.planair.specs.Drawable;
+import ch.epfl.planair.specs.Obstacle;
 import ch.epfl.planair.visual.WebcamProcessor;
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -31,7 +32,7 @@ public final class PlayMode extends Mode {
 	private final WebcamProcessor daemon;
 
 	private final Sphere sphere;
-	private final List<Drawable> obstacles;
+	private final List<Obstacle> obstacles;
 	private final Plate plate;
 	private final Scoreboard scoreboard;
 	private final Background background;
@@ -90,9 +91,14 @@ public final class PlayMode extends Mode {
 		scoreboard.draw();
 	}
 
-	public <T extends Drawable & Projectable> void addObstacles(T o) {
+	public void addObstacles(Obstacle o) {
 		obstacles.add(o);
 		scoreboard.addForProjection(o);
+	}
+
+	public void removeObstacle(Obstacle o) {
+		obstacles.remove(o);
+		scoreboard.removeProjection(o);
 	}
 
 	protected Sphere sphere() {
@@ -112,6 +118,7 @@ public final class PlayMode extends Mode {
 
 	@Override
 	public void entered() {
+		mouseMoved();
 		daemon.start();
 	}
 

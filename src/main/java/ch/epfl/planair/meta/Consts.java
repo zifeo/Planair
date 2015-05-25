@@ -31,7 +31,7 @@ public interface Consts {
 	int MENU_HEIGHT_CENTER  = 100;
 
 	// mods.play
-	int PLATE_SIZE             = 250;
+	int PLATE_SIZE             = 600;
 	int PLATE_THICKNESS        = 10;
 	int SCOREBOARD_HEIGHT      = 100;
 	float MOTION_FACTOR        = 1.5f;

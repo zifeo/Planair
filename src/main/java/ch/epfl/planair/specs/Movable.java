@@ -4,6 +4,7 @@ import ch.epfl.planair.meta.Utils;
 import processing.core.PApplet;
 import processing.core.PVector;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -107,13 +108,14 @@ public abstract class Movable extends Drawable {
      * @return the count of the obstacles that were bounced
      * against
      */
-    public int checkCollisions(List<Drawable> obstacles) {
+    public int checkCollisions(List<Obstacle> obstacles) {
         int count = 0;
         PVector location = location();
         PVector correction = new PVector(0, 0, 0);
+        List<Obstacle> removingList = new LinkedList<>();
 
         // Check collision for each obstacle
-        for (Drawable obstacle: obstacles) {
+        for (Obstacle obstacle: obstacles) {
 
             PVector obstacleLocation = obstacle.location();
             float angle = PVector.angleBetween(location, obstacleLocation);
@@ -133,9 +135,12 @@ public abstract class Movable extends Drawable {
                 delta.normalize();
                 delta.setMag(borders);
                 correction.add(PVector.add(obstacleLocation, delta));
+                removingList.add(obstacle);
                 ++count;
             }
         }
+
+        removingList.forEach(Obstacle::remove);
 
         // If there was a collision
         if (count > 0) {
