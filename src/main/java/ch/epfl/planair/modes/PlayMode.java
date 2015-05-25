@@ -40,6 +40,8 @@ public final class PlayMode extends Mode {
 
 	private PVector environmentRotation = Utils.nullVector();
 	private float motionFactor;
+	private int countObstacles;
+	private int doubleObstaclesTime;
 
 	public PlayMode(PApplet p, Capture webcam, PipelineConfig config) {
 		super(p);
@@ -56,17 +58,15 @@ public final class PlayMode extends Mode {
 				Consts.PLATE_SIZE / 2 - Consts.SPHERE_RADIUS
 		);
 		this.sphere.enableGravity();
-
-		this.plate = new Plate(p, new PVector(0, 0, 0), Consts.PLATE_SIZE, Consts.PLATE_THICKNESS);
-
+		this.plate = new Plate(p, Utils.nullVector(), Consts.PLATE_SIZE, Consts.PLATE_THICKNESS);
 		this.scoreboard = new Scoreboard(p, p.width, Consts.SCOREBOARD_HEIGHT, sphere);
 		this.scoreboard.addForProjection(plate);
 		this.scoreboard.addForProjection(sphere);
-
 		this.background = new Background(p);
 		this.airplane = new Airplane(p);
-
 		this.daemon = new WebcamProcessor(p, webcam, config);
+		this.countObstacles = 0;
+		this.doubleObstaclesTime = 0;
 	}
 
 	@Override
@@ -78,11 +78,12 @@ public final class PlayMode extends Mode {
 		plate.update();
 		scoreboard.update();
 		airplane.update();
+		doubleObstaclesTime = doubleObstaclesTime <= 0 ? 0: doubleObstaclesTime - 1;
 	}
 
 	@Override
 	public void draw() {
-		p.camera(0, - Consts.EYE_HEIGHT, (p.height / 2f) / PApplet.tan(PConstants.PI * 30f / 180f), 0, 0, 0, 0, 1, 0);
+		p.camera(0, -Consts.EYE_HEIGHT, (p.height / 2f) / PApplet.tan(PConstants.PI * 30f / 180f), 0, 0, 0, 0, 1, 0);
 		background.draw();
 		airplane.draw();
 		drawMetaPlate(environmentRotation);
@@ -96,8 +97,23 @@ public final class PlayMode extends Mode {
 	}
 
 	public void removeObstacle(Obstacle o) {
+		countObstacles += 1;
+		soundsEvent();
+		doubleObstaclesTime += 180;
 		obstacles.remove(o);
 		scoreboard.removeProjection(o);
+	}
+
+	private void soundsEvent() {
+		if (doubleObstaclesTime > 0) {
+			Planair.music().triggerDoubleKill();
+			doubleObstaclesTime = 0;
+		} else {
+			switch (countObstacles) {
+				case 1: Planair.music().triggerFirstBlood(); break;
+				case 5: Planair.music().triggerRampage(); break;
+			}
+		}
 	}
 
 	protected Sphere sphere() {
@@ -118,6 +134,7 @@ public final class PlayMode extends Mode {
 	@Override
 	public void entered() {
 		mouseMoved();
+		countObstacles = 0;
 		daemon.start();
 	}
 

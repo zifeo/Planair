@@ -3,6 +3,7 @@ package ch.epfl.planair.scene.scores;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.epfl.planair.Planair;
 import ch.epfl.planair.meta.Consts;
 import ch.epfl.planair.scene.ScrollBar;
 import ch.epfl.planair.specs.Drawable;
@@ -33,11 +34,11 @@ public final class Scoreboard extends Drawable implements Scorer {
     private final int moduleSize;
 
     private int timeChart;
-    private int time = 0;
-    private float totalScore = 0;
-    private float lastScore = 0;
-    private float maxScore = 0;
-    private float currentVelocity = 0;
+    private int time;
+    private float totalScore;
+    private float lastScore;
+    private float maxScore;
+    private float currentVelocity;
 
     /**
      * Create a scoreboard with given size and score source.
@@ -70,6 +71,11 @@ public final class Scoreboard extends Drawable implements Scorer {
                 location.x + 2 * moduleSize + 3 * Consts.SCOREBOARD_PADDING,
                 location.y + 2 * Consts.SCOREBOARD_PADDING + this.barChart.height);
         this.timeChart = (int) Math.floor(scrollbar.pos() * Consts.SCOREBOARD_TIME_CHART_BASE);
+        this.time = 0;
+	    this.totalScore = 0;
+	    this.lastScore = 0;
+	    this.maxScore = 0;
+	    this.currentVelocity = 0;
     }
 
 	@Override
@@ -78,7 +84,7 @@ public final class Scoreboard extends Drawable implements Scorer {
             currentVelocity = scoreTrack.velocity().mag();
         }
         if (p.frameCount % dt == 0) {
-            scores.add(0.0f);
+            scores.add(0f);
             ++time;
         }
         scrollbar.update();
@@ -110,6 +116,9 @@ public final class Scoreboard extends Drawable implements Scorer {
     @Override
     public void notifiedScore(int delta) {
         lastScore = delta * scoreTrack.velocity().mag();
+	    if (lastScore > 25) {
+		    Planair.music().triggerHeadshot();
+	    }
         totalScore += lastScore;
         scores.set(time, scores.get(time) + lastScore);
 
@@ -133,7 +142,6 @@ public final class Scoreboard extends Drawable implements Scorer {
 
     private void drawMiniMap() {
         projection.beginDraw();
-
         for (Projectable item : toProject) {
             item.projectOn(projection);
         }
