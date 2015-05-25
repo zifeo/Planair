@@ -52,7 +52,7 @@ public final class Tree extends Obstacle {
         float xScaled = (location.x - xMinBound() + 2 * Consts.TREE_RADIUS) / widthOrigin * graphic.width;
         float yScaled = (location.z - zMinBound() + 2 * Consts.TREE_RADIUS) / heightOrigin * graphic.height;
 
-        graphic.ellipse(xScaled - radiusScaled, yScaled - radiusScaled, 2 * radiusScaled, 2 * radiusScaled);
+        graphic.ellipse(xScaled - radiusScaled, yScaled - radiusScaled, 12 * radiusScaled, 12 * radiusScaled);
     }
 
     private PShape createTree() {

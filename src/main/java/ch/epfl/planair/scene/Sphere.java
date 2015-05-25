@@ -40,7 +40,7 @@ public final class Sphere extends Scorable implements Projectable {
         float radiusScaled = radius / widthOrigin * graphic.width;
         float xScaled = (location.x - xMinBound() + 2 * radius) / widthOrigin * graphic.width;
         float yScaled = (location.z - zMinBound() + 2 * radius) / heightOrigin * graphic.height;
-        graphic.ellipse(xScaled - radiusScaled, yScaled - radiusScaled, 2 * radiusScaled, 2 * radiusScaled);
+        graphic.ellipse(xScaled - radiusScaled, yScaled - radiusScaled, 8 * radiusScaled, 8 * radiusScaled);
     }
 
     @Override
