@@ -15,7 +15,6 @@ import java.util.function.IntUnaryOperator;
 /**
  * The image processing Pipeline.
  */
-@Deprecated
 public final class Pipeline extends PApplet {
 
 	private final PApplet parent;

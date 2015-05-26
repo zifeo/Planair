@@ -42,6 +42,7 @@ public final class PlayMode extends Mode {
 	private float motionFactor;
 	private int countObstacles;
 	private int doubleKillTimeLeft;
+	private boolean tangible;
 
 	public PlayMode(PApplet p, Capture webcam, PipelineConfig config) {
 		super(p);
@@ -67,11 +68,14 @@ public final class PlayMode extends Mode {
 		this.daemon = new WebcamProcessor(p, webcam, config);
 		this.countObstacles = 0;
 		this.doubleKillTimeLeft = 0;
+		this.tangible = true;
 	}
 
 	@Override
 	public void update() {
-		environmentRotation.set(daemon.rotation());
+		if (tangible) {
+			environmentRotation.set(daemon.rotation());
+		}
 		sphere.setEnvironmentRotation(environmentRotation);
 		sphere.update();
 		sphere.checkCollisions(obstacles);
@@ -133,17 +137,27 @@ public final class PlayMode extends Mode {
 		p.popMatrix();
 	}
 
+	private void toggleInteractionMode() {
+		exited();
+		tangible = !tangible;
+		entered();
+	}
+
 	@Override
 	public void entered() {
 		mouseMoved();
 		countObstacles = 0;
 		doubleKillTimeLeft = 0;
-		daemon.start();
+		if (tangible) {
+			daemon.start();
+		}
 	}
 
 	@Override
 	public void exited() {
-		daemon.stop();
+		if (tangible) {
+			daemon.stop();
+		}
 	}
 
 	@Override
@@ -174,6 +188,7 @@ public final class PlayMode extends Mode {
 		switch (p.keyCode) {
 			case 16: Planair.become(ObstaclesMode.class); break; // SHIFT
 			case 27: Planair.become(MenuMode.class); p.key = 0; break; // ESC
+			case 17: toggleInteractionMode(); break; // CTRL
 		}
 	}
 

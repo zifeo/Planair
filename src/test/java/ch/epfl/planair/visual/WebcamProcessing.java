@@ -1,6 +1,5 @@
 package ch.epfl.planair.visual;
 
-import cs211.imageprocessing.PipelineM3;
 import processing.core.PApplet;
 import processing.core.PImage;
 import processing.core.PVector;
@@ -30,8 +29,8 @@ public final class WebcamProcessing extends PApplet {
 			exit();
 		} else {
 			println("Cameras:");
-			for (int i = 0; i < cameras.length; i++) {
-				println(cameras[i]);
+			for (String camera : cameras) {
+				println(camera);
 			}
 			cam = new Capture(this, 640, 480, 15);
 			println(cam.width, cam.height);
@@ -59,7 +58,7 @@ public final class WebcamProcessing extends PApplet {
 		//result = pipeline.selectHueThreshold(result, 95, 140, 0);
 		result = pipeline.selectBrightnessThreshold(result, 30, 240, 0);
 		result = pipeline.selectSaturationThreshold(result, 80, 255, 0);
-		result = pipeline.convolute(result, PipelineM3.gaussianKernel);
+		result = pipeline.convolute(result, Pipeline.gaussianKernel);
 		result = pipeline.binaryBrightnessThreshold(result, 20, 0, 180);
 		result = pipeline.sobel(result, 0.35f);
 
