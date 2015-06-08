@@ -15,7 +15,7 @@ import processing.core.PVector;
  */
 public final class TestObstacleMode extends ObstaclesMode {
 
-    public TestObstacleMode(PApplet parent, PlayMode playMode) {
+    public TestObstacleMode(PApplet parent, TestMode playMode) {
         super(parent, playMode);
     }
 

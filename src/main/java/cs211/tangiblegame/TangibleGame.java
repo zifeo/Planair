@@ -97,9 +97,11 @@ public class TangibleGame extends PApplet {
 			/* ADD MODES BELOW */
 			PipelineConfig config = new PipelineConfig();
 			PlayMode playMode = new PlayMode(this, webcam, config);
+			TestMode testMode = new TestMode(this, movie, config);
 			modes.add(playMode);
+			modes.add(testMode);
 			modes.add(new ObstaclesMode(this, playMode));
-			modes.add(new MenuMode(this));
+			modes.add(new TestObstacleMode(this, testMode));
 			modes.add(new SetupMode(this, webcam, config));
 
 			/* DEFAULT MODE LOADED */
