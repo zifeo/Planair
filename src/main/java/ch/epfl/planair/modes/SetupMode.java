@@ -84,7 +84,6 @@ public final class SetupMode extends Mode {
 	@Override
 	public void draw() {
 		if (webcam.available()) {
-
 			webcam.read();
 			PImage image = webcam.get();
 			drawPlanel();

@@ -3,6 +3,7 @@ package ch.epfl.planair.modes;
 import ch.epfl.planair.meta.PipelineConfig;
 import ch.epfl.planair.visual.MovieCaptureAdaptor;
 import processing.core.PApplet;
+import processing.video.Capture;
 import processing.video.Movie;
 
 /**
@@ -12,8 +13,7 @@ import processing.video.Movie;
  */
 public final class TestMode extends PlayMode {
 
-
-    public TestMode(PApplet p, Movie webcam, PipelineConfig config) {
-        super(p, new MovieCaptureAdaptor(p, webcam), config);
+    public TestMode(PApplet p, Capture webcam, PipelineConfig config) {
+        super(p, webcam, config);
     }
 }

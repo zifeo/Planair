@@ -5,12 +5,11 @@ import processing.core.PImage;
 import processing.video.Capture;
 import processing.video.Movie;
 
-/**
- * Created by Nicolas on 08.06.15.
- */
 public class MovieCaptureAdaptor extends Capture{
 
     private final Movie movie;
+    public int width = 640;
+    public int height = 480;
 
     public MovieCaptureAdaptor(PApplet pApplet, Movie movie) {
         super(pApplet);
@@ -22,8 +21,9 @@ public class MovieCaptureAdaptor extends Capture{
         return movie;
     }
 
-    public float width(){
-        return movie.width;
+    @Override
+    public boolean available(){
+        return movie.available();
     }
 
     @Override
