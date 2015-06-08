@@ -19,7 +19,11 @@ public class MovieCaptureAdaptor extends Capture{
 
     @Override
     public PImage get() {
-        return movie.get();
+        return movie;
+    }
+
+    public float width(){
+        return movie.width;
     }
 
     @Override

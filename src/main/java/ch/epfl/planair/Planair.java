@@ -73,7 +73,7 @@ public class Planair extends PApplet {
             exit();
         }
         this.webcam = new Capture(this, Consts.CAMERA_WIDTH, Consts.CAMERA_HEIGHT, Consts.CAMERA_FPS);
-        this.movie = new Movie(this, "movie/testvideo.mp4");
+        this.movie = new Movie(this, "/Users/Nicolas/movie/testvideo.mp4");
         this.semantic = new HashMap<>();
     }
 
@@ -89,7 +89,7 @@ public class Planair extends PApplet {
         webcam.start();
 
         // Run the testvideo in a loop
-        //movie.loop();
+        movie.loop();
 
         try {
             List<Mode> modes = new ArrayList<>();
@@ -101,6 +101,7 @@ public class Planair extends PApplet {
             modes.add(playMode);
             modes.add(testMode);
             modes.add(new ObstaclesMode(this, playMode));
+            modes.add(new MenuMode(this));
             modes.add(new TestObstacleMode(this, testMode));
             modes.add(new SetupMode(this, webcam, config));
 

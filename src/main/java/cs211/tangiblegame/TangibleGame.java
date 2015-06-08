@@ -73,7 +73,7 @@ public class TangibleGame extends PApplet {
 			exit();
 		}
 		this.webcam = new Capture(this, Consts.CAMERA_WIDTH, Consts.CAMERA_HEIGHT, Consts.CAMERA_FPS);
-		this.movie = new Movie(this, "movie/testvideo.mp4");
+		this.movie = new Movie(this, "/Users/Nicolas/Library/Mobile\\ Documents/com\\~apple\\~CloudDocs/Documents/EPFL/EPFL_2_bachelor/Semestre_4/info-visuelle/PlanairCopie/Planair/src/main/resources/movie/testvideo.mp4");
 		this.semantic = new HashMap<>();
 	}
 
@@ -101,6 +101,7 @@ public class TangibleGame extends PApplet {
 			modes.add(playMode);
 			modes.add(testMode);
 			modes.add(new ObstaclesMode(this, playMode));
+			modes.add(new MenuMode(this));
 			modes.add(new TestObstacleMode(this, testMode));
 			modes.add(new SetupMode(this, webcam, config));
 

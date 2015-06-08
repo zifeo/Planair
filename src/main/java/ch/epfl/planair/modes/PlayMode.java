@@ -11,14 +11,13 @@ import ch.epfl.planair.scene.Sphere;
 import ch.epfl.planair.scene.scores.Scoreboard;
 import ch.epfl.planair.specs.Drawable;
 import ch.epfl.planair.specs.Obstacle;
-import ch.epfl.planair.visual.MovieProcessor;
 import ch.epfl.planair.visual.WebcamProcessor;
 import processing.core.PApplet;
 import processing.core.PConstants;
+import processing.core.PImage;
 import processing.core.PVector;
 import processing.event.MouseEvent;
 import processing.video.Capture;
-import processing.video.Movie;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -95,6 +94,8 @@ public class PlayMode extends Mode {
 		drawMetaPlate(environmentRotation);
 		p.camera();
 		scoreboard.draw();
+        PImage image = this.daemon.get();
+        p.image(image,0,0);
 	}
 
 	public void addObstacles(Obstacle o) {

@@ -63,6 +63,10 @@ public final class WebcamProcessor {
 		//webcam.stop();
 	}
 
+	public PImage get(){
+		return webcam.get();
+	}
+
 	public PVector rotation() {
 		PVector r;
 
