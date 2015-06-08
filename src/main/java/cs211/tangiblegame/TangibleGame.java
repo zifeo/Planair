@@ -7,6 +7,7 @@ import ch.epfl.planair.music.MusicPlayer;
 import processing.core.PApplet;
 import processing.event.MouseEvent;
 import processing.video.Capture;
+import processing.video.Movie;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,6 +35,8 @@ public class TangibleGame extends PApplet {
 
 	private final Map<Class<? extends Mode>, Mode> semantic;
 	private final Capture webcam;
+
+	private final Movie movie;
 
 	static {
 		status = null;
@@ -70,6 +73,7 @@ public class TangibleGame extends PApplet {
 			exit();
 		}
 		this.webcam = new Capture(this, Consts.CAMERA_WIDTH, Consts.CAMERA_HEIGHT, Consts.CAMERA_FPS);
+		this.movie = new Movie(this, "movie/testvideo.mp4");
 		this.semantic = new HashMap<>();
 	}
 
@@ -83,6 +87,9 @@ public class TangibleGame extends PApplet {
 
 		// Fix for webcam (Nico)
 		webcam.start();
+
+		// Run the testvideo in a loop
+		movie.loop();
 
 		try {
 			List<Mode> modes = new ArrayList<>();
