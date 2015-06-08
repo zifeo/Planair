@@ -14,7 +14,7 @@ public class MovieCaptureAdaptor extends Capture{
 
     public MovieCaptureAdaptor(PApplet pApplet, Movie movie) {
         super(pApplet);
-        this.movie = movie
+        this.movie = movie;
     }
 
     @Override

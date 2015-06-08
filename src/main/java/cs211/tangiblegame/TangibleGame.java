@@ -89,7 +89,7 @@ public class TangibleGame extends PApplet {
 		webcam.start();
 
 		// Run the testvideo in a loop
-		movie.loop();
+		//movie.loop();
 
 		try {
 			List<Mode> modes = new ArrayList<>();
