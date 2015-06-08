@@ -5,10 +5,7 @@ import processing.core.PImage;
 import processing.video.Capture;
 import processing.video.Movie;
 
-/**
- * Created by Nicolas on 08.06.15.
- */
-public class MovieCaptureAdaptor extends Capture{
+public class MovieCaptureAdaptor extends Capture {
 
     private final Movie movie;
 
@@ -21,14 +18,13 @@ public class MovieCaptureAdaptor extends Capture{
     public PImage get() {
         return movie;
     }
-
     public float width(){
         return movie.width;
     }
 
     @Override
     public void start() {
-        movie.loop();
+	    movie.loop();
     }
 
     @Override
