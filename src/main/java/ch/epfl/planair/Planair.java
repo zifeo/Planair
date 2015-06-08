@@ -36,8 +36,7 @@ public class Planair extends PApplet {
 
     private final Map<Class<? extends Mode>, Mode> semantic;
     private final Capture webcam;
-
-    private final Capture movie;
+    private final Movie movie;
 
     static {
         status = null;
@@ -74,7 +73,7 @@ public class Planair extends PApplet {
             exit();
         }
         this.webcam = new Capture(this, Consts.CAMERA_WIDTH, Consts.CAMERA_HEIGHT, Consts.CAMERA_FPS);
-        this.movie = new MovieCaptureAdaptor(this, new Movie(this, getClass().getResource("/movie/testvideo.mp4").getPath()));
+        this.movie = new Movie(this, getClass().getResource("/movie/testvideo.mp4").getPath());
         this.semantic = new HashMap<>();
     }
 
@@ -89,9 +88,6 @@ public class Planair extends PApplet {
         // Fix for webcam (Nico)
         webcam.start();
 
-        // Run the testvideo in a loop
-	    movie.start();
-
         try {
             List<Mode> modes = new ArrayList<>();
 
@@ -104,7 +100,7 @@ public class Planair extends PApplet {
             modes.add(new ObstaclesMode(this, playMode));
             modes.add(new MenuMode(this));
             modes.add(new TestObstacleMode(this, testMode));
-            modes.add(new SetupMode(this, movie, config));
+            modes.add(new SetupMode(this, webcam, config));
 
 			/* DEFAULT MODE LOADED */
             Class<? extends Mode> defaultMode = MenuMode.class;

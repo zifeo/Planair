@@ -13,8 +13,7 @@ import processing.video.Movie;
 public final class TestMode extends PlayMode {
 
     public TestMode(PApplet p, Movie webcam, PipelineConfig config) {
-        //super(p, new MovieCaptureAdaptor(p, webcam), config);
-        super(p, webcam, config);
+        super(p, new MovieCaptureAdaptor(p, webcam), config);
     }
 
 }
