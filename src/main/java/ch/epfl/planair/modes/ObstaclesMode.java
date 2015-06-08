@@ -13,10 +13,11 @@ import processing.core.PVector;
  * The mode where a top-view of the plate is displayed,
  * where the user can add obstacles to the terrain.
  */
-public final class ObstaclesMode extends Mode {
+public class ObstaclesMode extends Mode {
 
 	private final Tree obstacleHolder;
 	private final PlayMode playMode;
+	private Class toReturn;
 
 	public ObstaclesMode(PApplet parent, PlayMode playMode) {
 		super(parent);
