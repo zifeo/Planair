@@ -8,8 +8,6 @@ import processing.video.Movie;
 public class MovieCaptureAdaptor extends Capture{
 
     private final Movie movie;
-    public int width = 640;
-    public int height = 480;
 
     public MovieCaptureAdaptor(PApplet pApplet, Movie movie) {
         super(pApplet);
@@ -18,7 +16,7 @@ public class MovieCaptureAdaptor extends Capture{
 
     @Override
     public PImage get() {
-        return movie;
+        return movie.get();
     }
 
     @Override

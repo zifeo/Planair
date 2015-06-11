@@ -44,10 +44,10 @@ public final class WebcamProcessor {
 		this.rz = new AtomicInteger(0);
 		this.runner = null;
 		this.pipeline = new PipelineOnPlace(p);
-		this.twoDThreeD = new TwoDThreeD(webcam.width, webcam.height);
+		this.twoDThreeD = new TwoDThreeD(Consts.CAMERA_WIDTH, Consts.CAMERA_HEIGHT);
         this.yQueue = new BoundedQueue(sizeInterp);
         this.changed = new AtomicBoolean(false);
-		this.size = webcam.width * webcam.height;
+		this.size = Consts.CAMERA_WIDTH * Consts.CAMERA_HEIGHT;
 	}
 
 	public void start() {
@@ -71,26 +71,25 @@ public final class WebcamProcessor {
 	public PVector rotation() {
 		PVector r;
 
-		if (!changed.get()) {
+		/*if (!changed.get()) {
 			discStep++;
 			r = splineInterpolation();
 			//yQueue.enqueue(r);
-		} else {
-            p.print("hey !");
+		} else {*/
 			r = new PVector(Float.intBitsToFloat(rx.get()),
-					Float.intBitsToFloat(0),
+					Float.intBitsToFloat(ry.get()),
 					Float.intBitsToFloat(rz.get()));
 
 
-			if (discStep > 6)
+			/*if (discStep > 6)
 				lastDiscStep = discStep;
 			else
 				lastDiscStep = 6;
 
 			yQueue.enqueue(r);
 			changed.set(false);
-			discStep = 0;
-		}
+			discStep = 0;*/
+		//}
 		return r;
 	}
 

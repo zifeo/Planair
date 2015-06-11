@@ -35,27 +35,28 @@ public final class SetupMode extends Mode {
 		this.pipeline = new PipelineOnPlace(p);
 		this.webcam = webcam;
 		this.status =  PipelineConfig.Step.HUE;
-		this.offsetX = (p.width - webcam.width) / 2;
-		this.offsetY = (p.height - webcam.height) / 2;
-		this.panel = p.createGraphics(webcam.width, Consts.MENU_ITEM_HEIGHT + 10 + Consts.SCROLL_HEIGHT, PApplet.P2D);
+		this.offsetX = (p.width - Consts.CAMERA_WIDTH) / 2;
+		this.offsetY = (p.height - Consts.CAMERA_HEIGHT) / 2;
+		p.println(Consts.CAMERA_WIDTH + " , " + Consts.CAMERA_HEIGHT);
+		this.panel = p.createGraphics(Consts.CAMERA_WIDTH, Consts.MENU_ITEM_HEIGHT + 10 + Consts.SCROLL_HEIGHT, PApplet.P2D);
 		this.previousActionButton = new ActionButton(
 				this.panel,
 				0,
 				10 + Consts.SCROLL_HEIGHT,
-				-webcam.width / 2,
-				webcam.height / 2 - 40,
-				webcam.width / 2 - 5,
+				-Consts.CAMERA_WIDTH / 2,
+				Consts.CAMERA_HEIGHT / 2 - 40,
+				Consts.CAMERA_WIDTH / 2 - 5,
 				Consts.MENU_ITEM_HEIGHT,
 				"Previous",
 				this::previous
 		);
 		this.nextActionButton = new ActionButton(
 				this.panel,
-				webcam.width / 2 + 5,
+				Consts.CAMERA_WIDTH / 2 + 5,
 				10 + Consts.SCROLL_HEIGHT,
-				-webcam.width / 2,
-				webcam.height / 2 - 40,
-				webcam.width / 2 - 5,
+				-Consts.CAMERA_WIDTH / 2,
+				Consts.CAMERA_HEIGHT / 2 - 40,
+				Consts.CAMERA_WIDTH / 2 - 5,
 				Consts.MENU_ITEM_HEIGHT,
 				"Next",
 				this::next
@@ -65,14 +66,14 @@ public final class SetupMode extends Mode {
 				this.panel,
 				0,
 				0,
-				-webcam.width / 2,
-				webcam.height / 2 - 40,
-				webcam.width,
+				-Consts.CAMERA_WIDTH / 2,
+				Consts.CAMERA_HEIGHT / 2 - 40,
+				Consts.CAMERA_WIDTH,
 				Consts.SCROLL_HEIGHT,
 				this.config.lowerUnit(PipelineConfig.Step.HUE),
 				this.config.upperUnit(PipelineConfig.Step.HUE)
 		);
-		this.size = webcam.width * webcam.height;
+		this.size = Consts.CAMERA_WIDTH * Consts.CAMERA_HEIGHT;
 	}
 
 	@Override
@@ -90,7 +91,7 @@ public final class SetupMode extends Mode {
 
 			p.cursor(nextActionButton.hover() || previousActionButton.hover() || rangeButton.hover() ? PConstants.HAND : PConstants.ARROW);
 			p.noLights();
-			p.image(panel, offsetX, offsetY + webcam.height - 40);
+			p.image(panel, offsetX, offsetY + Consts.CAMERA_HEIGHT - 40);
 			p.lights();
 
 			for (int i = 0; i < size; ++i) {

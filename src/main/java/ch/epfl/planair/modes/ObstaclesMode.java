@@ -17,7 +17,6 @@ public class ObstaclesMode extends Mode {
 
 	private final Tree obstacleHolder;
 	private final PlayMode playMode;
-	private Class toReturn;
 
 	public ObstaclesMode(PApplet parent, PlayMode playMode) {
 		super(parent);
