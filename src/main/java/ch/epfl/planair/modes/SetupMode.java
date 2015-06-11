@@ -79,6 +79,7 @@ public final class SetupMode extends Mode {
 	@Override
 	public void update() {
 		config.lower(status, rangeButton.min());
+		p.println(rangeButton.min()+" : "+rangeButton.max());
 		config.upper(status, rangeButton.max());
 	}
 
@@ -125,7 +126,8 @@ public final class SetupMode extends Mode {
 			}
 
 			if (status.compareTo(PipelineConfig.Step.SATURATION) > 0) {
-				pipeline.convolute(image, PipelineOnPlace.gaussianKernel);
+				image.filter(PConstants.BLUR, 2.5f);
+				//pipeline.convolute(image, PipelineOnPlace.gaussianKernel);
 				pipeline.sobel(image, config.lower(PipelineConfig.Step.SOBEL), size);
 			}
 			image.updatePixels();

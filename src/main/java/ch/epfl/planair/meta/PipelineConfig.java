@@ -10,7 +10,7 @@ public final class PipelineConfig {
 	private final float[] upperConf;
 
 	public PipelineConfig() {
-		this.lowerConf = new float[]{  80/255f,  30/255f,  80/255f,  50/255f };
+		this.lowerConf = new float[]{ 110/255f,  0/255f,  160/255f,  50/255f };
 		this.upperConf = new float[]{ 125/255f, 240/255f, 255/255f,  90/255f };
 		assert upperConf.length == lowerConf.length && lowerConf.length == Step.values().length;
 	}

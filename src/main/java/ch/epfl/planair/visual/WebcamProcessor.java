@@ -5,6 +5,7 @@ import ch.epfl.planair.meta.Consts;
 import ch.epfl.planair.meta.PipelineConfig;
 import ch.epfl.planair.meta.Utils;
 import processing.core.PApplet;
+import processing.core.PConstants;
 import processing.core.PImage;
 import processing.core.PVector;
 import processing.video.Capture;
@@ -174,7 +175,8 @@ public final class WebcamProcessor {
 					pipeline.binaryBrightnessThreshold(image, currentConfig.lower(PipelineConfig.Step.SOBEL), 0, 180);
 					*/
 
-					pipeline.convolute(image, PipelineOnPlace.gaussianKernel);
+					//pipeline.convolute(image, PipelineOnPlace.gaussianKernel);
+					image.filter(PConstants.BLUR, 2.5f);
 					pipeline.sobel(image, currentConfig.lower(PipelineConfig.Step.SOBEL), size);
 					List<PVector> corners = pipeline.getPlane(image, pipeline.hough(image));
 
