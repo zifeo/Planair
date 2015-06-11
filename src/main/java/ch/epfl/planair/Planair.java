@@ -74,7 +74,7 @@ public class Planair extends PApplet {
             exit();
         }
         this.webcam = new Capture(this, Consts.CAMERA_WIDTH, Consts.CAMERA_HEIGHT, Consts.CAMERA_FPS);
-        this.movie = new MovieCaptureAdaptor(this, new Movie(this, "/Users/Nicolas/movie/testvideo.mp4"));
+        this.movie = new MovieCaptureAdaptor(this, new Movie(this, getClass().getResource("/movie/testvideo.mp4").getPath()));
         this.semantic = new HashMap<>();
     }
 
