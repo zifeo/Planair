@@ -3,7 +3,7 @@
 This is an augmented reality project part of the [EPFL](http://www.epfl.ch/)'s Visual Computing 2015 course.
 Planair is a 3D immersive game coded in Java, using [Processing](https://processing.org/).
 
-# How to play?
+## How to play?
 
 The aim is to control a thin plate with a ball rolling on it.
 To earn points, you need to hit on the trees and avoid the edges of the plate.
