@@ -126,7 +126,7 @@ public final class SetupMode extends Mode {
 			}
 
 			if (status.compareTo(PipelineConfig.Step.SATURATION) > 0) {
-				image.filter(PConstants.BLUR, 2.5f);
+				image.filter(PConstants.BLUR, 2);
 				//pipeline.convolute(image, PipelineOnPlace.gaussianKernel);
 				pipeline.sobel(image, config.lower(PipelineConfig.Step.SOBEL), size);
 			}

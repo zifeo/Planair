@@ -44,9 +44,9 @@ public interface Consts {
 	// visual.pipeline
 	float PIPELINE_DISCRETIZATION_STEPS_PHI = 0.03f;
 	float PIPELINE_DISCRETIZATION_STEPS_R = 2f;
-	int PIPELINE_DETECT_OFFSET = 200;
+	int PIPELINE_DETECT_OFFSET = 150;
 	int PIPELINE_LINES_COUNT = 6;
-	float GRAPH_NON_FLAT_QUAD_MIN_COS = 0.9f;
+	float GRAPH_NON_FLAT_QUAD_MIN_COS = 1;
 
 	// scores.Scoreboard
 	int SCOREBOARD_PADDING          = 5;

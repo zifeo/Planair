@@ -1,5 +1,6 @@
 package ch.epfl.planair.modes;
 
+import ch.epfl.planair.Planair;
 import ch.epfl.planair.meta.PipelineConfig;
 import ch.epfl.planair.visual.MovieCaptureAdaptor;
 import processing.core.PApplet;
@@ -16,4 +17,13 @@ public final class TestMode extends PlayMode {
     public TestMode(PApplet p, Capture webcam, PipelineConfig config) {
         super(p, webcam, config);
     }
+
+	@Override
+	public void keyPressed() {
+		super.keyPressed();
+		switch (p.keyCode) {
+			case 16: Planair.become(TestObstacleMode.class); break; // SHIFT
+		}
+	}
+
 }

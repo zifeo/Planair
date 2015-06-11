@@ -176,19 +176,19 @@ public final class WebcamProcessor {
 					*/
 
 					//pipeline.convolute(image, PipelineOnPlace.gaussianKernel);
-					image.filter(PConstants.BLUR, 2.5f);
+					image.filter(PConstants.BLUR, 2);
 					pipeline.sobel(image, currentConfig.lower(PipelineConfig.Step.SOBEL), size);
 					List<PVector> corners = pipeline.getPlane(image, pipeline.hough(image));
 
 					if (!corners.isEmpty()) {
 						PVector r = twoDThreeD.get3DRotations(corners.subList(0, 4));
 
-						if (PVector.sub(r, new PVector(Float.intBitsToFloat(rx.get()), Float.intBitsToFloat(rz.get()), -Float.intBitsToFloat(ry.get()))).mag() < 1.5) {
+						//if (PVector.sub(r, new PVector(Float.intBitsToFloat(rx.get()), Float.intBitsToFloat(rz.get()), -Float.intBitsToFloat(ry.get()))).mag() < 1.5) {
 
 							rx.set(Float.floatToIntBits(r.x));
 							ry.set(Float.floatToIntBits(r.z));
 							rz.set(Float.floatToIntBits(-r.y));
-						}
+						//}
 					}
 
                 }

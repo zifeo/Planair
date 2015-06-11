@@ -32,8 +32,7 @@ public final class MenuMode extends Mode {
 	private void constructMenu() {
 		int count = 0;
 		menu.add(createMenuButton(count++, "Play!", () -> Planair.become(PlayMode.class)));
-		menu.add(createMenuButton(count++, "Test (milestone 4 with video)!", () -> Planair.become(TestMode.class)));
-		menu.add(createMenuButton(count++, "Battle!", () -> Planair.music().triggerRampage()));
+		menu.add(createMenuButton(count++, "Test! (milestone 4 with video)!", () -> Planair.become(TestMode.class)));
 		menu.add(createMenuButton(count++, "Cam Setup", () -> Planair.become(SetupMode.class)));
 		menu.add(createMenuButton(count++, "Exit", p::exit));
 	}
