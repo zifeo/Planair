@@ -5,7 +5,7 @@ import processing.core.PImage;
 import processing.video.Capture;
 import processing.video.Movie;
 
-public class MovieCaptureAdaptor extends Capture{
+public class MovieCaptureAdaptor extends Capture {
 
     private final Movie movie;
 
@@ -26,7 +26,7 @@ public class MovieCaptureAdaptor extends Capture{
 
     @Override
     public void start() {
-        movie.loop();
+	    movie.loop();
     }
 
     @Override
