@@ -79,7 +79,7 @@ public final class SetupMode extends Mode {
 	@Override
 	public void update() {
 		config.lower(status, rangeButton.min());
-		p.println(rangeButton.min()+" : "+rangeButton.max());
+		//p.println(rangeButton.min()+" : "+rangeButton.max());
 		config.upper(status, rangeButton.max());
 	}
 

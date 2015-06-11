@@ -248,7 +248,7 @@ public final class QuadGraph {
 
 		boolean valid = (i1 > 0 && i2 > 0 && i3 > 0 && i4 > 0) || (i1 < 0 && i2 < 0 && i3 < 0 && i4 < 0);
 
-		// if (!valid) System.out.println("Eliminating non-convex quad");
+		//if (!valid) System.out.println("Eliminating non-convex quad");
 
 		return valid;
 	}

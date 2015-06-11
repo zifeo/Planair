@@ -183,12 +183,12 @@ public final class WebcamProcessor {
 					if (!corners.isEmpty()) {
 						PVector r = twoDThreeD.get3DRotations(corners.subList(0, 4));
 
-						//if (PVector.sub(r, new PVector(Float.intBitsToFloat(rx.get()), Float.intBitsToFloat(rz.get()), -Float.intBitsToFloat(ry.get()))).mag() < 1.5) {
+						if (PVector.sub(r, new PVector(Float.intBitsToFloat(rx.get()), Float.intBitsToFloat(rz.get()), -Float.intBitsToFloat(ry.get()))).mag() < 2.5) {
 
 							rx.set(Float.floatToIntBits(r.x));
 							ry.set(Float.floatToIntBits(r.z));
 							rz.set(Float.floatToIntBits(-r.y));
-						//}
+						}
 					}
 
                 }
