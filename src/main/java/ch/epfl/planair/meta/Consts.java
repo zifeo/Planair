@@ -60,5 +60,7 @@ public interface Consts {
 	float ACCELERABLE_G             = 0.1f;
 	float ACCELERABLE_MU            = 0.03f;
 
+	int MIN_PANCHE					= 1000;
+	int MAX_PANCHE					= 5000000;
 
 }

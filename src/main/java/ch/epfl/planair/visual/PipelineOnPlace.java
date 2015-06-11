@@ -202,7 +202,7 @@ public final class PipelineOnPlace extends PApplet {
 				PVector c41 = intersection(l4, l1);
 
 				if (QuadGraph.isConvex(c12, c23, c34, c41) &&
-						QuadGraph.validArea(c12, c23, c34, c41, 70000000, 50000) &&
+						QuadGraph.validArea(c12, c23, c34, c41, Consts.MAX_PANCHE, Consts.MIN_PANCHE) &&
 						QuadGraph.nonFlatQuad(c12, c23, c34, c41)) {
 
 					return Arrays.asList(c12, c23, c34, c41, l1, l2, l3, l4);

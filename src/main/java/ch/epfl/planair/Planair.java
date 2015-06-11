@@ -8,7 +8,9 @@ import ch.epfl.planair.visual.MovieCaptureAdaptor;
 import processing.core.PApplet;
 import processing.event.MouseEvent;
 import processing.video.Capture;
-import processing.video.Movie;
+//import processing.video.Movie;
+
+import processing.video.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -138,6 +140,7 @@ public class Planair extends PApplet {
             text(String.format("fps: %.1f", frameRate), 4, 13);
         }
     }
+
 
     @Override public boolean sketchFullScreen() {
         return true;
