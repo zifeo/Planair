@@ -43,6 +43,6 @@ If you want to contact us for feedback: send us an email!
 
 ## Maintainers
 
-- Nicolas Casademont
-- [Timothée Lottaz](mailto:timozattol@gmail.com)
-- Teo Stocco
+- [Nicolas Casademont](https://github.com/Trofleb)
+- [Timothée Lottaz](https://github.com/timozattol)
+- [Teo Stocco](https://github.com/zifeo/)
