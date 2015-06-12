@@ -17,7 +17,7 @@ import java.util.Map;
  * Planair main class.
  * Game loading, mode dependence setup, events forwarding and ticks.
  *
- * Visual computing class 2015
+ * Introduction to Visual computing class 2015
  * Contact: firstname.surname@epfl.ch
  *
  * @author Nicolas Casademont
