@@ -30,7 +30,7 @@ public final class MusicPlayer {
 	}
 
 	public void playBackgroundMusic() {
-		//backgroundMusic.loop();
+		backgroundMusic.loop();
 	}
 
 	public void triggerRampage() {
