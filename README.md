@@ -21,6 +21,12 @@ If you maintain the shift key pressed, an aerial view of the plate is shown and 
 * `CTRL`: Change control mode (webcam / mouse control)
 * `SHIFT`: Aerial view to add trees on the plate
 
+## Game overview
+
+![Home screen](http://i.imgur.com/5ZaHihf.png)
+
+![Game overview](http://i.imgur.com/WCQNBvf.png)
+
 ## Give it a try!
 
 1. Clone the project
