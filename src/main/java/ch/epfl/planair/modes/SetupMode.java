@@ -37,7 +37,6 @@ public final class SetupMode extends Mode {
 		this.status =  PipelineConfig.Step.HUE;
 		this.offsetX = (p.width - Consts.CAMERA_WIDTH) / 2;
 		this.offsetY = (p.height - Consts.CAMERA_HEIGHT) / 2;
-		p.println(Consts.CAMERA_WIDTH + " , " + Consts.CAMERA_HEIGHT);
 		this.panel = p.createGraphics(Consts.CAMERA_WIDTH, Consts.MENU_ITEM_HEIGHT + 10 + Consts.SCROLL_HEIGHT, PApplet.P2D);
 		this.previousActionButton = new ActionButton(
 				this.panel,

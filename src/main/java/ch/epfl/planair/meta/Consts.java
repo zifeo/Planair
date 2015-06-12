@@ -42,11 +42,14 @@ public interface Consts {
 	int HOLDER_RADIUS          = 15;
 
 	// visual.pipeline
-	float PIPELINE_DISCRETIZATION_STEPS_PHI = 0.03f;
-	float PIPELINE_DISCRETIZATION_STEPS_R = 2f;
-	int PIPELINE_DETECT_OFFSET = 150;
-	int PIPELINE_LINES_COUNT = 6;
-	float GRAPH_NON_FLAT_QUAD_MIN_COS = 1;
+	float PIPELINE_DISCRETIZATION_STEPS_PHI     = 0.02f;
+	float PIPELINE_DISCRETIZATION_STEPS_R       = 2f;
+	int PIPELINE_DETECT_OFFSET                  = 0;
+	int PIPELINE_LINES_COUNT                    = 6;
+	float GRAPH_NON_FLAT_QUAD_MIN_COS           = 1.2f;
+	int PIPELINE_MIN_VOTES                      = 100;
+	int PIPELINE_MIN_PANCHE                     = 50000;
+	int PIPELINE_MAX_PANCHE                     = 200000;
 
 	// scores.Scoreboard
 	int SCOREBOARD_PADDING          = 5;
@@ -60,7 +63,5 @@ public interface Consts {
 	float ACCELERABLE_G             = 0.1f;
 	float ACCELERABLE_MU            = 0.03f;
 
-	int MIN_PANCHE					= 50000;
-	int MAX_PANCHE					= 200000;
 
 }
