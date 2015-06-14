@@ -16,7 +16,7 @@ public interface Consts {
 	String FONT = "fonts/SF-Archery-Black/SF_Archery_Black.ttf";
 
 	// Planair
-	boolean DEBUG              = true;
+	boolean DEBUG              = false;
 	int FRAMERATE              = 60;
 	int EYE_HEIGHT             = 200;
 	int CAMERA_WIDTH           = 640;

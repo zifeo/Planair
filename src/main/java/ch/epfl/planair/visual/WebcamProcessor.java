@@ -5,6 +5,7 @@ import ch.epfl.planair.meta.Consts;
 import ch.epfl.planair.meta.PipelineConfig;
 import ch.epfl.planair.meta.Utils;
 import processing.core.PApplet;
+import processing.core.PConstants;
 import processing.core.PImage;
 import processing.core.PVector;
 import processing.video.Capture;
@@ -215,25 +216,23 @@ public final class WebcamProcessor {
 					}
 					image.updatePixels();
 
-					/*
-					pipeline.selectHueThreshold(image, currentConfig.lower(PipelineConfig.Step.HUE), currentConfig.upper(PipelineConfig.Step.HUE), 0);
-					pipeline.selectBrightnessThreshold(image, currentConfig.lower(PipelineConfig.Step.BRIGHTNESS), currentConfig.upper(PipelineConfig.Step.BRIGHTNESS), 0);
-					pipeline.selectSaturationThreshold(image, currentConfig.lower(PipelineConfig.Step.SATURATION), currentConfig.upper(PipelineConfig.Step.SATURATION), 0);
-					pipeline.binaryBrightnessThreshold(image, currentConfig.lower(PipelineConfig.Step.SOBEL), 0, 180);
-					*/
-
 					pipeline.convolute(image, PipelineOnPlace.gaussianKernel);
 					pipeline.sobel(image, currentConfig.lower(PipelineConfig.Step.SOBEL), size);
 					List<PVector> corners = pipeline.getPlane(image, pipeline.hough(image));
 
 					if (!corners.isEmpty()) {
 						PVector r = twoDThreeD.get3DRotations(corners.subList(0, 4));
+						PVector prev = new PVector(Float.intBitsToFloat(rx.get()), Float.intBitsToFloat(ry.get()), Float.intBitsToFloat(rz.get()));
 
-						if (PVector.sub(r, new PVector(Float.intBitsToFloat(rx.get()), Float.intBitsToFloat(rz.get()), -Float.intBitsToFloat(ry.get()))).mag() < 1.5) {
-
-							rx.set(Float.floatToIntBits(r.x));
-							ry.set(Float.floatToIntBits(r.z));
-							rz.set(Float.floatToIntBits(-r.y));
+						// smooths and gets rids of extravagant changes
+						if (Math.abs(r.x - prev.x) < PConstants.THIRD_PI) {
+							rx.set(Float.floatToIntBits((r.x + prev.x)/2));
+						}
+						if (Math.abs(r.z - prev.y) < PConstants.THIRD_PI) {
+							ry.set(Float.floatToIntBits((r.z + prev.y)/2));
+						}
+						if (Math.abs(-r.y - prev.z) < PConstants.THIRD_PI) {
+							rz.set(Float.floatToIntBits((-r.y + prev.z)/2));
 						}
 					}
 
