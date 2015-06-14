@@ -133,8 +133,8 @@ public class TangibleGame extends PApplet {
         lights();
         status.tick();
 
+	    camera();
         if (Consts.DEBUG) {
-            camera();
             fill(Consts.BLACK);
             textSize(11f);
             text(String.format("fps: %.1f", frameRate), 4, 13);

@@ -94,9 +94,8 @@ public class PlayMode extends Mode {
 		drawMetaPlate(environmentRotation);
 		p.camera();
 		scoreboard.draw();
-        PImage image = this.daemon.get();
-		p.scale(0.5f);
-        p.image(image,0,0);
+        PImage image = daemon.get();
+        p.image(image, 0, 0, image.width / 2, image.height / 2);
 	}
 
 	public void addObstacles(Obstacle o) {
