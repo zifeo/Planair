@@ -1,13 +1,7 @@
 package ch.epfl.planair.modes;
 
-import ch.epfl.planair.Planair;
-import ch.epfl.planair.meta.Consts;
-import ch.epfl.planair.meta.Utils;
-import ch.epfl.planair.scene.Sphere;
-import ch.epfl.planair.scene.Tree;
+import cs211.tangiblegame.TangibleGame;
 import processing.core.PApplet;
-import processing.core.PConstants;
-import processing.core.PVector;
 
 /**
  * The mode where a top-view of the plate is displayed,
@@ -22,7 +16,7 @@ public final class TestObstacleMode extends ObstaclesMode {
     @Override
     public void keyReleased() {
         switch (p.keyCode) {
-            case 16: Planair.become(TestMode.class); break; // SHIFT
+            case 16: TangibleGame.become(TestMode.class); break; // SHIFT
         }
     }
 

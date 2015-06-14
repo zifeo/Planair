@@ -1,6 +1,6 @@
 package ch.epfl.planair.modes;
 
-import ch.epfl.planair.Planair;
+import cs211.tangiblegame.TangibleGame;
 import ch.epfl.planair.meta.Consts;
 import ch.epfl.planair.meta.Utils;
 import ch.epfl.planair.scene.Sphere;
@@ -64,7 +64,7 @@ public class ObstaclesMode extends Mode {
 	@Override
 	public void keyReleased() {
 		switch (p.keyCode) {
-			case 16: Planair.become(PlayMode.class); break; // SHIFT
+			case 16: TangibleGame.become(PlayMode.class); break; // SHIFT
 		}
 	}
 

@@ -1,6 +1,6 @@
 package ch.epfl.planair.modes;
 
-import ch.epfl.planair.Planair;
+import cs211.tangiblegame.TangibleGame;
 import ch.epfl.planair.meta.Consts;
 import ch.epfl.planair.meta.PipelineConfig;
 import ch.epfl.planair.scene.ui.ActionButton;
@@ -158,7 +158,7 @@ public final class SetupMode extends Mode {
 		update();
 		int previous = status.ordinal() - 1;
 		if (previous < 0) {
-			Planair.become(MenuMode.class);
+			TangibleGame.become(MenuMode.class);
 		} else {
 			toStep(previous);
 		}
@@ -168,7 +168,7 @@ public final class SetupMode extends Mode {
 		update();
 		int next = status.ordinal() + 1;
 		if (next >= PipelineConfig.Step.values().length) {
-			Planair.become(MenuMode.class);
+			TangibleGame.become(MenuMode.class);
 		} else {
 			toStep(next);
 		}
@@ -218,7 +218,7 @@ public final class SetupMode extends Mode {
 	@Override
 	public void keyPressed() {
 		switch (p.keyCode) {
-			case 27: Planair.become(MenuMode.class); p.key = 0; break; // ESC
+			case 27: TangibleGame.become(MenuMode.class); p.key = 0; break; // ESC
 		}
 	}
 

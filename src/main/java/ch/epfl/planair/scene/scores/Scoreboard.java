@@ -3,7 +3,7 @@ package ch.epfl.planair.scene.scores;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.epfl.planair.Planair;
+import cs211.tangiblegame.TangibleGame;
 import ch.epfl.planair.meta.Consts;
 import ch.epfl.planair.scene.ScrollBar;
 import ch.epfl.planair.specs.Drawable;
@@ -117,7 +117,7 @@ public final class Scoreboard extends Drawable implements Scorer {
     public void notifiedScore(int delta) {
         lastScore = delta * scoreTrack.velocity().mag();
 	    if (lastScore > 25) {
-		    Planair.music().triggerHeadshot();
+		    TangibleGame.music().triggerHeadshot();
 	    }
         totalScore += lastScore;
         scores.set(time, scores.get(time) + lastScore);

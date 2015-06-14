@@ -1,6 +1,6 @@
 package ch.epfl.planair.modes;
 
-import ch.epfl.planair.Planair;
+import cs211.tangiblegame.TangibleGame;
 import ch.epfl.planair.meta.Consts;
 import ch.epfl.planair.scene.ui.Action;
 import ch.epfl.planair.scene.ui.ActionButton;
@@ -31,9 +31,9 @@ public final class MenuMode extends Mode {
 
 	private void constructMenu() {
 		int count = 0;
-		menu.add(createMenuButton(count++, "Play!", () -> Planair.become(PlayMode.class)));
-		menu.add(createMenuButton(count++, "Test! (milestone 4 with video)!", () -> Planair.become(TestMode.class)));
-		menu.add(createMenuButton(count++, "Cam Setup", () -> Planair.become(SetupMode.class)));
+		menu.add(createMenuButton(count++, "Play!", () -> TangibleGame.become(PlayMode.class)));
+		menu.add(createMenuButton(count++, "Test! (milestone 4 with video)!", () -> TangibleGame.become(TestMode.class)));
+		menu.add(createMenuButton(count++, "Cam Setup", () -> TangibleGame.become(SetupMode.class)));
 		menu.add(createMenuButton(count++, "Exit", p::exit));
 	}
 

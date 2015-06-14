@@ -15,7 +15,7 @@ public interface Consts {
 	int NOALPHA = 0x00000000;
 	String FONT = "fonts/SF-Archery-Black/SF_Archery_Black.ttf";
 
-	// Planair
+	// TangibleGame
 	boolean DEBUG              = false;
 	int FRAMERATE              = 60;
 	int EYE_HEIGHT             = 200;

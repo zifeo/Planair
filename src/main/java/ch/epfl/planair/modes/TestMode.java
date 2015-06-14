@@ -1,11 +1,9 @@
 package ch.epfl.planair.modes;
 
-import ch.epfl.planair.Planair;
+import cs211.tangiblegame.TangibleGame;
 import ch.epfl.planair.meta.PipelineConfig;
-import ch.epfl.planair.visual.MovieCaptureAdaptor;
 import processing.core.PApplet;
 import processing.video.Capture;
-import processing.video.Movie;
 
 /**
  * The main mode of the game. A 3D view of the plate
@@ -22,7 +20,7 @@ public final class TestMode extends PlayMode {
 	public void keyPressed() {
 		super.keyPressed();
 		switch (p.keyCode) {
-			case 16: Planair.become(TestObstacleMode.class); break; // SHIFT
+			case 16: TangibleGame.become(TestObstacleMode.class); break; // SHIFT
 		}
 	}
 

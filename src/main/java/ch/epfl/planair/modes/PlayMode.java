@@ -1,6 +1,6 @@
 package ch.epfl.planair.modes;
 
-import ch.epfl.planair.Planair;
+import cs211.tangiblegame.TangibleGame;
 import ch.epfl.planair.meta.Consts;
 import ch.epfl.planair.meta.PipelineConfig;
 import ch.epfl.planair.meta.Utils;
@@ -114,12 +114,12 @@ public class PlayMode extends Mode {
 		countObstacles += 1;
 
 		if (countObstacles % 5 == 0) {
-			Planair.music().triggerRampage();
+			TangibleGame.music().triggerRampage();
 		} else if (doubleKillTimeLeft > 0){
-			Planair.music().triggerDoubleKill();
+			TangibleGame.music().triggerDoubleKill();
 			doubleKillTimeLeft = 0;
 		} else if (countObstacles == 1) {
-			Planair.music().triggerFirstBlood();
+			TangibleGame.music().triggerFirstBlood();
 		} else {
 			// Adds 180 frames (~ 3 secs) before which a double kill can be triggered
 			doubleKillTimeLeft = 180;
@@ -190,8 +190,8 @@ public class PlayMode extends Mode {
 	@Override
 	public void keyPressed() {
 		switch (p.keyCode) {
-			case 16: Planair.become(ObstaclesMode.class); break; // SHIFT
-			case 27: Planair.become(MenuMode.class); p.key = 0; break; // ESC
+			case 16: TangibleGame.become(ObstaclesMode.class); break; // SHIFT
+			case 27: TangibleGame.become(MenuMode.class); p.key = 0; break; // ESC
 			case 17: toggleInteractionMode(); break; // CTRL
 		}
 	}
