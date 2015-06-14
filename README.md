@@ -9,7 +9,7 @@ The aim is to control a thin plate with a ball rolling on it.
 To earn points, you need to hit on the trees and avoid the edges of the plate.
 
 You can choose to play the game with your mouse or using your webcam. Just use `CTRL` while in-game to switch mode.
-If you choose the webcam, you need a colored squared / rectangular object (such as a lego board) to show to the webcam. Moving the physical object will rotate the virtual plate in the game.
+If you choose the webcam, you need a colored squared / rectangular object (such as a lego board) to show to the webcam. Moving the physical object will rotate the virtual plate in the game.
 
 You might want to go to "Cam Setup" first, and play with the sliders to try to isolate the object.
 
