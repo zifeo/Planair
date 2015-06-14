@@ -179,13 +179,15 @@ public final class WebcamProcessor {
 
 					if (!corners.isEmpty()) {
 						PVector r = twoDThreeD.get3DRotations(corners.subList(0, 4));
-						PVector prev = new PVector(Float.intBitsToFloat(rx.get()), 0, Float.intBitsToFloat(rz.get()));
+						PVector prev = new PVector(Float.intBitsToFloat(rx.get()), Float.intBitsToFloat(ry.get()), Float.intBitsToFloat(rz.get()));
 
 						// smooths and gets rids of extravagant changes
 						if (Math.abs(r.x - prev.x) < PConstants.THIRD_PI) {
 							rx.set(Float.floatToIntBits((r.x + prev.x)/2));
 						}
-						// ry.set(Float.floatToIntBits((r.z + prev.y)/2));
+						if (Math.abs(r.z - prev.y) < PConstants.THIRD_PI) {
+							ry.set(Float.floatToIntBits((r.z + prev.y)/2));
+						}
 						if (Math.abs(-r.y - prev.z) < PConstants.THIRD_PI) {
 							rz.set(Float.floatToIntBits((-r.y + prev.z)/2));
 						}
