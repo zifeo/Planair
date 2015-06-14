@@ -29,10 +29,10 @@ public final class TwoDThreeD {
 		// Store here the 3D coordinates of the corners of
 		// the real Lego board, in homogenous coordinates
 		// and clockwise.
-			{-128, -128, 0, 1},
-			{128, -128, 0, 1},
-			{128, 128, 0, 1},
-			{-128, 128, 0, 1}
+			{-boardSize/2, -boardSize/2, 0, 1},
+			{boardSize/2, -boardSize/2, 0, 1},
+			{boardSize/2, boardSize/2, 0, 1},
+			{-boardSize/2, boardSize/2, 0, 1}
 		};
 
 	/**

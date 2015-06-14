@@ -173,33 +173,24 @@ public final class WebcamProcessor {
 					}
 					image.updatePixels();
 
-					/*
-					pipeline.selectHueThreshold(image, currentConfig.lower(PipelineConfig.Step.HUE), currentConfig.upper(PipelineConfig.Step.HUE), 0);
-					pipeline.selectBrightnessThreshold(image, currentConfig.lower(PipelineConfig.Step.BRIGHTNESS), currentConfig.upper(PipelineConfig.Step.BRIGHTNESS), 0);
-					pipeline.selectSaturationThreshold(image, currentConfig.lower(PipelineConfig.Step.SATURATION), currentConfig.upper(PipelineConfig.Step.SATURATION), 0);
-					pipeline.binaryBrightnessThreshold(image, currentConfig.lower(PipelineConfig.Step.SOBEL), 0, 180);
-					*/
-
-					//pipeline.convolute(image, PipelineOnPlace.gaussianKernel);
 					image.filter(PConstants.BLUR, 2);
 					pipeline.sobel(image, currentConfig.lower(PipelineConfig.Step.SOBEL), size);
 					List<PVector> corners = pipeline.getPlane(image, pipeline.hough(image));
 
 					if (!corners.isEmpty()) {
 						PVector r = twoDThreeD.get3DRotations(corners.subList(0, 4));
-                        PVector prev = new PVector(Float.intBitsToFloat(rx.get()), Float.intBitsToFloat(ry.get()), Float.intBitsToFloat(rz.get()));
+						PVector prev = new PVector(Float.intBitsToFloat(rx.get()), 0, Float.intBitsToFloat(rz.get()));
 
-						if (Math.abs(r.x - prev.x) < Math.PI/2
-                                && Math.abs(-r.y - prev.z) < Math.PI/2) {
-
+						// smooths and gets rids of extravagant changes
+						if (Math.abs(r.x - prev.x) < PConstants.THIRD_PI) {
 							rx.set(Float.floatToIntBits((r.x + prev.x)/2));
-							ry.set(Float.floatToIntBits((r.z + prev.y)/2));
+						}
+						// ry.set(Float.floatToIntBits((r.z + prev.y)/2));
+						if (Math.abs(-r.y - prev.z) < PConstants.THIRD_PI) {
 							rz.set(Float.floatToIntBits((-r.y + prev.z)/2));
 						}
 					}
-
                 }
-
                 changed.set(true);
             }
         }

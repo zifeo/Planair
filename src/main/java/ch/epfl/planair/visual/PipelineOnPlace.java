@@ -205,7 +205,7 @@ public final class PipelineOnPlace extends PApplet {
 						QuadGraph.validArea(c12, c23, c34, c41, Consts.PIPELINE_MAX_PANCHE, Consts.PIPELINE_MIN_PANCHE) &&
 						QuadGraph.nonFlatQuad(c12, c23, c34, c41)) {
 
-					return Arrays.asList(c12, c23, c34, c41, l1, l2, l3, l4);
+					return Arrays.asList(c12, c23, c34, c41/*, l1, l2, l3, l4*/);
 				}
 			}
 		}
