@@ -95,6 +95,7 @@ public class PlayMode extends Mode {
 		p.camera();
 		scoreboard.draw();
         PImage image = this.daemon.get();
+		p.scale(0.5f);
         p.image(image,0,0);
 	}
 
