@@ -53,7 +53,7 @@ public final class WebcamProcessor {
 
 	public void start() {
 		assert runner == null;
-		//webcam.start();
+		webcam.start();
 		runner = new Thread(new PipelineRunner(config.snapshot()));
 		runner.start();
 	}
@@ -65,7 +65,7 @@ public final class WebcamProcessor {
 	}
 
 	public PImage get(){
-        webcam.read();
+        //webcam.read();
 		return webcam.get();
 	}
 
@@ -77,10 +77,15 @@ public final class WebcamProcessor {
 			r = splineInterpolation();
 			//yQueue.enqueue(r);
 		} else {*/
+		if(changed.get()) {
 			r = new PVector(Float.intBitsToFloat(rx.get()),
 					Float.intBitsToFloat(ry.get()),
 					Float.intBitsToFloat(rz.get()));
-
+			yQueue.enqueue(r);
+            changed.set(false);
+		}
+		else
+			r =  yQueue.get(0);
 
 			/*if (discStep > 6)
 				lastDiscStep = discStep;
@@ -182,13 +187,15 @@ public final class WebcamProcessor {
 
 					if (!corners.isEmpty()) {
 						PVector r = twoDThreeD.get3DRotations(corners.subList(0, 4));
+                        PVector prev = new PVector(Float.intBitsToFloat(rx.get()), Float.intBitsToFloat(ry.get()), Float.intBitsToFloat(rz.get()));
 
-						//if (PVector.sub(r, new PVector(Float.intBitsToFloat(rx.get()), Float.intBitsToFloat(rz.get()), -Float.intBitsToFloat(ry.get()))).mag() < 4) {
+						if (Math.abs(r.x - prev.x) < Math.PI/2
+                                && Math.abs(-r.y - prev.z) < Math.PI/2) {
 
-							rx.set(Float.floatToIntBits(r.x));
-							ry.set(Float.floatToIntBits(r.z));
-							rz.set(Float.floatToIntBits(-r.y));
-						//}
+							rx.set(Float.floatToIntBits((r.x + prev.x)/2));
+							ry.set(Float.floatToIntBits((r.z + prev.y)/2));
+							rz.set(Float.floatToIntBits((-r.y + prev.z)/2));
+						}
 					}
 
                 }

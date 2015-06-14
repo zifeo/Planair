@@ -26,6 +26,9 @@ public class MovieCaptureAdaptor extends Capture {
 
     @Override
     public void start() {
+        if(movie.available())
+            movie.stop();
+
         movie.loop();
     }
 
